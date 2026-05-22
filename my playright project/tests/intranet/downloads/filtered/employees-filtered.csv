@@ -1,0 +1,296 @@
+Employee Id,Name,Grade,Hr Name,Joining Date,Previous Work Experience(months),Experience As On Today(months),Designation,Technical Skills,Other Skills,Projects,Location,Status,Email,Parent Business Unit
+719,Aastha Bhargava,J12,SriGayathriKavya Ruttala,06/10/2022,29,72,QA Engineer,QA-Manual,",JIRA,TestRail,aditya,ok","Pool-BFSI, Package depreciation of ruby, Admin Module Rewrite, ACE TECH: Annual Maintenance Contract",Pune,approved,aastha.bhargava@joshsoftware.com,Data Engineering
+873,Abhay Inamdar,J11,Saurabh Gaji,04/10/2023,43,74,QA Engineer,"QA-Manual, QA-Automation, Java",",testing","Mobile Banking Rewrite, Star TV #RN1, AMC (Support)- BFSI, ACE TECH: Annual Maintenance Contract",Pune,approved,abhay.i@joshsoftware.com,Data Engineering
+210,Abhijit Kasbe,J11,Anuj Verma,01/07/2020,0,70,Senior QA Engineer,"React-Native, Dart, Data Science",",demo","Pool-ECommerce, RN#1 Brandscope, AMC (Support)- BFSI, Analytical Creation (“Fortress One”), ACE TECH: Annual Maintenance Contract,  Iziel: Solution architect + Developer (Renewal)",Pune,approved,abhijit.kasbe@joshsoftware.com,Internal IT
+652,Abhinav Raj,J11,Sindhu R,04/07/2022,20,66,Software Engineer,ReactJs,,"Star TV #RN1, Analytical Creation (“Fortress One”)",Pune,approved,abhinav.raj@joshsoftware.com,Data Engineering
+924,Abhishek Dhondalkar,J11,Anuj Verma,01/07/2024,0,22,Software Engineer,"Go, ReactJs",,"Pool-ECommerce, Profile Builder Development, ACE TECH: Annual Maintenance Contract",Pune,approved,abhishek.dhondalkar@joshsoftware.com,Data Engineering
+747,Abhishek Agarwal,J10,Sindhu R,28/11/2022,73,114,Senior Software Engineer,"Python, DevOps","ansible,awx,powershell,Django,mongoDB,RESTAPI,Terraform,dataengineering","Pool-ECommerce, Druva: CloudApps API , SPO, and Security Features, Banyan-ops, ACE TECH: Annual Maintenance Contract",Pune,approved,abhishek.agarwal@joshsoftware.com,Data Engineering
+911,Adhika K,J11,SriGayathriKavya Ruttala,23/05/2024,34,57,Software Engineer,Go,,"Pool-BFSI, Mobile Banking Rewrite, Admin Module Rewrite, ACE TECH: Annual Maintenance Contract",Bengaluru,approved,adhika.k@joshsoftware.com,Delivery
+891,Aditya Kumar,J11,SriGayathriKavya Ruttala,08/01/2024,37,65,Software Engineer,Java,,Pool-BFSI,Bengaluru,approved,aditya.kumar@joshsoftware.com,Delivery
+834,Aditya Yadav,J11,Sai Pradhan,03/07/2023,0,34,Software Engineer,ROR,"ComputerVision,Robotics","Sportskill AMC, AMC (Support)- BFSI",Pune,approved,aditya.yadav@joshsoftware.com,Internal IT
+554,Ajinkya Khadse,J11,Nasreen Azam,12/04/2022,23,72,Software Engineer,Python,"SQL,pyspark,pandas,Tableau,PowerBI,Sisense","Liberty Wireless Renewal : Data, Star TV #RN1",Pune,on notice,ajinkya.khadse@joshsoftware.com,Data Engineering
+404,Ajinkya Karanjikar  ,J9,Saurabh Gaji,04/10/2021,54,109,Technical Lead,"Flutter, Android, iOS","Dart,Web,Design","DeltaTech Development Project, Admin Module Rewrite, ACE TECH: Annual Maintenance Contract",Pune,approved,ajinkya.karanjikar@joshsoftware.com,Data Engineering
+215,Akansha Kumari,J11,Nasreen Azam,01/07/2020,0,70,Senior Software Engineer,"ROR, Python",,"Emeritus Monthly retainer, Analytical Creation (“Fortress One”), ACE TECH: Annual Maintenance Contract",Pune,approved,akansha.kumari@joshsoftware.com,Data Engineering
+874,Akash Barde,J11,Sindhu R,09/10/2023,37,68,Software Engineer,Java,,ACE TECH: Annual Maintenance Contract,Pune,approved,akash.barde@joshsoftware.com,BFSI
+851,Akshay Khairnar,J11,Saurabh Gaji,14/07/2023,42,76,Software Engineer,"Java, Angular","SpringBoot,Microservices,PostgresSQL",EXP2# FYNDNA POD,Pune,approved,akshay.khairnar@joshsoftware.com,Delivery
+887,Akshay Doiphode,J10,Sindhu R,02/01/2024,79,107,Senior Software Engineer,"React-Native, ReactJs","JavaScript,ReactJS","Responsive Web Application Development - ERP for Educational Institutes, ACE TECH: Annual Maintenance Contract, Peerly",Pune,approved,akshay.doiphode@joshsoftware.com,Delivery
+583,Akshay Patil,J11,Saurabh Gaji,16/05/2022,36,84,Software Engineer,Go,Java,"Mobile Banking Rewrite, Package depreciation of ruby, ACE TECH: Annual Maintenance Contract",Pune,approved,akshay.patil@joshsoftware.com,Delivery
+595,Amar Jadhav,J10,Sindhu R,25/05/2022,44,91,Senior Software Engineer,ReactJs,,"ACE TECH: Annual Maintenance Contract, Peerly",Pune,approved,amar.jadhav@joshsoftware.com,Delivery
+226,Amit Jadhav,J10,,12/08/2020,71,140,Senior Software Engineer,"Java, ReactJs, Go","Spring. Spring Rest,Hibernet,Javascript",,Pune,approved,amit.jadhav@joshsoftware.com,Delivery
+365,Aniket Gore,J11,SriGayathriKavya Ruttala,09/08/2021,42,99,Software Engineer,"NodeJs, Angular","javascript,moongoDB",DeltaTech Development Project,Pune,approved,aniket.gore@joshsoftware.com,Data Engineering
+889,Anil Sah,J11,Saurabh Gaji,02/01/2024,39,67,Software Engineer,Java,"Springboot,microservices,RestApi",EXP2# FYNDNA POD,Pune,approved,anil.sah@joshsoftware.com,Delivery
+838,Animesh  Sinha,J11,Sai Pradhan,03/07/2023,0,34,Software Engineer,"Flutter, Python",,Sportskill AMC,Bengaluru,approved,animesh.sinha@joshsoftware.com,Delivery
+414,Ankitkumar Singh,J11,Swapnil Chincholkar,13/10/2021,57,112,Software Engineer,"Angular, NodeJs, .Net",,Banor Capital- Staff Augmentation,Pune,approved,ankit.singh@joshsoftware.com,Delivery
+305,Ankush Kadam,J10,Nasreen Azam,05/04/2021,26,87,Senior Software Engineer,"ReactJs, NodeJs","NextJs,NodeJs","Package depreciation of ruby, Druva: CloudRanger Roadmap Support",Pune,approved,ankush.kadam@joshsoftware.com,Data Engineering
+548,Ankush Yeshwantkar,J11,Sindhu R,07/04/2022,13,62,Software Engineer,Java,,"Mobile Banking Rewrite, Banyan-ops",Pune,approved,ankush.yeshwantkar@joshsoftware.com,Delivery
+679,Anshumant Dhawan,J8,SriGayathriKavya Ruttala,01/08/2022,0,45,Manager Sales,,,,Pune,approved,anshumant.dhawan@joshsoftware.com,Sales
+870,Anu Gubbala,J10,,18/09/2023,5,37,Senior QA Engineer,"QA-Manual, QA-Automation",,Netbanking Rewrite,Bengaluru,approved,anu.pavani@joshsoftware.com,Delivery
+83,Anuj Verma,J6,,01/07/2016,0,118,Product Manager,Go,,"Management- Data Engineering BU, DataPelago",Pune,approved,anuj@joshsoftware.com,Data Engineering
+31,Anuja Ware,J6,,04/07/2011,0,178,Engineering Manager,"DevOps, ROR, .Net",",Angularjs","Management- BFSI BU, Nephroflow",Pune,approved,anuja@joshsoftware.com,Delivery
+55,Anurag Pratap,J8,Swapnil Chincholkar,01/07/2014,0,142,Project Manager,"ROR, ReactJs",,"Emeritus Monthly retainer, Rakuten Viki Renewal #1",Pune,approved,anurag@joshsoftware.com,Delivery
+903,Apurva Rawal,J11,Anuj Verma,01/03/2024,10,36,Software Engineer,Java,,"Pool-ECommerce, ITACO iCAMS",Pune,approved,apurva.rawal@joshsoftware.com,Data Engineering
+895,Arjun B,J10,Saurabh Gaji,22/01/2024,50,77,Senior QA Engineer,,,Mobile Banking Rewrite,Bengaluru,approved,arjun.b@joshsoftware.com,Delivery
+901,Arjun Soundankar,J10,Saurabh Gaji,02/02/2024,90,117,Senior Software Engineer,"ReactJs, NodeJs, Angular",,EXP2# FYNDNA POD,Pune,approved,arjun.soundankar@joshsoftware.com,Delivery
+18,Arvind Mahale,J12,SriGayathriKavya Ruttala,07/10/2009,0,199,Office Assistant,,Office Assistant,Pool-BFSI,Pune,approved,arvind@joshsoftware.com,Finance and Accounts
+842,Aryan Chourasia,J11,Swapnil Chincholkar,03/07/2023,0,34,Software Engineer,Python,"AWS,Azure,DataEngineering",Banor Capital- Staff Augmentation,Pune,approved,aryan.chourasia@joshsoftware.com,Delivery
+766,Asha P,J11,Sameer Tilak,15/02/2023,3,42,QA Engineer,QA-Manual,,"Pool- Data Engineering, Eye OP Management Project",Bengaluru,approved,asha.p@joshsoftware.com,Data Engineering
+165,Ashish Pande,J11,Sindhu R,12/08/2019,0,81,Software Engineer,ROR,"Elasticsearch,psql,mongodb",Star TV #RN1,Pune,approved,ashish.pande@joshsoftware.com,Data Engineering
+166,Ashok Kori,J10,Swapnil Chincholkar,12/08/2019,25,106,Senior Software Engineer,"ROR, PHP","Jquery,Javascript,Mysql,Ruby,Microservices,Mongo,Docker,Datadog,Postgresql,PHP,HTML,CSS,Ajax",Rakuten Viki Renewal #1,Pune,approved,ashok.kori@joshsoftware.com,Delivery
+72,Ashvini Vibhute,J8,Sai Pradhan,01/07/2015,0,130,Project Manager,"ROR, Go, ReactJs","Ruby,Angularjs","Nephroflow, Kindkart Monthly Retainer",Pune,approved,ashvini@joshsoftware.com,Data Engineering
+491,Ashwini Todewar,J11,Gautam Rege,11/01/2022,42,94,QA Engineer,"QA-Automation, QA-Manual, Java","apitesting,databasequerywriting,qamanual,Restassured,seleniumwithjava,Desktoptetsing,webtesting","WKG: .Net Dev & 0.25QA Extension#9, DubaiTech- Delivery Project",Pune,approved,ashwini.todewar@joshsoftware.com,Delivery
+827,Ayushi Kumari,J11,Sethupathi Asokan,03/07/2023,0,34,Software Engineer,"Python, Java","AWS,NiFi,Hadoop,PySpark,GCP,LearningMSDynamics365,PowerBI",Proof of Concept,Pune,approved,ayushi.kumari@joshsoftware.com,Data Engineering
+641,B Bharat Subudhi,J11,SriGayathriKavya Ruttala,11/07/2022,0,46,Software Engineer,"Java, NodeJs",,Tickets connector service project,Bengaluru,approved,bharat.subudhi@joshsoftware.com,Data Engineering
+817,Balaji S V,J10,,28/06/2023,146,180,Senior Business Analyst,Business Analyst,"JIRA,agile,BRD,FSD,PROCESSflowdiagram,wireframe","AI drones , Netbanking Rewrite",Bengaluru,approved,balaji.suchendra@joshsoftware.com,Delivery
+208,Bhakti Jadhav,J10,Nasreen Azam,01/07/2020,11,81,Senior Software Engineer,"Python, ReactJs, QA-Automation","ProblemSolving,TimeManagement,CriticalThinking,Teamwork,Creativity,Communication,Leadership,Adaptability,Challenger,QuickLearning","Druva: CloudApps API , SPO, and Security Features",Pune,approved,bhakti.jadhav@joshsoftware.com,Data Engineering
+892,Bhaskar Mala,J10,,12/01/2024,43,71,Senior Software Engineer,Java,,,Bengaluru,approved,bhaskar.mala@joshsoftware.com,Delivery
+884,Bikram Arisal,J10,Saurabh Gaji,27/11/2023,74,103,Senior QA Engineer,,,Mobile Banking Rewrite,Bengaluru,approved,bikram.arisal@joshsoftware.com,BFSI
+412,Bramhanand Kale,J11,Saurabh Gaji,11/10/2021,0,55,Software Engineer,Java,"Hibernate,MySql,Algrithms,springboot,JunittestingwithMockito",Mobile Banking Rewrite,Pune,approved,bramhanand.kale@joshsoftware.com,Delivery
+687,Chaithra N S,J10,SriGayathriKavya Ruttala,11/08/2022,55,100,Senior Software Engineer,"Angular, UI/UX, Java",,DeltaTech Development Project,Bengaluru,approved,chaithra.ns@joshsoftware.com,Data Engineering
+899,Chandrakant Umarani,J10,Saurabh Gaji,01/02/2024,74,101,Senior QA Engineer,QA-Automation,ETLTesting,Mobile Banking Rewrite,Bengaluru,approved,chandrakant.umarani@joshsoftware.com,BFSI
+76,Chandrashekhar Sahu,J6,,01/08/2015,36,165,Engineering Manager,"Android, Flutter, Java","Kotlin,Dart,MobileApplicationDevelopment,ProjectDeliveryManagement,TeamManagement,CoreJava,TechnicalProjectManagement",Management- Data Engineering BU,Pune,approved,chandrashekhar@joshsoftware.com,Data Engineering
+833,Chetan Satpute,J11,Sameer Tilak,03/07/2023,0,34,Software Engineer,"React-Native, ReactJs, DevOps",Nodejs,"Sportskill AMC, Eye OP Management Project, Intranet",Pune,approved,chetan.satpute@joshsoftware.com,Internal IT
+998,Chiraag Khemani,J6,,08/09/2025,0,8,Engineering Manager,,,,Pune,approved,chiraag.khemani@joshsoftware.com,Josh Software
+674,Deepak Chilmule,J11,Sindhu R,16/07/2022,5,51,Software Engineer,"ReactJs, NodeJs","tailwind css,javascript,github","Pool-BFSI, Star TV #RN1",Pune,approved,deepak.narayan@joshsoftware.com,Delivery
+520,Deepak Kumar,J10,Gautam Rege,07/03/2022,26,76,Senior Software Engineer,"Go, DevOps, Python","docker,microservices,aws,gitlabpipelines","Star TV #RN1, DubaiTech- Delivery Project",Pune,approved,deepak.kumar@joshsoftware.com,Delivery
+925,Dinesh Patel,J11,Saurabh Gaji,01/07/2024,0,22,Software Engineer,"ROR, ReactJs",,Responsive Web Application Development - ERP for Educational Institutes,Pune,approved,dinesh.patel@joshsoftware.com,Delivery
+456,Dipali Thakare,J11,,01/12/2021,0,53,Software Engineer,Flutter,"Mysql,firebase",,Pune,approved,dipali.thakare@joshsoftware.com,Data Engineering
+927,Divya Tambat,J11,Saurabh Gaji,01/08/2024,0,21,Software Engineer,"Go, ReactJs",,SimplySmart,Pune,approved,divya.tambat@joshsoftware.com,Delivery
+284,Dominic Lopes,J10,Sindhu R,08/02/2021,32,95,Software Engineer,"Go, Python, QA-Automation","GO,SQL,PythonSelenium,AWS,Docker,APITesting,QAManual,PythonRequests,Jenkins,Python",Banyan-ops,Pune,on notice,dominic.lopes@joshsoftware.com,Delivery
+231,Durgeswore Mohanty,J11,Saurabh Gaji,21/09/2020,0,67,Software Engineer,ReactJs,"C/C++,Javascript,Git,Html,css,Data Structures and Algorithm",EXP2# FYNDNA POD,Pune,approved,durgeswore.mohanty@joshsoftware.com,Delivery
+822,Eshan Pandey,J11,Nasreen Azam,03/07/2023,0,34,Software Engineer,Python,"SQL,AWS,DjangoRestFramework,Flask","Data Analytics Full stack development - NPCI, Analytical Creation (“Fortress One”)",Pune,on notice,eshan.pandey@joshsoftware.com,Data Engineering
+346,Fatema Mansawala,J11,Nasreen Azam,19/07/2021,0,58,Senior Software Engineer,"Go, QA-Automation",CICD,Liberty Wireless Renewal: Markets,Pune,on notice,fatema.moaiyadi@joshsoftware.com,Data Engineering
+779,Ganesh Kadam,J11,SriGayathriKavya Ruttala,09/03/2023,35,73,IT & Network Engineer,DevOps,,Internal- Admin & IT,Pune,on notice,ganesh.kadam@joshsoftware.com,Admin
+832,Gaurav Makhijani,J11,SriGayathriKavya Ruttala,03/07/2023,0,34,Software Engineer,"Go, NodeJs",,Kindkart Monthly Retainer,Pune,approved,gaurav.makhijani@joshsoftware.com,Delivery
+135,Gaurav Jha,J11,Sindhu R,04/01/2019,13,101,QA Engineer,QA-Manual,"scrummaster,jira,Browserstack","DeltaTech Development Project, Banyan-ops",Pune,approved,gaurav.jha@joshsoftware.com,Data Engineering
+656,Gaurav Sorte,J11,Sindhu R,18/07/2022,0,46,Software Engineer,"ReactJs, Python, Business Analyst","DjangoFullStackWebDevelopment,Tableau,PowerBi,Django,JavaScript,Excel,DataAnalytics,SQL,RProgramming,MachineLearning",Star TV #RN1,Pune,approved,gaurav.sorte@joshsoftware.com,Data Engineering
+197,Gauravi Rajput,J10,Sindhu R,01/04/2020,46,119,Senior Software Engineer,"ROR, PHP, Angular",flutter,Star TV #RN1,Pune,approved,gauravi.rajput@joshsoftware.com,Data Engineering
+2,Gautam Rege,J1,,25/09/2007,0,223,Co-Founder & Director,,,,Pune,approved,gautam@joshsoftware.com,Corporate
+880,Goutam Kumar,J10,Sai Pradhan,21/11/2023,34,63,Senior Software Engineer,,,WKG: .Net Dev & 0.25QA Extension#9,Pune,approved,goutam.kumar@joshsoftware.com,Delivery
+306,Harikesh Prajapati,J10,Nasreen Azam,08/04/2021,0,61,Senior Software Engineer,"Go, VueJs, PHP","VueJS,MongoDB,MySQL,Bootstrap",Druva: MSP (DCP),Pune,approved,harikesh.prajapati@joshsoftware.com,Data Engineering
+829,Harsh Soni,J11,Saurabh Gaji,03/07/2023,0,34,Software Engineer,"Python, Java, NodeJs",,"Responsive Web Application Development - ERP for Educational Institutes, Sportskill AMC",Pune,approved,harsh.soni@joshsoftware.com,Delivery
+778,Harshal Ingale,J8,Shambhavi Sharma,08/03/2023,0,38,Manager Talent Acquisition,,,Internal- Talent Acquisition Group,Bengaluru,approved,harshal.ingale@joshsoftware.com,Human Resources
+644,Harshitha M N,J11,Swapnil Chincholkar,11/07/2022,0,46,Software Engineer,"Java, NodeJs, QA-Automation","reactjs,cypress,javascript",RN#1 Brandscope,Bengaluru,approved,harshitha.mn@joshsoftware.com,Delivery
+732,Ishani Trivedi,J11,Nasreen Azam,31/10/2022,32,74,Software Engineer,"ROR, NodeJs","Graphql,SQL,Javascript","Emeritus Monthly retainer, Star TV #RN1",Pune,approved,ishani.trivedi@joshsoftware.com,Data Engineering
+906,Jagdish Kumar,J11,Nasreen Azam,11/03/2024,34,60,Software Engineer,"ROR, ReactJs, NodeJs","TypeScript,docker,kubernetes,RubyonRails",Emeritus Monthly retainer,Pune,approved,jagdish.kumar@joshsoftware.com,Data Engineering
+768,Jaydeep Jadhav,J11,Sethupathi Asokan,20/02/2023,0,38,UX/UI Designer,UI/UX,",GraphicDesign,VideoEditing,Framer","Shared Service - UI/UX, ITACO iCAMS",Pune,approved,jaydeep.jadhav@joshsoftware.com,Shared Services
+642,Jeevan P,J11,SriGayathriKavya Ruttala,11/07/2022,0,46,Software Engineer,"Java, ReactJs, NodeJs",SQL,Tickets connector service project,Bengaluru,approved,jeevan.p@joshsoftware.com,Delivery
+777,Jeevitha C P,J8,Saurabh Gaji,03/03/2023,156,194,Project Manager,Java,"ProjectManagement,ScrumMaster",Mobile Banking Rewrite,Bengaluru,approved,jeevitha.prakash@joshsoftware.com,Delivery
+738,Julee Gunjal,J11,Sameer Tilak,14/11/2022,0,42,Software Engineer,ROR,"mysql,mongodb,springboot,postgres,React,Java","Duka Direct - Support, Reliable: 21-Nautica",Pune,approved,julee.gunjal@joshsoftware.com,Delivery
+855,Jyotrimaya  Swain,J9,Sethupathi Asokan,18/07/2023,56,90,Technical Lead,"Java, ReactJs","springboot,microservice",ITACO iCAMS,Bengaluru,approved,jyotrimaya.swain@joshsoftware.com,Data Engineering
+849,Kannan T,J10,,07/07/2023,56,90,Senior Software Engineer,"React-Native, Android, ReactJs",Java,,Bengaluru,approved,kannan.t@joshsoftware.com,Delivery
+429,Kartik Hiwase,J11,Nasreen Azam,16/06/2025,0,11,Software Engineer,"Python, Business Analyst, Data Science",",Sql,Bigdatatechnology,Sisense,BigQuery,DataEngineering","Liberty Wireless Renewal : Data, SimplySmart, Kindkart Monthly Retainer, Intranet",Pune,approved,kartik.hiwase@joshsoftware.com,Data Engineering
+194,Kaushik Hande,J10,Sindhu R,23/03/2020,28,101,Senior Software Engineer,"ROR, ReactJs","Ruby,Rails Jquery,Html,Css",Star TV #RN1,Pune,approved,kaushik.hande@joshsoftware.com,Data Engineering
+JC01,Kaushik Bhagwat,J9,SriGayathriKavya Ruttala,01/06/2022,0,47,Lead,,,Internal- Marketing team,Pune,approved,kaushik.bhagwat@joshsoftware.com,Marketing
+815,Kinjal Mali,J10,Shambhavi Sharma,27/06/2023,55,89,Senior QA Engineer,QA-Manual,,"Long leave (Maternity Leave, sabbatical leave)",Bengaluru,approved,kinjal.mali@joshsoftware.com,Delivery
+866,Kiran Gosavi,J10,Saurabh Gaji,25/08/2023,61,93,Senior QA Engineer,"QA-Automation, Data Science, Java","SQL,ETL,DWHTesting,Migrationtester,Etltools,SSIS,informatica,talend,Datacentraltools",Mobile Banking Rewrite,Bengaluru,approved,kiran.gosavi@joshsoftware.com,Delivery
+290,Kiran Ghodake,J11,Sindhu R,01/03/2021,0,62,Software Engineer,ReactJs,"nextJS,javascript,Redux",Star TV #RN1,Pune,approved,kiran.ghodake@joshsoftware.com,Data Engineering
+JIN0179,Komal Mastud,J12,Sindhu R,02/07/2025,0,10,Trainee,,,Internal- Finance & Accounts,Pune,approved,komal.mastud@joshsoftware.com,Josh Software
+964,Kunal Rathod,J11,,01/04/2025,0,13,Software Engineer,,,,Pune,approved,kunal.rathod@joshsoftware.com,BFSI
+250,Kushal Dev,J3,,26/10/2020,0,66,Vice President Sales,,,,Bengaluru,approved,kushal.dev@joshsoftware.com,Sales
+737,Maaz Mustafa,J11,,14/11/2022,0,42,Software Engineer,"Java, ReactJs, NodeJs",,,Pune,approved,maaz.mustafa@joshsoftware.com,Delivery
+553,Mahesh Tarhalkar,J10,SriGayathriKavya Ruttala,11/04/2022,108,157,Senior QA Engineer,QA-Manual,"APITesting,jira,postman,zephyr,DBTesting",Pool-BFSI,Pune,approved,mahesh.tarhalkar@joshsoftware.com,Delivery
+141,Mahesh Dere,J10,,25/02/2019,0,86,Senior Software Engineer,"Go, Java, DevOps","RESTful APIPROGRAMMING,MySQL",,Pune,approved,mahesh.dere@joshsoftware.com,Delivery
+461,Mahesh Yambal,J10,,13/12/2021,50,103,Senior QA Engineer,"QA-Manual, QA-Automation","qamanual,BrowserStack,Testrail,JIRA,Cypress",Netbanking Rewrite,Pune,approved,mahesh.yambal@joshsoftware.com,Delivery
+803,Mahima Tripathi,J11,Saurabh Gaji,16/05/2023,28,64,UX/UI Designer,UI/UX,"DesignThinking,ColorPsychology","Responsive Web Application Development - ERP for Educational Institutes, Shared Service - UI/UX",Pune,approved,mahima.tripathi@joshsoftware.com,Shared Services
+657,Malhar Jadhav,J11,Saurabh Gaji,18/07/2022,0,46,Software Engineer,ReactJs,NodeJs,Responsive Web Application Development - ERP for Educational Institutes,Pune,approved,malhar.jadhav@joshsoftware.com,Delivery
+258,Mandar Bhagwat,J11,,07/12/2020,24,89,QA Engineer,QA-Manual,"SQL,Postman,API Testing",Netbanking Rewrite,Pune,approved,mandar.bhagwat@joshsoftware.com,Delivery
+465,Mangesh Shinde,J11,Sameer Tilak,01/01/2022,0,52,Software Engineer,DevOps,Networking,Shared Service - DevOps,Pune,approved,mangesh.shinde@joshsoftware.com,Shared Services
+D002,Maragatha Sundari,,,25/09/2010,0,187,Director,,,,Pune,approved,sundari@joshsoftware.com,
+791,Mayank Gupta,J10,Saurabh Gaji,07/04/2023,69,106,Senior Software Engineer,Go,"Clojure,Python,Java,Elixir,Docker,Kubernetes,Redis,MySQL,MongoDB,Spark",Mobile Banking Rewrite,Bengaluru,approved,mayank.gupta@joshsoftware.com,Delivery
+317,Mayank Sahu,J10,Nasreen Azam,10/05/2021,30,90,Software Engineer,"NodeJs, ReactJs, Java","Javascript,Mysql,Postgresql,Docker,AWSLambda,AWSEC2,AWSS3,MongoDb,JAVA","Druva: CloudApps API , SPO, and Security Features",Pune,approved,mayank.sahu@joshsoftware.com,Data Engineering
+39,Megha Brid,J7,,14/05/2012,0,168,Senior Manager Finance,"Angular, DevOps",Finance,Internal- Finance & Accounts,Pune,approved,megha@joshsoftware.com,Finance and Accounts
+556,Milind Anand,J11,Saurabh Gaji,13/04/2022,6,55,Software Engineer,ReactJs,"redux,javaScript,html,css,materialUi,cypress",Responsive Web Application Development - ERP for Educational Institutes,Bengaluru,approved,milind.anand@joshsoftware.com,Delivery
+577,Mitesh Sonawane,J11,,12/05/2022,0,48,Software Engineer,"Go, Python, Java","bigdata,datacollectionandDBMSSQLMONGODB,cloudcomputing,linux,datavisualizationAnalysisandReporting,machinelearning,RProgramming,AdvanceAnalyticsusingstastistics",,Pune,approved,mitesh.sonawane@joshsoftware.com,Delivery
+501,Mohammad Fareed,J9,SriGayathriKavya Ruttala,24/01/2022,107,158,Technical Lead,Android,,DeltaTech Development Project,Bengaluru,approved,mohammad.fareed@joshsoftware.com,Data Engineering
+813,Mohini Khalkar,J11,Saurabh Gaji,23/06/2023,31,65,Software Engineer,Java,"SpringBoot,Hibernate,DataJPA,MYSQL,Microservices,Postman,Swagger",EXP2# FYNDNA POD,Pune,approved,mohini.khalkar@joshsoftware.com,Delivery
+614,Mohini Mane,J8,Nasreen Azam,15/06/2022,175,222,Manager - HR,,,"Internal- Corporate HR, Druva: CloudRanger Roadmap Support",Pune,approved,mohini.mane@joshsoftware.com,Human Resources
+886,Mohit Goud,J11,Sameer Tilak,18/12/2023,36,65,Software Engineer,ROR,"AWSEC2andS3storage,Javascript",Reliable: 21-Nautica,Pune,approved,mohit.goud@joshsoftware.com,Delivery
+904,Moin Ahmed,J10,Sindhu R,05/03/2024,44,70,Senior Software Engineer,"ROR, ReactJs",,Star TV #RN1,Pune,approved,moin.ahmed@joshsoftware.com,Data Engineering
+883,Monica  Nayagam,J11,Shambhavi Sharma,01/11/2023,0,30,Software Engineer,,,"Internal- Finance & Accounts, Interns training",Pune,approved,monica.nayagam@joshsoftware.com,Finance and Accounts
+902,Mythri V,J10,Saurabh Gaji,21/02/2024,53,79,Senior QA Engineer,"QA-Manual, QA-Automation","APITesting,MobileTesting,SQL,JIRA,Agile,CharlesProxy,Xcode,Andriodstudio,MongoDB",Mobile Banking Rewrite,Bengaluru,approved,mythri.v@joshsoftware.com,Delivery
+516,NERAVATI   SAI  SREENIDHI,J10,Saurabh Gaji,28/02/2022,33,83,Senior Software Engineer,"Go, Java, Python","Springboot,Angular,AWS,javascript",Mobile Banking Rewrite,Bengaluru,approved,sai.sreenidhi@joshsoftware.com,Delivery
+797,Naga  K V,J9,Saurabh Gaji,20/04/2023,89,125,QA Lead,"QA-Manual, Java, Python","SQL,UNIX,APITesting",Mobile Banking Rewrite,Bengaluru,approved,naga.praveen@joshsoftware.com,Delivery
+551,Nagashree TJ,J10,Saurabh Gaji,11/04/2022,60,109,Senior Software Engineer,"React-Native, Android",,Mobile Banking Rewrite,Bengaluru,approved,nagashree.tj@joshsoftware.com,Delivery
+754,Nasreen Azam,J6,,02/01/2023,16,56,Product Manager,"QA-Automation, QA-Manual, PHP","ProjectManagement,AgileScrumMaster,ProductManagement",Management- Data Engineering BU,Bengaluru,approved,nasreen.azam@joshsoftware.com,Data Engineering
+773,Naziya Shikalgar,J11,Swapnil Chincholkar,27/02/2023,41,79,QA Engineer,"QA-Automation, QA-Manual","Cypress,MYSQL,POSTMAN,MANUALTESTING",Loan Document Generation System,Pune,approved,naziya.shikalgar@joshsoftware.com,Data Engineering
+772,Neha Pawar,J11,Saurabh Gaji,27/02/2023,7,45,Software Engineer,Java,"ElasticSearch,MySql,Swagger,SpringBoot,Junit,CustomAnnotation,Kibana,PostgreSQL",Mobile Banking Rewrite,Pune,approved,neha.pawar@joshsoftware.com,Delivery
+134,Neha Naghate,J9,Saurabh Gaji,02/01/2019,27,115,Technical Lead_UI/UX,UI/UX,"Photoshop,Illustrator,AxureBasics,Wordpress,XD,TeamHandling,UX,UI,Figma,Miro","Responsive Web Application Development - ERP for Educational Institutes, Loan Document Generation System, Shared Service - UI/UX",Pune,approved,neha.naghate@joshsoftware.com,Shared Services
+506,Nihal  Nadaf,J10,Saurabh Gaji,01/02/2022,34,85,Senior Software Engineer,java,,EXP2# FYNDNA POD,Pune,approved,nihal.nadaf@joshsoftware.com,Delivery
+217,Niharika Bhoi,J10,Swapnil Chincholkar,01/07/2020,0,70,Senior Software Engineer,"ROR, ReactJs",,RN#1 Brandscope,Pune,approved,niharika.bhoi@joshsoftware.com,Delivery
+192,Nikhil Patil,J8,Saurabh Gaji,16/03/2020,78,152,Project Manager,"Android, Flutter, React-Native","Kotlin,java","Responsive Web Application Development - ERP for Educational Institutes,  Iziel: Solution architect + Developer (Renewal)",Pune,approved,nikhil.patil@joshsoftware.com,Data Engineering
+157,Niranjan Patil,J10,Sindhu R,15/05/2019,0,84,Senior Software Engineer,"ROR, ReactJs","Ruby,Rails,C++,Elasticsearch",Star TV #RN1,Pune,approved,niranjan.patil@joshsoftware.com,Data Engineering
+963,Nitesh Singh,J11,,01/04/2025,0,13,Software Engineer,,,,Pune,approved,nitesh.singh@joshsoftware.com,BFSI
+839,Omkar Bhosale,J11,Sethupathi Asokan,05/04/2025,0,13,Software Engineer,"Flutter, iOS, ReactJs",,Pool- Data Engineering,Pune,approved,omkar.bhosale@joshsoftware.com,Data Engineering
+852,Omkar Bhagat,J8,,17/07/2023,0,34,Manager Sales,,,,Pune,approved,omkar.bhagat@joshsoftware.com,Sales
+249,Omkesh Sajjanwar,J10,Sindhu R,26/10/2020,12,78,Senior Software Engineer,Go,"PHP,ReactJS",Banyan-ops,Pune,approved,omkesh.sajjanwar@joshsoftware.com,Delivery
+718,Pallavi Wadgaonkar,J11,Saurabh Gaji,04/10/2022,0,43,QA Engineer,"QA-Manual, Python, Java","abilitytolearnanynewtechnology,problemsolving,goodCommunicator,TeamPlayer,adaptability",Responsive Web Application Development - ERP for Educational Institutes,Pune,approved,pallavi.wadgaonkar@joshsoftware.com,Delivery
+529,Pallavi Harapanahalli,J8,Saurabh Gaji,21/03/2022,180,229,Project Manager,".Net, Python, QA-Automation","Sharepoint,windowssdk,MSSqlServer,Mysql,net,ProjectManagement,ResourceMgt,communication,TeamMgt,ScrumMaster,ProgramManager",Mobile Banking Rewrite,Pune,approved,pallavi.harapanahalli@joshsoftware.com,Delivery
+734,Pallavi Patil,J11,SriGayathriKavya Ruttala,14/11/2022,0,42,QA Engineer,QA-Manual,QAAutomationSeleniumJava,Tickets connector service project,Pune,approved,pallavi.patil@joshsoftware.com,Data Engineering
+713,Pallavi Sajjanshetty,J11,SriGayathriKavya Ruttala,03/10/2022,0,43,Executive - L&D,,,Internal- Learning & Development,Pune,approved,pallavi.sajjanshetty@joshsoftware.com,Human Resources
+264,Paramita Majumdar,J10,Saurabh Gaji,04/01/2021,0,64,Senior Software Engineer,"Go, Python","Dancing,singing,hostingevents,reading,Javascript,aws",Mobile Banking Rewrite,Pune,approved,paramita.majumdar@joshsoftware.com,Delivery
+93,Payal Dhongade,J9,Sindhu R,05/06/2017,72,179,Technical Lead,ROR,"ReactJs,Rails",Star TV #RN1,Pune,approved,payal@joshsoftware.com,Data Engineering
+294,Phati Sawant,J11,Saurabh Gaji,01/03/2021,0,62,Software Engineer,Java,"SpringBoot,MySQL,Hibernate,AWS",Mobile Banking Rewrite,Pune,approved,phati.sawant@joshsoftware.com,Delivery
+905,Pooja Lande,J10,Sindhu R,11/03/2024,36,62,Software Engineer,"React-Native, ReactJs, NodeJs","javascript,html,css,bootstrap",Star TV #RN1,Pune,approved,pooja.lande@joshsoftware.com,BFSI
+82,Pooja Mane,J8,Sindhu R,01/07/2016,2,120,Project Manager,Angular,",RubyonRails,go",,Pune,approved,pooja@joshsoftware.com,Data Engineering
+153,Pradip Kshirsagar,J9,Sindhu R,15/05/2019,0,84,Technical Lead,"ROR, ReactJs",RubyonRails,"Clubbuzz Renewal #RN1, Star TV #RN1",Pune,approved,pradip.kshirsagar@joshsoftware.com,Data Engineering
+909,Pradyot Puranik,J8,,15/04/2024,204,229,Project Manager,QA-Manual,"scrummaster,ProjectManager",Management- BFSI BU,Divyashree Chambers,approved,pradyot.puranik@joshsoftware.com,Delivery
+131,Pragati Garud,J9,Sindhu R,02/01/2019,2,90,Technical Lead,"ReactJs, UI/UX","HTML5,CSS3,javascript",Star TV #RN1,Pune,approved,pragati.garud@joshsoftware.com,Data Engineering
+926,Prajjwalkumar Panzade,J11,Swapnil Chincholkar,01/07/2024,0,22,Software Engineer,"ROR, ReactJs",,Loan Document Generation System,Pune,approved,prajjwalkumar.panzade@joshsoftware.com,Delivery
+962,Pranali More,J11,,01/04/2025,0,13,Software Engineer,,,,Pune,approved,pranali.more@joshsoftware.com,BFSI
+325,Pranav Naik,J10,Sindhu R,09/06/2021,48,107,Software Engineer,"NodeJs, ReactJs, Python","Javascript,TALFramework,aws,php",Star TV #RN1,Pune,approved,pranav.naik@joshsoftware.com,Data Engineering
+823,Prasad Bhosale,J11,Gautam Rege,03/07/2023,0,34,Software Engineer,Go,"Express,Nodejs,Java",DubaiTech- Delivery Project,Pune,approved,prasad.bhosale@joshsoftware.com,Delivery
+615,Prasad Patil,J10,Nasreen Azam,16/06/2022,43,90,Senior QA Engineer,"QA-Automation, QA-Manual, Python","Selenium,RobotFramework,APIAutomation","Druva: CloudApps API , SPO, and Security Features",Pune,approved,prasad.patil@joshsoftware.com,Data Engineering
+739,Prashant Salave,J11,Sameer Tilak,14/11/2022,0,42,Software Engineer,ROR,,"Proof of Concept, Duka Direct - Support",Pune,approved,prashant.salave@joshsoftware.com,Data Engineering
+825,Prashant Soni,J11,Sethupathi Asokan,03/07/2023,0,34,Software Engineer,"Flutter, iOS, ReactJs","java,javase,javaee","Pool- Data Engineering, Niwant: Platform Migration, Data Engineering: Upskill & Cross skill",Pune,approved,prashant.soni@joshsoftware.com,Data Engineering
+655,Prathamesh Lohakare,J11,Nasreen Azam,11/07/2022,0,46,Software Engineer,"Python, Java, Data Science","Networking,DSA,cpp,UNIX,DBMS","Druva: CloudApps API , SPO, and Security Features",Pune,approved,prathamesh.lohakare@joshsoftware.com,Data Engineering
+594,Prathamesh Shirke,J11,Shambhavi Sharma,01/05/2022,6,54,Executive - Talent Acquisition,,,Internal- Talent Acquisition Group,Pune,approved,prathamesh.shirke@joshsoftware.com,Human Resources
+620,Pratik Paraye,J11,Gautam Rege,21/06/2022,16,62,Software Engineer,"ReactJs, Java","ReactQuery,Redux,Formik,Bootstrap",DubaiTech- Delivery Project,Pune,approved,pratik.paraye@joshsoftware.com,Data Engineering
+427,Pratik Walanj,J11,Nasreen Azam,25/10/2021,0,54,Software Engineer,"Python, Data Science","SQL,DataAnalystics,ML","BFSI: Upskill & Cross skill, Liberty Wireless Renewal : Data",Pune,approved,pratik.walanj@joshsoftware.com,Data Engineering
+584,Pratik Varute,J11,Saurabh Gaji,12/05/2022,0,48,Software Engineer,"Go, ReactJs",MySql,Mobile Banking Rewrite,Pune,approved,pratik.varute@joshsoftware.com,Delivery
+426,Pratik Powale,J11,SriGayathriKavya Ruttala,25/10/2021,0,54,Software Engineer,"ReactJs, UI/UX","mySQL,Html,CSS",Kindkart Monthly Retainer,Pune,approved,pratik.powale@joshsoftware.com,Delivery
+735,Pratik Baravkar,J11,Nasreen Azam,14/11/2022,0,42,Software Engineer,"ROR, .Net",,Emeritus Monthly retainer,Pune,approved,pratik.baravkar@joshsoftware.com,Data Engineering
+893,Priyadharshini A,J10,Saurabh Gaji,18/01/2024,63,91,Senior QA Engineer,,,Mobile Banking Rewrite,Bengaluru,approved,priyadharshini.a@joshsoftware.com,Delivery
+528,Racheal Papabathini,J10,SriGayathriKavya Ruttala,21/03/2022,66,115,Senior Executive - HRBP,,"Management Skills,Vendor Management,Presentation Skills,Brand management,Employee Engagement,Stakeholder Management,Strategic Planning,Content Management",Internal- Human Resource Business Partner,Pune,approved,racheal.papabathini@joshsoftware.com,Human Resources
+670,Rahul Jadhav,J10,SriGayathriKavya Ruttala,15/07/2022,0,46,Senior Executive - Marketing,,,Internal- Marketing team,Pune,approved,rahul.jadhav@joshsoftware.com,Marketing
+581,Rajat Kawale,J11,Nasreen Azam,12/05/2022,10,58,Software Engineer,"ROR, Java, ReactJs",,"Emeritus Monthly retainer, Sportskill AMC, Intranet, AMC (Support)- BFSI",Pune,approved,rajat.kawale@joshsoftware.com,Internal IT
+180,Rajnandini Ranbhare,J9,Saurabh Gaji,12/02/2020,43,118,Technical Lead,Java,"spring,springboot,hibernate,maven,gradle,dapr,yugabytedb,microservicearchitecture,jpa","Tickets connector service project, EXP2# FYNDNA POD",Pune,approved,rajnandini.ranbhare@joshsoftware.com,Delivery
+898,Rajshekhar  Bharati,J10,Saurabh Gaji,29/01/2024,53,80,Senior QA Engineer,"QA-Manual, QA-Automation","CoreBanking,CoreJava,MobileTesting,APITesting",Mobile Banking Rewrite,Bengaluru,approved,rajshekhar.bharati@joshsoftware.com,Delivery
+897,Raju  Kasbe,J11,Saurabh Gaji,23/01/2024,37,64,QA Engineer,"QA-Automation, Python, QA-Manual","SQl,DatabaseTesting,EtlTesting,SeleniumWebdriver,Pytest",Mobile Banking Rewrite,Bengaluru,approved,raju.kasbe@joshsoftware.com,BFSI
+808,Rakshith KN,J11,SriGayathriKavya Ruttala,29/05/2023,11,46,IT & Network Engineer,,,Internal- Admin & IT,Bengaluru,approved,rakshith.kn@joshsoftware.com,Admin
+794,Ram Sai Chokkapu,J9,,17/04/2023,0,37,Assistant Manager Sales Strategy,,,,Pune,approved,ram.chokkapu@joshsoftware.com,Sales
+559,Ranjita Kudtarkar,J10,,18/04/2022,53,102,Senior Software Engineer,".Net, NodeJs",,Gregg & Valby Renewal,Pune,approved,ranjita.kudtarkar@joshsoftware.com,Delivery
+560,Ravindra  Mishra,J11,Nasreen Azam,18/04/2022,30,79,Software Engineer,"Python, Data Science","SQL,PLSQL,Snowflake,looker",Liberty Wireless Renewal : Data,Pune,approved,ravindra.mishra@joshsoftware.com,Data Engineering
+848,Reeni Das,J10,Sindhu R,05/07/2023,0,34,Senior Executive - Finance,,,Internal- Finance & Accounts,Pune,approved,reeni.das@joshsoftware.com,Finance and Accounts
+769,Rishabh Sharma,J10,Nasreen Azam,22/02/2023,42,80,Senior Software Engineer,Python,"Docker,scripting,linux,rpm",Data Analytics Full stack development - NPCI,Pune,approved,rishabh.sharma@joshsoftware.com,Data Engineering
+856,Rishabh Rai,J10,Saurabh Gaji,24/07/2023,60,93,Senior Software Engineer,Java,"SpringBoot,MicroServices,Hibernate,JPA,Oracle,DB2",Mobile Banking Rewrite,Bengaluru,approved,rishabh.rai@joshsoftware.com,Delivery
+783,Ritesh  Ranjan,J10,Nasreen Azam,20/03/2023,60,97,Senior QA Engineer,"QA-Automation, QA-Manual",,Druva: CloudRanger Roadmap Support,Pune,approved,ritesh.ranjan@joshsoftware.com,Data Engineering
+749,Ritika Dhawan,J9,,12/12/2022,0,41,Senior Executive Sales,,,,Pune,approved,ritika.dhawan@joshsoftware.com,Sales
+913,Rohan Dhalpe,J11,Sameer Tilak,01/07/2024,1,23,Software Engineer,"ROR, ReactJs",,Eye OP Management Project,Pune,approved,rohan.dhalpe@joshsoftware.com,Delivery
+710,Rohit Patil,J10,Nasreen Azam,26/09/2022,36,79,Senior QA Engineer,"QA-Automation, QA-Manual",,"Druva: CloudApps API , SPO, and Security Features",Pune,approved,rohit.patil@joshsoftware.com,Delivery
+242,Rohit Nale,J11,Sai Pradhan,21/09/2020,0,67,Software Engineer,ROR,"MySQL,C,Data Structure,Git,GO",Nephroflow,Pune,approved,rohit.nale@joshsoftware.com,Delivery
+578,Rohit Sangamnerkar,J11,Sindhu R,12/05/2022,0,48,Software Engineer,Go,mysql,Banyan-ops,Pune,approved,rohit.sangamnerkar@joshsoftware.com,Data Engineering
+841,Rohit Sinha,J11,Saurabh Gaji,03/07/2023,0,34,Software Engineer,"ReactJs, Python, NodeJs",,Responsive Web Application Development - ERP for Educational Institutes,Pune,approved,rohit.sinha@joshsoftware.com,Delivery
+869,Roneeta Basak,J7,,01/09/2023,81,113,Senior Manager Sales,,,,Bengaluru,approved,roneeta.basak@joshsoftware.com,Sales
+757,Ruchira Kulkarni ,J11,,04/01/2023,53,93,Executive - PMO,,",ProjectManagement,TeamManagement,ResourceManagement,CustomerSuccess,Communications,AccountManagement,InsideSales",,Pune,approved,ruchira.kulkarni@joshsoftware.com,BFSI
+203,Rupesh Gadekar,J9,SriGayathriKavya Ruttala,20/11/2025,87,92,Technical Lead_UI/UX,UI/UX,"HTMLCSSSCSS,Javascript","DeltaTech Development Project, Shared Service - UI Developers",Pune,approved,rupesh.gadekar@joshsoftware.com,Shared Services
+846,Rushikesh Markad,J11,Anuj Verma,10/07/2023,0,34,Software Engineer,Go,MySQL,DataPelago,Pune,approved,rushikesh.markad@joshsoftware.com,Delivery
+790,Rushikesh Kalhapure,J10,Nasreen Azam,05/04/2023,75,112,Senior Software Engineer,"ReactJs, NodeJs, React-Native","JavaScript,HTML5,CSS3",Druva: CloudRanger Roadmap Support,Pune,approved,rushikesh.kalhapure@joshsoftware.com,Data Engineering
+357,Rutuja Dhokchaule,J11,Saurabh Gaji,02/08/2021,0,57,Software Engineer,ReactJs,"HTML,CSS,JavaScript,Redux,ReactStrap,Bootstrap,Github,UIUX,TypeScript,ReactQuery,Figma",Responsive Web Application Development - ERP for Educational Institutes,Pune,approved,rutuja.dhokchaule@joshsoftware.com,Delivery
+894,S  Sandeep,J10,Saurabh Gaji,22/01/2024,50,77,Senior Software Engineer,ROR,,Responsive Web Application Development - ERP for Educational Institutes,Pune,approved,sandeep.s@joshsoftware.com,Delivery
+396,Sagar Gharge,J10,Nasreen Azam,27/09/2021,41,96,Senior Software Engineer,Python,"JavaScript,HTML,CSS,R,spark","Druva: CloudApps API , SPO, and Security Features",Pune,approved,sagar.gharge@joshsoftware.com,Data Engineering
+234,Sagar  Sonwane,J10,Anuj Verma,21/09/2020,0,67,Senior Software Engineer,Go,"PostgreSQL,Git,mysql,gRPC,RabbitMQ,microservices,RESTAPI",DataPelago,Pune,approved,sagar.sonwane@joshsoftware.com,Delivery
+52,Sahil Bhatia,J6,,02/01/2014,24,172,Engineering Manager,"ReactJs, DevOps, NodeJs","Troubleshooting,RoR",Management- BFSI BU,Pune,approved,sahil@joshsoftware.com,Delivery
+104,Sai Pradhan,J6,,28/05/2018,144,239,Product Manager,"UI/UX, Business Analyst",",ProductDesigning,StrategyDesign,UxDesign,DesignThinking,UserResearch,Wireframe,UiDesign,Prototype,Communication",Management- BFSI BU,Pune,approved,sai@joshsoftware.com,Delivery
+714,Sakshi Deshpande,J11,Sindhu R,03/10/2022,0,43,Executive - HR,,,"Internal- Finance & Accounts, Duka Direct - Support",Pune,approved,sakshi.deshpande@joshsoftware.com,Finance and Accounts
+918,Sakshi Mokashi,J11,Sindhu R,05/04/2025,0,13,Software Engineer,"ROR, ReactJs",,"Star TV #RN1, Analytical Creation (“Fortress One”)",Bengaluru,approved,sakshi.mokashi@joshsoftware.com,Internal IT
+816,Samanweeta Mangal,J10,SriGayathriKavya Ruttala,30/06/2023,104,138,QA Lead,"QA-Manual, QA-Automation","Selenium,APITesting,UITesting,UIPath,TestNG,JENKINS,POSTMAN,SOAPUI,GIT",DeltaTech Development Project,Bengaluru,approved,samanweeta.mangal@joshsoftware.com,Data Engineering
+916,Samarth Kulkarni,J11,Saurabh Gaji,01/07/2024,0,22,Software Engineer,"ROR, ReactJs",,Responsive Web Application Development - ERP for Educational Institutes,Pune,approved,samarth.kulkarni@joshsoftware.com,Delivery
+26,Sameer Tilak,J2,,18/05/2011,252,432,Chief Technology Officer,,,,Pune,approved,sameer@joshsoftware.com,Corporate
+917,Samnit Patil,J11,SriGayathriKavya Ruttala,,,,Software Engineer,"Go, ReactJs, UI/UX",,Peerly,Pune,approved,samnit.patil@joshsoftware.com,Data Engineering
+344,Samruddhi Deshpande,J11,Sai Pradhan,19/07/2021,22,80,Software Engineer,ROR,"Rails,PostgreSQL,CPP,ArduinoIDE",Nephroflow,Pune,approved,samruddhi.deshpande@joshsoftware.com,Delivery
+720,Sanchi Sunil,J11,Shambhavi Sharma,07/10/2022,0,43,Executive - Talent Acquisition,,,Internal- Talent Acquisition Group,Pune,approved,sanchi.sunil@joshsoftware.com,Human Resources
+920,Sandhya Dornal,J11,Saurabh Gaji,01/07/2024,0,22,Software Engineer,"Go, ReactJs",,Responsive Web Application Development - ERP for Educational Institutes,Pune,approved,sandhya.dornal@joshsoftware.com,Delivery
+263,Sangeeta Yadav,J11,Saurabh Gaji,04/01/2021,60,124,Visual Designer,UI/UX,"HTML5,Css4,Javascript,ReactSemanticUI,Haml,BootstrapFramework,Emailer,ReactstrapFramework,ReactBootstrap","Responsive Web Application Development - ERP for Educational Institutes, Shared Service - UI Developers",Pune,approved,sangeeta.yadav@joshsoftware.com,Shared Services
+919,Saniya Chaudhari,J11,Saurabh Gaji,01/07/2024,0,22,Software Engineer,"ROR, ReactJs",,Responsive Web Application Development - ERP for Educational Institutes,Pune,approved,saniya.chaudhari@joshsoftware.com,Delivery
+225,Satbeer Bhatia,J6,,05/08/2020,156,225,Group Project Manager,"QA-Automation, QA-Manual, Python","Project Management,Quality Management,Quality Monitoring and Control,Performance Testing using JMeter,Sonar qube,ITIL 4.0,Service Now,HTML,CSS,Process Management and implementation,Root Cause Analysis,SLA Management,Risk Management,Power BI,JIRA/Confluence,Delivery Management",,Pune,approved,satbeer.singh@joshsoftware.com,Data Engineering
+890,Sateesh C,J10,Saurabh Gaji,08/01/2024,53,81,Senior QA Engineer,,,Mobile Banking Rewrite,Bengaluru,approved,sateesh.c@joshsoftware.com,Delivery
+840,Satyam Shukla,J11,Sameer Tilak,03/07/2023,0,34,Software Engineer,"ReactJs, Python, Java","Django,flask,Java,Dataengineering,Nodejs",Shework,Pune,approved,satyam.shukla@joshsoftware.com,Data Engineering
+910,Satyam Maurya,J11,Saurabh Gaji,02/05/2024,36,60,Software Engineer,Go,,Mobile Banking Rewrite,Bengaluru,approved,satyam.maurya@joshsoftware.com,Delivery
+923,Saurabh Puri,J11,Sameer Tilak,01/07/2024,0,22,Software Engineer,"Go, ReactJs",,Profile Builder Development,Pune,approved,saurabh.puri@joshsoftware.com,Data Engineering
+612,Saurabh Gupta,J10,Nasreen Azam,13/06/2022,32,79,Software Engineer,"Go, Angular, DevOps","NodeJs,Docker,Kubernetes,Git,Github,Java,microservices",Druva: MSP (DCP),Pune,approved,saurabh.gupta@joshsoftware.com,Data Engineering
+826,Saurabh Kale,J11,Sai Pradhan,03/07/2023,0,34,Software Engineer,"Flutter, Python, Java",Django,"Pool- Data Engineering, Niwant AMC, Data Engineering: Upskill & Cross skill",Pune,approved,saurabh.kale@joshsoftware.com,Data Engineering
+281,Saurabh Gaji,J10,SriGayathriKavya Ruttala,02/08/2021,18,75,Senior Executive - HRBP,".Net, Android, Finance- Accounts receivable",",kjnwkjnrk",Internal- Human Resource Business Partner,Pune,approved,saurabh.gaji@joshsoftware.com,People and Culture
+218,Sayali Sheth,J11,Sameer Tilak,01/07/2020,0,70,Software Engineer,"ROR, Angular","C,C++,Java",Eye OP Management Project,Pune,approved,sayali.sheth@joshsoftware.com,Data Engineering
+61,Seema Jha,J7,,01/07/2014,0,142,EA to C Suite,,,Pool-ECommerce,Pune,approved,seema@joshsoftware.com,Corporate
+1,Sethupathi Asokan,J1,,25/09/2007,0,223,Director,,,,Pune,approved,sethu@joshsoftware.com,Corporate
+907,Shachi Mankar,J7,,02/04/2024,0,25,Senior Manager Sales,,"Sales,Customer Relations",,Pune,approved,shachi.mankar@joshsoftware.com,Sales
+125,Shailendra Kanherkar,J8,SriGayathriKavya Ruttala,12/11/2018,32,122,Project Manager,"ReactJs, Angular, NodeJs","Html,Css,C,C++,C#,.Net,CoreJava,NodeJS,AngularJS,AWS,Golang","Management- Data Engineering BU, Peerly",Pune,approved,shailendra.kanherkar@joshsoftware.com,Data Engineering
+3,Shailesh Patil,J7,,20/08/2007,0,224,Senior Technical Manager,,"Ruby, rails, jquery, css",,Pune,approved,shailesh@joshsoftware.com,Corporate
+853,Shailesh Parkhi,J10,Sethupathi Asokan,18/07/2023,102,136,Senior Software Engineer,"iOS, Flutter",,Pool- Data Engineering,Pune,approved,shailesh.parkhi@joshsoftware.com,Data Engineering
+163,Shailesh Kalekar,J2,,01/08/2019,0,81,Chief Operating Officer,DevOps,,,Pune,approved,shailesh.kalekar@joshsoftware.com,Corporate
+858,Shambhavi Sharma,J2,,02/08/2023,0,33,Chief Human Resources Officer,,,,Pune,approved,shambhavi.sharma@joshsoftware.com,Human Resources
+534,Shantanu  Bhuruk,J9,Nasreen Azam,28/03/2022,86,135,Technical Lead,"Java, Python","Spring,SpringSecurity,REST,AngularJs,ThirdPartyAPIIntegration,JavaScript,Troubleshooting,APIDesign,jQuery,HTML,CSS,LESS,Gulp,Bower,Maven,Oracle,MySQL,Tomcat,Redis,HazelCast,MyBatis,JSP,Cordova,Jenkins,JUnit,Jasmin,Protractor,OpenBanking,FinTech,springboot,Python,falcon","Druva: CloudApps API , SPO, and Security Features",Pune,approved,shantanu.bhuruk@joshsoftware.com,Data Engineering
+928,Sharanya Datrange,J11,Saurabh Gaji,01/08/2024,1,22,Software Engineer,"Go, React-Native, NodeJs",,SimplySmart,Pune,approved,sharanya.datrange@joshsoftware.com,Delivery
+648,Sharda Mishra,J11,Sethupathi Asokan,11/07/2022,0,46,Software Engineer,Java,SQL,Proof of Concept,Bengaluru,approved,sharda.mishra@joshsoftware.com,Data Engineering
+929,Sharyu Marwadi,J11,SriGayathriKavya Ruttala,01/08/2024,5,26,Software Engineer,"Go, ReactJs",,Peerly,Pune,approved,sharyu.marwadi@joshsoftware.com,Delivery
+844,Shilpa Paralkar,J11,Sai Pradhan,04/07/2023,16,50,Software Engineer,Java,,Optessa: Java Staff Augmentation,Pune,approved,shilpa.paralkar@joshsoftware.com,Data Engineering
+494,Shivam Singh,J11,Shambhavi Sharma,03/01/2022,0,52,Executive - Talent Acquisition,"Java, PHP","Team Player,Html",Internal- Talent Acquisition Group,Bengaluru,on notice,singh.shivam@joshsoftware.com,Human Resources
+961,Shivani Poonia,J11,,01/04/2025,0,13,Software Engineer,,,,Pune,approved,shivani.poonia@joshsoftware.com,BFSI
+493,Shivlal Chavan,J11,Sethupathi Asokan,12/01/2022,47,99,Software Engineer,"Flutter, Android, Java","Kotlin,Dart","Pool- Data Engineering, MaxOptra Mobile Support ",Pune,approved,shivlal.chavan@joshsoftware.com,Data Engineering
+659,Shivprasad Bele,J11,Gautam Rege,18/07/2022,0,46,Software Engineer,"NodeJs, ReactJs, VueJs",,DubaiTech- Delivery Project,Pune,approved,shivprasad.bele@joshsoftware.com,Delivery
+806,Shraddha Ghodke,J11,Sindhu R,22/05/2023,82,117,Executive - Marketing,,,ACE TECH: Annual Maintenance Contract,Pune,approved,shraddha.ghodke@joshsoftware.com,Marketing
+812,Shradha Chaudhari,J10,Shambhavi Sharma,22/06/2023,48,82,Senior Executive - HR,,"HROperations,HRPayroll",Internal- Corporate HR,Pune,approved,shradha.chaudhari@joshsoftware.com,Human Resources
+878,Shradhamayee Naik,J10,Saurabh Gaji,09/11/2023,37,67,Senior QA Engineer,"QA-Manual, Java, QA-Automation",,Mobile Banking Rewrite,Bengaluru,approved,shradhamayee.naik@joshsoftware.com,Delivery
+801,Shreya Sawarkar,J10,Saurabh Gaji,15/05/2023,49,85,Senior QA Engineer,"QA-Automation, QA-Manual, Java","sqL,selenium,postman,swagger,Jmeter,communication",Mobile Banking Rewrite,Bengaluru,approved,shreya.sawarkar@joshsoftware.com,Delivery
+875,Shrinivas Dhone,J10,Saurabh Gaji,09/10/2023,53,84,Senior Software Engineer,Java,,EXP2# FYNDNA POD,Pune,on notice,shrinivas.dhone@joshsoftware.com,Delivery
+705,Shriraj Chavan,J9,SriGayathriKavya Ruttala,15/09/2022,65,109,Lead Designer,UI/UX,,"Shared Service - UI/UX, ITACO iCAMS, Kindkart Monthly Retainer",Pune,approved,shriraj.chavan@joshsoftware.com,Shared Services
+587,Shruti Khandagiri,J11,Shailesh Kalekar,16/05/2022,47,95,UI-Developer,,,Shared Service - UI Developers,Pune,approved,shruti.khandagiri@joshsoftware.com,Shared Services
+591,Shubham Vyas,J10,Saurabh Gaji,23/05/2022,36,83,Senior Software Engineer,"Go, NodeJs, VueJs","React,Javascript,HTML,CSS","Mobile Banking Rewrite, RN#1 Brandscope",Pune,approved,shubham.vyas@joshsoftware.com,Delivery
+872,Shubham Dasgupta,J10,,29/09/2023,65,96,Senior QA Engineer,QA-Manual,"CypressAutomation,Javascript,QAAutomation,FunctionalTesting,MobileTesting,BankingDomain,Github,CICD,WebApplicationTesting,EcommerceTesting,TestCaseDesign,Scrum,APITesting",Netbanking Rewrite,Bengaluru,approved,shubham.d@joshsoftware.com,Delivery
+564,Shubham Maheshan,J11,,25/04/2022,2,50,Software Engineer,"NodeJs, ReactJs",,,Pune,approved,shubham.maheshan@joshsoftware.com,Delivery
+836,Shubham Pradhan,J11,Sindhu R,03/07/2023,0,34,Software Engineer,"Python, NodeJs, DevOps",,"Pool-BFSI, Star TV #RN1",Pune,approved,shubham.pradhan@joshsoftware.com,Delivery
+818,Shubham Oza,J10,Sai Pradhan,03/07/2023,20,54,Senior Software Engineer,Java,,Optessa: Java Staff Augmentation,Pune,approved,shubham.oza@joshsoftware.com,Data Engineering
+336,Shubham Singh,J11,Saurabh Gaji,01/07/2021,0,58,QA Engineer,QA-Manual,"Ruby on Rails,HTML,CSS",Responsive Web Application Development - ERP for Educational Institutes,Pune,approved,shubham.singh@joshsoftware.com,Data Engineering
+219,Shubham Nagpure,J10,Gautam Rege,01/07/2020,0,70,Senior Software Engineer,"ReactJs, NodeJs, ROR","Typescript,go",DubaiTech- Delivery Project,Pune,approved,shubham.nagpure@joshsoftware.com,Delivery
+653,Shubham Kumar,J11,Swapnil Chincholkar,04/07/2022,0,46,Software Engineer,"ROR, Angular",awsbasics,Loan Document Generation System,Pune,approved,shubham.kumar@joshsoftware.com,Data Engineering
+885,Shubham Kumar,J11,Nasreen Azam,14/12/2023,21,50,Software Engineer,ROR,"AngularJS,ReactJS,ReactNative",Emeritus Monthly retainer,Pune,approved,shubham.kumar885@joshsoftware.com,BFSI
+908,Shweta Parmar,J11,Nasreen Azam,09/04/2024,84,109,Executive - PMO,,"Projectmanagement,Floormanagement,CRM,Peoplemanagement,sales",Management- Data Engineering BU,Pune,approved,shweta.parmar@joshsoftware.com,Data Engineering
+205,Shyamsunder Kulkarni,J8,Sindhu R,10/06/2020,0,71,Finance Controller,,Finance and Accounting,Internal- Finance & Accounts,Pune,approved,shyamsunder.kulkarni@joshsoftware.com,Finance and Accounts
+900,Sindhu R,J8,SriGayathriKavya Ruttala,01/02/2024,111,138,Manager - HR,,,Internal- Learning & Development,Bengaluru,approved,sindhu.r@joshsoftware.com,Human Resources
+146,Smriti Gupta,J8,Swapnil Chincholkar,01/04/2019,45,130,Project Manager,"ROR, ReactJs, Python","Redis,PostgreSQL",,Pune,approved,smriti.gupta@joshsoftware.com,Delivery
+222,Sneha Mantri,J9,Shambhavi Sharma,13/07/2020,0,70,Assistant Manager Talent Acquisition,,Recruitment ,Internal- Talent Acquisition Group,Pune,approved,sneha.mantri@joshsoftware.com,People and Culture
+144,Snehal Ahire,J10,Swapnil Chincholkar,18/03/2019,1,87,Senior Software Engineer,"ROR, Angular",,RN#1 Brandscope,Pune,approved,snehal.ahire@joshsoftware.com,Delivery
+172,Snehal Pise,J10,,03/09/2019,22,102,Senior QA Engineer,"QA-Manual, QA-Automation, Java","APITestinginusingPostman,seleniumwebdriver,APITestingrestassured",,Pune,approved,snehal.pise@joshsoftware.com,Delivery
+466,Sonal Sachdev,J11,,01/01/2022,0,52,Software Engineer,"ROR, QA-Manual",,,Pune,approved,sonal.sachdev@joshsoftware.com,Delivery
+888,Sonal Kumar,J11,Saurabh Gaji,02/01/2024,25,53,Software Engineer,ROR,,Responsive Web Application Development - ERP for Educational Institutes,Pune,approved,sonal.kumar@joshsoftware.com,BFSI
+921,Sourabh Bharale,J11,Sameer Tilak,01/07/2024,4,26,Software Engineer,"ROR, ReactJs",,Eye OP Management Project,Pune,approved,sourabh.bharale@joshsoftware.com,Delivery
+292,Sparsh Arora,J11,Sindhu R,01/03/2021,0,62,Software Engineer,"Go, Java","Adaptable,Abletotakedecision.,AWS",Banyan-ops,Pune,approved,sparsh.arora@joshsoftware.com,Data Engineering
+717,SriGayathriKavya Ruttala,J11,SriGayathriKavya Ruttala,06/10/2022,0,43,Executive - HRBP,,"peoplemanagement,attritionmanagement,deployment,Performancemanagement,Skillmapping",Internal- Human Resource Business Partner,Pune,approved,srigayathri.ruttala@joshsoftware.com,People and Culture
+568,Subramanyam Siliveri,J11,SriGayathriKavya Ruttala,02/05/2022,0,48,Software Engineer,ReactJs,"NodeJs,Python,sql",Pool-BFSI,Pune,approved,subramanyam.siliveri@joshsoftware.com,Delivery
+914,Suhaan Bhandary,J11,Sindhu R,01/07/2024,7,29,Software Engineer,"Go, ReactJs",,Banyan-ops,Pune,approved,suhaan.bhandary@joshsoftware.com,Data Engineering
+722,Suman De,J11,Saurabh Gaji,06/10/2022,26,69,Software Engineer,Go,"QAManual,Python",Mobile Banking Rewrite,Pune,approved,suman.de@joshsoftware.com,Delivery
+458,Sumit Patil,J10,SriGayathriKavya Ruttala,01/12/2021,30,83,Senior Executive - Business Support,,"Ms-Excel,People Handling,Inventory Management,Vendor Management",Internal- Admin & IT,Pune,approved,sumit.patil@joshsoftware.com,Admin
+580,Sumit Arvikar,J11,Sethupathi Asokan,12/05/2022,21,69,Software Engineer,iOS,swiftdevelopment,"Pool- Data Engineering, MaxOptra Mobile Support ",Pune,approved,sumit.arvikar@joshsoftware.com,Data Engineering
+922,Sumit Done,J11,Saurabh Gaji,01/07/2024,0,22,Software Engineer,"ROR, ReactJs",,Intranet,Pune,approved,sumit.done@joshsoftware.com,Internal IT
+171,Sunil Sonawane,J8,Saurabh Gaji,03/09/2019,56,136,Project Manager,"Java, NodeJs, .Net","MongoDb,IoT,Phonegap,Socket.Io,Mqtt,Embedded,Mysql,Jquery,NodeRed,Hibernet,SpringBoot,C#,Javascript",Mobile Banking Rewrite,Pune,approved,sunil.sonawane@joshsoftware.com,Delivery
+837,Suraj Suryawanshi,J11,Sethupathi Asokan,03/07/2023,0,34,Software Engineer,"Flutter, Java, UI/UX",,Pool- Data Engineering,Pune,approved,suraj.suryawanshi@joshsoftware.com,Data Engineering
+214,Suraj Rane,J10,Nasreen Azam,01/07/2020,0,70,Senior Software Engineer,"ReactJs, NodeJs","javascript,aws",Druva: CloudRanger Roadmap Support,Pune,approved,suraj.rane@joshsoftware.com,Data Engineering
+399,Surendra Phatangare,J10,Nasreen Azam,01/10/2021,65,120,Senior Software Engineer,"Flutter, Android, Go","GO,Kotlin",Liberty Wireless Renewal: Markets,Pune,approved,surendra.phatangare@joshsoftware.com,Data Engineering
+200,Sushmita Wable,J10,Saurabh Gaji,20/04/2020,31,103,Senior Software Engineer,"Go, VueJs","psql,mongo,aws",Mobile Banking Rewrite,Pune,approved,sushmita.wable@joshsoftware.com,Delivery
+788,Swapnil Shinde,J10,Saurabh Gaji,03/04/2023,68,105,Senior QA Engineer,"QA-Manual, QA-Automation, Java","RobotFramework,SQL",Mobile Banking Rewrite,Pune,approved,swapnil.shinde@joshsoftware.com,BFSI
+27,Swapnil Chincholkar,J6,,20/06/2011,0,178,Product Manager,ROR,"DeliveryManagement,ProjectManagement,htmlcss","Loan Document Generation System, Management- BFSI BU, Intranet",Pune,approved,swapnil@joshsoftware.com,Delivery
+662,Swapnil Dawange,J11,Saurabh Gaji,11/07/2022,15,61,Software Engineer,"Go, React-Native, ReactJs",CSS,Mobile Banking Rewrite,Pune,approved,swapnil.dawange@joshsoftware.com,Delivery
+293,Syed Hasan,J10,Sindhu R,01/03/2021,0,62,Senior Software Engineer,"Go, Java",,Banyan-ops,Pune,approved,syed.hasan@joshsoftware.com,Data Engineering
+549,Tanmay  Bhawsar,J10,Swapnil Chincholkar,07/04/2022,65,114,Senior Software Engineer,"ROR, DevOps, Go",,RN#1 Brandscope,Pune,approved,tanmay.bhawsar@joshsoftware.com,Delivery
+236,Tejas Zambre,J10,Sindhu R,21/09/2020,0,67,Senior Software Engineer,"ROR, Go, Java","Git,Trailblazer,HAMLERB,Rspecs,React",Star TV #RN1,Pune,approved,tejas.zambre@joshsoftware.com,Data Engineering
+209,Tejashree Surve,J11,Sai Pradhan,01/07/2020,34,104,Software Engineer,"Java, ReactJs","Oracle,J2ee,Database,SpringBoot,reactjs,puppeteer,reactquery,redux",Nephroflow,Pune,approved,tejashree.surve@joshsoftware.com,Delivery
+695,Tejasvini Gaikwad,J11,,23/08/2022,52,96,Software Engineer,"PHP, ReactJs","laravel,Yii2,Jquery,javascript",,Pune,approved,tejasvini.gaikwad@joshsoftware.com,Data Engineering
+10133,Test User,J11,SriGayathriKavya Ruttala,20/06/2023,0,34,,"Flutter, Android, NodeJs",Go,Pool- Cloud,Pune,approved,test.user@joshsoftware.com,Internal IT
+871,Tharun Boosi,J10,,18/09/2023,63,95,Senior QA Engineer,"QA-Manual, QA-Automation, ROR",HavedoneCertificationinToscaAutomation,Netbanking Rewrite,Bengaluru,on notice,tharun.kumar@joshsoftware.com,Delivery
+459,Trupti Waje,J9,Sameer Tilak,06/12/2021,54,107,QA Lead,QA-Manual,"apitesting,databasetesting,uitesting,qamanual,robotframework,requirementanalysis,python,ETLtesting","Pool- Data Engineering, Eye OP Management Project",Pune,approved,trupti.waje@joshsoftware.com,Data Engineering
+50,Umesh Kanchan,J12,SriGayathriKavya Ruttala,06/11/2013,0,150,Office Assistant,,,Pool-BFSI,Pune,approved,umesh@joshsoftware.com,Admin
+624,Utkarsh Mukul,J10,Swapnil Chincholkar,20/06/2022,54,100,Senior Software Engineer,"Go, Python","Redis,Rest,GRPC,Networking,Protobuf,Docker",Banor Capital- Staff Augmentation,Pune,approved,utkarsh.mukul@joshsoftware.com,Delivery
+579,Vaibhav Gholap,J11,Saurabh Gaji,12/05/2022,0,48,Software Engineer,Go,Mysql,Mobile Banking Rewrite,Pune,approved,vaibhav.gholap@joshsoftware.com,Delivery
+D001,Vaibhavi Rege,,,25/09/2010,0,187,Director,,,,Pune,approved,vaibhavi@joshsoftware.com,
+567,Vamsi Krishna,J11,Sindhu R,02/05/2022,0,48,Software Engineer,"ReactJs, NodeJs, Go",MySql,Star TV #RN1,Pune,approved,vamsi.krishna@joshsoftware.com,Delivery
+569,Varsha Patil,J11,Swapnil Chincholkar,04/05/2022,26,74,Software Engineer,"QA-Automation, QA-Manual, Python","Selenium,Pytest,Behave(BDD)",RN#1 Brandscope,Pune,approved,varsha.patil@joshsoftware.com,Delivery
+879,Varsha  Chavan,J11,Nasreen Azam,17/11/2023,53,83,Software Engineer,,,"Druva: CloudApps API , SPO, and Security Features",Pune,approved,varsha.chavan@joshsoftware.com,Data Engineering
+358,Varun Gadde,J11,Sai Pradhan,02/08/2021,0,57,Software Engineer,ROR,"Javascrpit,Angular,Java,ReactJS",Nephroflow,Pune,approved,varun.gadde@joshsoftware.com,Delivery
+864,Vedant Nandi,J11,Nasreen Azam,21/08/2023,24,56,Software Engineer,"ReactJs, NodeJs, React-Native","HTML,CSS,Python,JS,AWS,Lambda,Cognito,S3,TypeScript",Druva: MSP (DCP),Pune,approved,vedant.nandi@joshsoftware.com,Data Engineering
+868,Vignesh Chandiran,J10,,29/08/2023,50,82,Senior QA Engineer,"QA-Automation, QA-Manual","Javawithselenium,cucumber,Testng,Pom,sql,BDD",Netbanking Rewrite,Bengaluru,approved,vignesh.c@joshsoftware.com,BFSI
+173,Vijay Godse,J9,Nasreen Azam,01/10/2019,45,124,Technical Lead,"iOS, Flutter, Go","watchOS,Apple TV",Liberty Wireless Renewal: Markets,Pune,approved,vijay.godse@joshsoftware.com,Data Engineering
+716,Vijayalaxmi Belekar,J11,Shambhavi Sharma,03/10/2022,0,43,Executive - HR,,,Internal- Corporate HR,Pune,approved,vijayalaxmi.belekar@joshsoftware.com,Human Resources
+915,Vinay Chopda,J11,SriGayathriKavya Ruttala,01/07/2024,9,31,Software Engineer,"Go, ReactJs",,Kindkart Monthly Retainer,Pune,approved,vinay.chopda@joshsoftware.com,Data Engineering
+896,Vinayak Behere,J4,,22/01/2024,6,33,Assistant Vice President,,"Sales Management 
+Leads Management
+PreSales Management",,Pune,approved,vinayak.behere@joshsoftware.com,Sales
+843,Viral Patel,J12,Sameer Tilak,03/07/2023,0,34,Software Engineer,"Python, NodeJs","AWS,Azure,Pyspark",EO SouthAsia- AMC,Pune,approved,viral.patel@joshsoftware.com,Delivery
+745,Vishal Sakunde,J11,Nasreen Azam,21/11/2022,39,80,QA Engineer,"QA-Automation, QA-Manual, Python","Selenium,Robotframework","Druva: CloudApps API , SPO, and Security Features",Pune,approved,vishal.sakunde@joshsoftware.com,Data Engineering
+912,Vishwas G,J10,,17/06/2024,48,71,Senior Software Engineer,Java,,,Bengaluru,approved,vishwas.g@joshsoftware.com,Delivery
+760,Vivek  Xavier,J10,Saurabh Gaji,30/01/2023,85,124,Senior Software Engineer,"React-Native, ReactJs",,Mobile Banking Rewrite,Bengaluru,approved,vivek.xavier@joshsoftware.com,Delivery
+181,Vrushabh Bayas,J10,SriGayathriKavya Ruttala,12/02/2020,24,99,Senior Software Engineer,"ReactJs, NodeJs","Cooperation,Adaptability,Timemanagement,nextJS",Pool-BFSI,Pune,approved,vrushabh.bayas@joshsoftware.com,Data Engineering
+862,Yallappa Shanawad,J10,Saurabh Gaji,14/08/2023,72,105,Senior QA Engineer,QA-Manual,"Web,APITesting,MobileapplicationTesting",Mobile Banking Rewrite,Bengaluru,approved,yallappa.bs@joshsoftware.com,Delivery
+245,Yash Maheshwari,J10,Sindhu R,28/09/2020,0,67,Senior Software Engineer,Go,SQL,Banyan-ops,Pune,approved,yash.maheshwari@joshsoftware.com,Delivery
+847,Yogesh Patil,J11,Saurabh Gaji,03/07/2023,0,34,Software Engineer,"ROR, Python, DevOps","Django,Flask",Responsive Web Application Development - ERP for Educational Institutes,Pune,approved,yogesh.patil@joshsoftware.com,Delivery
+865,Yogish H C,J10,,21/08/2023,49,81,Senior Software Engineer,Java,"Java8,Springboot,SpringMVC,Spring,HTML,CSS,JavaScript,MySQL,Angular,RestfullWebservices,Microservices",Netbanking Rewrite,Bengaluru,approved,yogish.hc@joshsoftware.com,Delivery
+10167,demo test,J2,,14/07/2025,20,30,Accounts Executive,,,,Pune,approved,test.consultant@joshsoftware.com,

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx playwright *)",
+      "Bash(npx tsc *)",
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(ls -Recurse \"D:\\\\my_cypress_project\\\\cypress\\\\e2e\\\\intranet\\\\employee\" 2>$null | where {!$_.PSIsContainer} | select FullName)",
+      "PowerShell(dir \"D:\\\\my playright project\\\\\" -Force | where {$_.Name -notmatch 'node_modules|\\\\.claude|\\\\.github|playwright-report|test-results|projects|screenshots'} | select Name)",
+      "PowerShell(dir \"D:\\\\my playright project\\\\tests\\\\\" -Recurse | where {!$_.PSIsContainer} | select FullName)",
+      "PowerShell(\\(dir \"D:\\\\my playright project\\\\\" -Force\\).Name)",
+      "PowerShell(head *)",
+      "PowerShell(Write-Host \"=== CYPRESS PROJECT ===\" ; Get-ChildItem -Path \"D:\\\\my_cypress_project\\\\cypress\\\\e2e\\\\intranet\\\\\" -Recurse -Force | ForEach-Object { $_.FullName })",
+      "PowerShell(Write-Host \"=== PLAYWRIGHT PROJECT ===\" ; Get-ChildItem -Path \"D:\\\\my playright project\\\\tests\\\\intranet\\\\\" -Recurse -Force | ForEach-Object { $_.FullName })"
+    ]
+  }
+}

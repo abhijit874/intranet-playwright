@@ -1,0 +1,32 @@
+{
+  "name": "my-playright-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report",
+    "report:auto": "playwright test tests/projects/project_report_automation.spec.ts --project=chromium",
+    "report:auto:hdfc": "set \"PROJECT_REPORT_QUERY=hdfc\" && set \"PROJECT_REPORT_FROM=2023-01-01\" && set \"PROJECT_REPORT_TO=2026-12-31\" && set \"PROJECT_REPORT_DATE_FIELD=Start Date\" && playwright test tests/projects/project_report_automation.spec.ts --project=chromium",
+    "inventory:report:auto": "playwright test tests/assets/inventory_report_automation.spec.ts --project=chromium",
+    "inventory:report:auto:active": "set \"INVENTORY_REPORT_TYPE=active\" && playwright test tests/assets/inventory_report_automation.spec.ts --project=chromium",
+    "inventory:report:auto:inactive": "set \"INVENTORY_REPORT_TYPE=inactive\" && playwright test tests/assets/inventory_report_automation.spec.ts --project=chromium",
+    "allocation:report:auto": "playwright test assets/allocation/allocation_report_automation.spec.ts --project=chromium",
+    "allocation:report:auto:today": "set \"ALLOCATION_REPORT_FROM=2026-04-22\" && set \"ALLOCATION_REPORT_TO=2026-04-22\" && playwright test assets/allocation/allocation_report_automation.spec.ts --project=chromium",
+    "pid-wise-asset-cost:report:auto": "playwright test assets/allocation/pid_wise_asset_cost_report_automation.spec.ts --project=chromium"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.0.3",
+    "dotenv": "^17.4.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "csv-parse": "^6.1.0"
+  }
+}
