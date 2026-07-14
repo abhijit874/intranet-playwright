@@ -1,11 +1,12 @@
-﻿import { test } from '@playwright/test';
-import { AllocationRequestPage } from '../pages/AllocationRequestPage';
+import { test } from '@playwright/test';
+import { AllocationRequestApprovalPage } from '../pages/AllocationRequestApprovalPage';
 
 test('approve deallocation request', async ({ page }) => {
-  const allocationPage = new AllocationRequestPage(page);
-  await allocationPage.loginAs('hr');
-  await allocationPage.navigateTo();
-  await allocationPage.searchRequests('Aditya Kumar');
-  await allocationPage.clickViewOnRow('Aditya Kumar', 'deallocation');
-  await allocationPage.approveRequest(true);
+  const approvalPage = new AllocationRequestApprovalPage(page);
+  await approvalPage.loginAs('hr');
+  await approvalPage.navigateTo();
+  await approvalPage.searchRequests('Aditya Kumar');
+  await approvalPage.clickViewOnRow('Aditya Kumar', 'deallocation');
+  await approvalPage.approveRequest(true);
+  await approvalPage.assertRequestApproved();
 });

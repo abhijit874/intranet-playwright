@@ -1,7 +1,7 @@
 ﻿import { test, expect } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
-import { InventoryPage } from '../../pages/assets/InventoryPage';
+import { InventoryReportsPage } from '../../pages/assets/InventoryReportsPage';
 import { processInventoryReportCsv } from '../../utils/inventory_report_filter';
 
 function inventoryReportType(): 'active' | 'inactive' {
@@ -17,13 +17,13 @@ function inventoryReportType(): 'active' | 'inactive' {
 test('inventory report automation - download and process csv', async ({ page }) => {
   const reportType = inventoryReportType();
 
-  const inventoryPage = new InventoryPage(page);
-  await inventoryPage.loginAs('hr');
-  await inventoryPage.navigateTo();
-  await inventoryPage.clickDownloadIcon();
+  const reportsPage = new InventoryReportsPage(page);
+  await reportsPage.loginAs('hr');
+  await reportsPage.navigateTo();
+  await reportsPage.clickDownloadIcon();
 
   const downloadDir = path.resolve(__dirname, '../downloads');
-  const filePath = await inventoryPage.downloadInventoryReport(downloadDir, reportType);
+  const filePath = await reportsPage.downloadInventoryReport(downloadDir, reportType);
   expect(fs.existsSync(filePath)).toBe(true);
 
   const processed = processInventoryReportCsv(filePath);

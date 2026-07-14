@@ -1,16 +1,18 @@
 import { test, expect } from '@playwright/test';
-import { EmployeePage } from '../pages/EmployeePage';
+import { EmployeeListPage } from '../pages/EmployeeListPage';
+import { EmployeeProfilePage } from '../pages/EmployeeProfilePage';
 
 test('create new feedback record for other employee', async ({ page }) => {
   test.setTimeout(90000);
-  const employeePage = new EmployeePage(page);
+  const employeePage = new EmployeeListPage(page);
+  const profilePage = new EmployeeProfilePage(page);
   await employeePage.loginAs('hr');
   await employeePage.navigateToEmployees();
   await employeePage.switchToCompactView();
   await employeePage.searchEmployee('abhijit kasbe');
   await employeePage.clickEmployeeProfileIcon();
-  await employeePage.clickProfileTab('Feedbacks');
-  await employeePage.addFeedback({
+  await profilePage.clickProfileTab('Feedbacks');
+  await profilePage.addFeedback({
     type: 'Client Interview',
     project: 'BCSG',
     interviewer: 'Sameer tilak',
@@ -18,6 +20,8 @@ test('create new feedback record for other employee', async ({ page }) => {
     status: 'Interview Select',
     comment: 'Test',
   });
-  await expect(page.locator('#flashes')).toBeVisible();
-  await expect(page.locator('#flashes')).toContainText('Feedback added Successfully');
+  const alert = page.locator('#flashes');
+  await expect(alert).toBeVisible();
+  await expect(alert).toHaveClass(/alert-success/);
+  await expect(alert).toContainText('Feedback added Successfully');
 });

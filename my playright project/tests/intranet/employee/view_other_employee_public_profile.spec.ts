@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { EmployeePage } from '../pages/EmployeePage';
+import { EmployeeListPage } from '../pages/EmployeeListPage';
 
 test('view other employee public profile', async ({ page }) => {
-  const employeePage = new EmployeePage(page);
+  const employeePage = new EmployeeListPage(page);
   await employeePage.loginAs('hr');
   await employeePage.navigateToEmployees();
   await employeePage.switchToCompactView();

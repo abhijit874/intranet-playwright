@@ -11,4 +11,6 @@ node_modules/
 /playwright/.auth/
 /screenshots/
 /tests/downloads/
+# Generated report downloads from the intranet suite
+**/downloads/
 tests/fixtures/credentials.json

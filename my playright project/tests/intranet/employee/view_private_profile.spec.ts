@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { EmployeePage } from '../pages/EmployeePage';
+import { EmployeeProfilePage } from '../pages/EmployeeProfilePage';
 
 test('view own personal details (private profile)', async ({ page }) => {
-  const employeePage = new EmployeePage(page);
-  await employeePage.loginAs('employee');
-  await employeePage.navigateToProfile();
-  await employeePage.clickProfileTab('Personal Details');
+  const profilePage = new EmployeeProfilePage(page);
+  await profilePage.loginAs('employee');
+  await profilePage.navigateToProfile();
+  await profilePage.clickProfileTab('Personal Details');
   await expect(page.getByRole('tab', { name: 'Personal Details' })).toHaveAttribute('aria-selected', 'true');
 });

@@ -1,17 +1,17 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
-import { ProjectsPage } from '../pages/ProjectsPage';
+import { ProjectReportsPage } from '../pages/ProjectReportsPage';
 import { processProjectReportCsv } from '../utils/project_report_filter';
 
 test('project report automation - download and process csv', async ({ page }) => {
-  const projectsPage = new ProjectsPage(page);
-  await projectsPage.loginAs('hr');
-  await projectsPage.navigateTo();
-  await projectsPage.clickDownloadIcon();
+  const reportsPage = new ProjectReportsPage(page);
+  await reportsPage.loginAs('hr');
+  await reportsPage.navigateTo();
+  await reportsPage.clickDownloadIcon();
 
   const downloadDir = path.resolve(__dirname, '../downloads');
-  const filePath = await projectsPage.downloadProjectsReport(downloadDir);
+  const filePath = await reportsPage.downloadProjectsReport(downloadDir);
 
   const processed = processProjectReportCsv(filePath);
   console.log(

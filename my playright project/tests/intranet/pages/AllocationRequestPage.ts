@@ -1,4 +1,4 @@
-﻿import { expect, Page } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import { login } from '../utils/login_helper';
 import { selectFromSingleSelect2, setDateByEvaluate } from '../utils/test_helpers';
 
@@ -13,7 +13,11 @@ export class AllocationRequestPage {
 
   async navigateTo() {
     await this.page.getByText('Allocation and Deallocation').click();
-    await expect(this.page).toHaveURL(/\/allocation_deallocation_requests/);
+    try {
+      await expect(this.page).toHaveURL(/\/allocation_deallocation_requests/);
+    } catch {
+      throw new Error('Failed to navigate to Allocation and Deallocation Requests page.');
+    }
   }
 
   async clickCreateRequest() {
@@ -70,7 +74,11 @@ export class AllocationRequestPage {
     const row = this.page
       .locator('tr, .row, .form-check', { hasText: projectName })
       .first();
-    await expect(row).toBeVisible();
+    try {
+      await expect(row).toBeVisible();
+    } catch {
+      throw new Error(`Deallocation project row not found for: "${projectName}".`);
+    }
     await row
       .locator('input[name="allocation_deallocation_request[deallocation_details][project_ids][]"]')
       .first()
@@ -93,80 +101,33 @@ export class AllocationRequestPage {
       .click();
   }
 
-  // --- Approval flow ---
-
-  async clickRejectedTab() {
-    await this.page.locator('button.nav-link[data-bs-target="#rejected"]').click();
-  }
-
-  async clickViewModalOnRow(employeeName: string) {
-    const row = this.page
-      .locator('table tbody tr')
-      .filter({ hasText: employeeName })
-      .first();
-    await expect(row).toBeVisible({ timeout: 20000 });
-    await row.locator('button.btn.btn-primary.btn-sm[data-bs-toggle="modal"]', { hasText: 'View' }).click();
-  }
-
-  async clickEditIconOnRow(employeeName: string) {
-    const row = this.page
-      .locator('table tbody tr')
-      .filter({ hasText: employeeName })
-      .first();
-    await expect(row).toBeVisible({ timeout: 20000 });
-    await row.locator('i.text-dark.ri-edit-2-line').click();
-  }
-
-  async searchRequests(query: string) {
-    await this.page.getByRole('searchbox', { name: 'Search:' }).fill(query);
-  }
-
-  async findRequestRow(employeeName: string, type?: 'deallocation' | 'allocation') {
-    let row = this.page.locator('table tbody tr', { hasText: employeeName });
-    if (type) row = row.filter({ hasText: new RegExp(type, 'i') });
-    const first = row.first();
-    await expect(first).toBeVisible({ timeout: 20000 });
-    return first;
-  }
-
-  async clickViewOnRow(employeeName: string, type?: 'deallocation' | 'allocation') {
-    const row = await this.findRequestRow(employeeName, type);
-    await row
-      .locator(
-        'a:has-text("View"), button:has-text("View"), a[href*="/allocation_deallocation_requests/"]'
-      )
-      .first()
-      .click();
-  }
-
-  async approveRequest(sendEmail = true) {
-    if (sendEmail) {
-      await this.page.locator('input[name="send_deallocation_email"][form="approveForm"]').check();
-    }
-    await this.page.locator('button.btn.btn-success', { hasText: 'Approve' }).click();
-  }
-
-  async clickRejectButton() {
-    await this.page.locator('button#rejectToggle.btn.btn-danger').click();
-  }
-
-  async fillRejectReason(reason: string) {
-    await this.page.locator('textarea[name="reject_reason"]').fill(reason);
-  }
-
-  async confirmReject() {
-    await this.page.locator('button.btn.btn-danger', { hasText: 'Confirm Reject' }).click();
-  }
-
-  async assertRequestRejected() {
-    const flash = this.page.locator('#flashes');
-    await expect(flash).toBeVisible({ timeout: 20000 });
-    await expect(flash).toContainText('Request rejected successfully.');
+  async assertRequestNotCreated() {
+    await this.page.waitForLoadState('networkidle');
+    const successFlash = this.page
+      .locator('#flashes')
+      .filter({ hasText: 'Request created successfully.' });
+    await expect(
+      successFlash,
+      'Allocation request was created without required fields — server-side validation was bypassed.'
+    ).toHaveCount(0);
   }
 
   async assertRequestCreated() {
-    const flash = this.page.locator('#flashes');
-    await expect(flash).toBeVisible({ timeout: 20000 });
-    await expect(flash).toContainText('Request created successfully.');
+    const alert = this.page.locator('#flashes');
+    try {
+      await expect(alert).toBeVisible({ timeout: 20000 });
+    } catch {
+      throw new Error('Flash message not visible after creating request.');
+    }
+    try {
+      await expect(alert).toHaveClass(/alert-info/);
+    } catch {
+      throw new Error('Request creation failed — UI showed an error or warning instead of success.');
+    }
+    try {
+      await expect(alert).toContainText('Request created successfully.');
+    } catch {
+      throw new Error('Request was not created successfully - expected success message not found.');
+    }
   }
 }

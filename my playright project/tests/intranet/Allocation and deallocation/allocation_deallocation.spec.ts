@@ -17,8 +17,9 @@ test('create allocation and deallocation request', async ({ page }) => {
   await allocationPage.fillBillingHours('160');
 
   await allocationPage.checkDeallocationCheckbox();
-  await allocationPage.checkDeallocationProjectById('540');
+  await allocationPage.checkDeallocationProjectByText('Iziel: Solution architect + Developer (Renewal)');
   await allocationPage.setDeallocationDate('2026-05-10');
 
   await allocationPage.submit();
+  await allocationPage.assertRequestCreated();
 });

@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
-import { EmployeePage } from '../pages/EmployeePage';
+import { EmployeeListPage } from '../pages/EmployeeListPage';
 import { processEmployeeReportCsv } from '../utils/employee_report_filter';
 
 test('employee report automation - download and process csv', async ({ page }) => {
-  const employeePage = new EmployeePage(page);
+  const employeePage = new EmployeeListPage(page);
   await employeePage.loginAs('hr');
   await employeePage.navigateToEmployees();
 

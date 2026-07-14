@@ -35,5 +35,10 @@ test('add new company', async ({ page }) => {
   await companyPage.fillPinCode('123456');
   await companyPage.submit();
 
+  const alert = page.locator('#flashes');
+  await expect(alert).toBeVisible();
+  await expect(alert).toHaveClass(/alert-success/);
+  await expect(alert).toContainText('Company created Successfully');
+
   await expect(page).toHaveURL(/\/companies/i);
 });

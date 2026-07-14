@@ -1,4 +1,4 @@
-﻿import { test } from '@playwright/test';
+import { test } from '@playwright/test';
 import { PoolReportPage } from '../pages/PoolReportPage';
 
 const employeeName = 'Abhijit Kasbe';  // change before running

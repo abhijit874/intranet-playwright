@@ -1,17 +1,17 @@
 ﻿import { test } from '@playwright/test';
-import { VendorPage } from '../pages/VendorPage';
+import { VendorDocumentPage } from '../pages/VendorDocumentPage';
 
 test('add document in vendor', async ({ page }) => {
   const vendorCompany = 'open AI';
 
-  const vendorPage = new VendorPage(page);
-  await vendorPage.loginAs('hr');
-  await vendorPage.navigateTo();
-  await vendorPage.searchVendor(vendorCompany);
-  await vendorPage.clickAddDocumentIcon(vendorCompany);
-  await vendorPage.fillDocumentFromDate('2026-04-29');
-  await vendorPage.fillDocumentToDate('2026-12-31');
-  await vendorPage.selectDocumentType('PO');
-  await vendorPage.uploadDocumentFile('tests/fixtures/image.png');
-  await vendorPage.submitDocument();
+  const vendorDocumentPage = new VendorDocumentPage(page);
+  await vendorDocumentPage.loginAs('hr');
+  await vendorDocumentPage.navigateTo();
+  await vendorDocumentPage.searchVendor(vendorCompany);
+  await vendorDocumentPage.clickAddDocumentIcon(vendorCompany);
+  await vendorDocumentPage.fillDocumentFromDate('2026-04-29');
+  await vendorDocumentPage.fillDocumentToDate('2026-12-31');
+  await vendorDocumentPage.selectDocumentType('PO');
+  await vendorDocumentPage.uploadDocumentFile('tests/fixtures/image.png');
+  await vendorDocumentPage.submitDocument();
 });

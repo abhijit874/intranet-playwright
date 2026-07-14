@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
-import { EmployeePage } from '../pages/EmployeePage';
+import { EmployeeListPage } from '../pages/EmployeeListPage';
 
 test('download employee CSV', async ({ page }) => {
   test.setTimeout(60000);
-  const employeePage = new EmployeePage(page);
+  const employeePage = new EmployeeListPage(page);
   await employeePage.loginAs('hr');
   await employeePage.navigateToEmployees();
 

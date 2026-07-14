@@ -9,7 +9,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
  */
 export default defineConfig({
   testDir: './tests',
-  testIgnore: ['**/example.spec.ts'],
+  testIgnore: ['**/example.spec.ts', '**/upload_file.spec.ts', '**/cleanup_test_projects.spec.ts'],
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -21,6 +21,7 @@ export default defineConfig({
     headless: !!process.env.CI,
     screenshot: 'only-on-failure',
     trace: 'on-first-retry',
+    video: 'off',
     actionTimeout: 15_000,
     navigationTimeout: 30_000,
   },

@@ -1,14 +1,14 @@
 import { test } from '@playwright/test';
-import { PoolReportPage } from '../pages/PoolReportPage';
+import { FuturePoolPage } from '../pages/FuturePoolPage';
 
 const employeeName = 'Abhijit Kasbe';  // change before running
 
 test('view employee profile on future pool', async ({ page }) => {
-  const poolPage = new PoolReportPage(page);
-  await poolPage.loginAs('admin');
-  await poolPage.navigateTo();
-  await poolPage.navigateToFuturePool();
-  await poolPage.searchEmployee(employeeName);
-  await poolPage.clickEmployeeProfileLink(employeeName);
-  await poolPage.assertProfilePageOpened(employeeName);
+  const futurePoolPage = new FuturePoolPage(page);
+  await futurePoolPage.loginAs('admin');
+  await futurePoolPage.navigateTo();
+  await futurePoolPage.navigateToFuturePool();
+  await futurePoolPage.searchEmployee(employeeName);
+  await futurePoolPage.clickEmployeeProfileLink(employeeName);
+  await futurePoolPage.assertProfilePageOpened(employeeName);
 });

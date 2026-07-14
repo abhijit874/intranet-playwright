@@ -1,18 +1,18 @@
 ﻿import { test, expect } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
-import { CompanyPage } from '../pages/CompanyPage';
+import { CompanyReportsPage } from '../pages/CompanyReportsPage';
 import { processCompanyReportCsv } from '../utils/company_report_filter';
 import { csvValueMatches, readCsvRecords } from '../utils/csv_report_filter';
 
 test('download company csv', async ({ page }) => {
-  const companyPage = new CompanyPage(page);
-  await companyPage.loginAs('hr');
-  await companyPage.navigateTo();
-  await companyPage.clickDownloadIcon();
+  const companyReportsPage = new CompanyReportsPage(page);
+  await companyReportsPage.loginAs('hr');
+  await companyReportsPage.navigateTo();
+  await companyReportsPage.clickDownloadIcon();
 
   const downloadDir = path.resolve(__dirname, '../downloads');
-  const filePath = await companyPage.downloadCompanyCsv(downloadDir);
+  const filePath = await companyReportsPage.downloadCompanyCsv(downloadDir);
   expect(fs.existsSync(filePath)).toBe(true);
 
   process.env.COMPANY_REPORT_QUERY = process.env.COMPANY_REPORT_QUERY || 'open ai';

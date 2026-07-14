@@ -1,4 +1,4 @@
-﻿import { test } from '@playwright/test';
+﻿import { test, expect } from '@playwright/test';
 import { CompanyPage } from '../pages/CompanyPage';
 
 test('edit company', async ({ page }) => {
@@ -24,4 +24,9 @@ test('edit company', async ({ page }) => {
   await companyPage.fillLandline(updatedLandline);
   await companyPage.fillPinCode(updatedPinCode);
   await companyPage.submit();
+
+  const alert = page.locator('#flashes');
+  await expect(alert).toBeVisible();
+  await expect(alert).toHaveClass(/alert-success/);
+  await expect(alert).toContainText('Company updated Successfully');
 });

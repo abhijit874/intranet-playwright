@@ -15,4 +15,5 @@ test('create allocation request', async ({ page }) => {
   await allocationPage.fillAllocationHours('160');
   await allocationPage.fillBillingHours('160');
   await allocationPage.submit();
+  await allocationPage.assertRequestCreated();
 });

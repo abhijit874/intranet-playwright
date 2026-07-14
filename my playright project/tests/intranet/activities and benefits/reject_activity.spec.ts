@@ -1,9 +1,15 @@
 ﻿import { test } from '@playwright/test';
-import { ActivitiesPage } from '../pages/activities/ActivitiesPage';
+import { ContributionsApprovalPage } from '../pages/activities/ContributionsApprovalPage';
 
 test('reject activity', async ({ page }) => {
-  const activitiesPage = new ActivitiesPage(page);
-  await activitiesPage.loginAs('hr');
-  await activitiesPage.navigateToContributionsApproval();
-  await activitiesPage.rejectContribution('claude', '11/05/2026', 'Abhijit Kasbe');
+  const approvalPage = new ContributionsApprovalPage(page);
+  await approvalPage.loginAs('hr');
+  await approvalPage.navigateToContributionsApproval();
+  await approvalPage.rejectContribution({
+    title: 'claude',
+    date: '11/05/2026',
+    employeeName: 'Abhijit Kasbe',
+    category: 'Blog Writing',
+    subcategory: 'Self',
+  });
 });

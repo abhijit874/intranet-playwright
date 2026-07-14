@@ -1,10 +1,10 @@
 import { test } from '@playwright/test';
-import { PoolReportPage } from '../pages/PoolReportPage';
+import { FuturePoolPage } from '../pages/FuturePoolPage';
 
 test('view future pool report as leader', async ({ page }) => {
-  const poolPage = new PoolReportPage(page);
-  await poolPage.loginAs('leader');
-  await poolPage.navigateTo();
-  await poolPage.navigateToFuturePool();
-  await poolPage.assertPoolReportLoaded();
+  const futurePoolPage = new FuturePoolPage(page);
+  await futurePoolPage.loginAs('leader');
+  await futurePoolPage.navigateTo();
+  await futurePoolPage.navigateToFuturePool();
+  await futurePoolPage.assertPoolReportLoaded();
 });

@@ -1,8 +1,6 @@
-﻿import { expect, Page } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import { login } from '../utils/login_helper';
-import { selectFromSingleSelect2 } from '../utils/test_helpers';
-import * as fs from 'fs';
-import * as path from 'path';
+import { selectFromSingleSelect2, filterTableBySearch } from '../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin';
 
@@ -17,12 +15,20 @@ export class CompanyPage {
     await this.page
       .locator('a.nav-link[data-turbo="false"][href="/companies"]', { hasText: 'Company' })
       .click();
-    await expect(this.page).toHaveURL(/\/companies/i);
+    try {
+      await expect(this.page).toHaveURL(/\/companies/i);
+    } catch {
+      throw new Error('Failed to navigate to Companies page.');
+    }
   }
 
   async clickAddCompany() {
     await this.page.getByRole('link', { name: 'Add Company' }).click();
-    await expect(this.page).toHaveURL(/\/companies\/new/i);
+    try {
+      await expect(this.page).toHaveURL(/\/companies\/new/i);
+    } catch {
+      throw new Error('Failed to navigate to Add Company page.');
+    }
   }
 
   async searchCompany(name: string) {
@@ -30,27 +36,44 @@ export class CompanyPage {
   }
 
   async findCompanyRow(name: string) {
+    await filterTableBySearch(this.page, name);
     const row = this.page.locator('table tbody tr', { hasText: name }).first();
-    await expect(row).toBeVisible();
+    try {
+      await expect(row).toBeVisible();
+    } catch {
+      throw new Error(`Company row not found for: "${name}".`);
+    }
     return row;
   }
 
   async clickEditOnRow(name: string) {
     const row = await this.findCompanyRow(name);
     await row.locator('a[href$="/edit"]').click();
-    await expect(this.page).toHaveURL(/\/companies\/\d+\/edit/i);
+    try {
+      await expect(this.page).toHaveURL(/\/companies\/\d+\/edit/i);
+    } catch {
+      throw new Error(`Failed to navigate to edit page for company: "${name}".`);
+    }
   }
 
   // --- Form fields ---
 
   async selectJoshEntity(label: string) {
     await this.page.locator('#company_josh_entity').selectOption({ label });
-    await expect(this.page.locator('#company_josh_entity')).toHaveValue(/.+/);
+    try {
+      await expect(this.page.locator('#company_josh_entity')).toHaveValue(/.+/);
+    } catch {
+      throw new Error(`Failed to select Josh entity: "${label}".`);
+    }
   }
 
   async fillName(name: string) {
     await this.page.locator('#company_name').fill(name);
-    await expect(this.page.locator('#company_name')).toHaveValue(name);
+    try {
+      await expect(this.page.locator('#company_name')).toHaveValue(name);
+    } catch {
+      throw new Error(`Failed to fill company name field with value: "${name}".`);
+    }
   }
 
   async setActive(checked: boolean) {
@@ -68,7 +91,11 @@ export class CompanyPage {
   async fillWebsite(website: string) {
     const field = this.page.getByLabel('Website');
     await field.fill(website);
-    await expect(field).toHaveValue(website);
+    try {
+      await expect(field).toHaveValue(website);
+    } catch {
+      throw new Error(`Failed to fill website field with value: "${website}".`);
+    }
   }
 
   async checkBillingLocationUs() {
@@ -85,15 +112,23 @@ export class CompanyPage {
       '#select2-company_billing_currency-container',
       currency
     );
-    await expect(
-      this.page.locator('#select2-company_billing_currency-container')
-    ).toContainText(currency);
+    try {
+      await expect(
+        this.page.locator('#select2-company_billing_currency-container')
+      ).toContainText(currency);
+    } catch {
+      throw new Error(`Billing currency "${currency}" was not selected correctly.`);
+    }
   }
 
   async fillSalesManager(name: string) {
     const field = this.page.getByLabel('Sales Manager');
     await field.fill(name);
-    await expect(field).toHaveValue(name);
+    try {
+      await expect(field).toHaveValue(name);
+    } catch {
+      throw new Error(`Failed to fill sales manager field with value: "${name}".`);
+    }
   }
 
   async checkExistingManager() {
@@ -119,76 +154,85 @@ export class CompanyPage {
   async fillTypeOfAddress(type: string) {
     const field = this.page.getByLabel('Type of address');
     await field.fill(type);
-    await expect(field).toHaveValue(type);
+    try {
+      await expect(field).toHaveValue(type);
+    } catch {
+      throw new Error(`Failed to fill type of address field with value: "${type}".`);
+    }
   }
 
   async fillAddress(address: string) {
     const field = this.page.locator('#company_addresses_attributes_0_address');
     await field.fill(address);
-    await expect(field).toHaveValue(address);
+    try {
+      await expect(field).toHaveValue(address);
+    } catch {
+      throw new Error(`Failed to fill address field with value: "${address}".`);
+    }
   }
 
   async fillCity(city: string) {
     const field = this.page.locator('#company_addresses_attributes_0_city');
     await field.fill(city);
-    await expect(field).toHaveValue(city);
+    try {
+      await expect(field).toHaveValue(city);
+    } catch {
+      throw new Error(`Failed to fill city field with value: "${city}".`);
+    }
   }
 
   async fillState(state: string) {
     const field = this.page.locator('#company_addresses_attributes_0_state');
     await field.fill(state);
-    await expect(field).toHaveValue(state);
+    try {
+      await expect(field).toHaveValue(state);
+    } catch {
+      throw new Error(`Failed to fill state field with value: "${state}".`);
+    }
   }
 
   async fillCountry(country: string) {
     const field = this.page.locator('#company_addresses_attributes_0_country');
     await field.fill(country);
-    await expect(field).toHaveValue(country);
+    try {
+      await expect(field).toHaveValue(country);
+    } catch {
+      throw new Error(`Failed to fill country field with value: "${country}".`);
+    }
   }
 
   async fillLandline(phone: string) {
     const field = this.page.locator('#company_addresses_attributes_0_landline_no');
     await field.fill(phone);
-    await expect(field).toHaveValue(phone);
+    try {
+      await expect(field).toHaveValue(phone);
+    } catch {
+      throw new Error(`Failed to fill landline field with value: "${phone}".`);
+    }
   }
 
   async fillPinCode(pin: string) {
     const field = this.page.locator('#company_addresses_attributes_0_pin_code');
     await field.fill(pin);
-    await expect(field).toHaveValue(pin);
+    try {
+      await expect(field).toHaveValue(pin);
+    } catch {
+      throw new Error(`Failed to fill pin code field with value: "${pin}".`);
+    }
   }
 
   async submit() {
     await this.page.locator('#company-submit').click();
   }
 
-  // --- Download / reports ---
-
-  async clickDownloadIcon() {
-    await this.page.locator('i.fs-3.text-dark.ri-file-download-line').click();
-  }
-
-  async downloadCompanyCsv(downloadDir: string) {
-    if (!fs.existsSync(downloadDir)) fs.mkdirSync(downloadDir, { recursive: true });
-    const [download] = await Promise.all([
-      this.page.waitForEvent('download'),
-      this.page
-        .locator('a.dropdown-item.fs-6[href="/companies.csv"]', { hasText: 'Download Company CSV' })
-        .click(),
-    ]);
-    const filePath = path.join(downloadDir, download.suggestedFilename());
-    await download.saveAs(filePath);
-    return filePath;
-  }
-
-  async getBillingLocationDetails(location: string) {
-    await this.page
-      .locator('a.dropdown-item.fs-6[data-bs-target="#billing_location_details_modal"]', {
-        hasText: 'Billing Location Details',
-      })
-      .click();
-    await this.page.locator('#billing_location').selectOption({ label: location });
-    await expect(this.page.locator('#billing_location')).toHaveValue(/.+/);
-    await this.page.locator('input[type="submit"][value="Export Report"]').click();
+  async assertNotCreated() {
+    await this.page.waitForLoadState('networkidle');
+    const successFlash = this.page
+      .locator('#flashes')
+      .filter({ hasText: 'Company created Successfully' });
+    await expect(
+      successFlash,
+      'Company was created without required fields — server-side validation was bypassed.'
+    ).toHaveCount(0);
   }
 }

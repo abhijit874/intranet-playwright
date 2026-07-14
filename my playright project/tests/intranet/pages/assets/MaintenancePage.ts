@@ -1,8 +1,6 @@
-﻿import { expect, Page } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import { login } from '../../utils/login_helper';
-import { selectAssetDropdown } from '../../utils/test_helpers';
-import * as fs from 'fs';
-import * as path from 'path';
+import { selectAssetDropdown, filterTableBySearch, expectFlashMessage } from '../../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin';
 
@@ -35,6 +33,25 @@ export class MaintenancePage {
     );
   }
 
+  // Picks the first genuinely-available asset from the maintenance asset dropdown
+  // (skipping the empty placeholder) and returns its name. Used so create-then-edit
+  // tests don't depend on a specific asset that gets consumed once it's in
+  // maintenance and removed from the list.
+  async selectFirstAvailableMaintenanceAsset(): Promise<string> {
+    const container = this.page.locator(
+      '#new_asset_maintainance > div.row.control-group > div:nth-child(1) > div > span > span.selection > span'
+    );
+    await container.click();
+    const option = this.page
+      .getByRole('option')
+      .filter({ hasText: /\S/ })
+      .filter({ hasNotText: /^\s*select/i })
+      .first();
+    const name = ((await option.textContent()) ?? '').trim();
+    await option.click();
+    return name;
+  }
+
   async selectVendor(name: string) {
     await selectAssetDropdown(
       this.page,
@@ -46,22 +63,38 @@ export class MaintenancePage {
   async fillCost(cost: string) {
     await this.page.locator('#asset_maintainance_maintainance_cost').clear();
     await this.page.locator('#asset_maintainance_maintainance_cost').fill(cost);
-    await expect(this.page.locator('#asset_maintainance_maintainance_cost')).toHaveValue(cost);
+    try {
+      await expect(this.page.locator('#asset_maintainance_maintainance_cost')).toHaveValue(cost);
+    } catch {
+      throw new Error(`Failed to fill maintenance cost field with value: "${cost}".`);
+    }
   }
 
   async fillReason(reason: string) {
     await this.page.locator('#asset_maintainance_reason').fill(reason);
-    await expect(this.page.locator('#asset_maintainance_reason')).toHaveValue(reason);
+    try {
+      await expect(this.page.locator('#asset_maintainance_reason')).toHaveValue(reason);
+    } catch {
+      throw new Error(`Failed to fill maintenance reason field with value: "${reason}".`);
+    }
   }
 
   async fillFromDate(date: string) {
     await this.page.locator('#asset_maintainance_from_date').fill(date);
-    await expect(this.page.locator('#asset_maintainance_from_date')).toHaveValue(date);
+    try {
+      await expect(this.page.locator('#asset_maintainance_from_date')).toHaveValue(date);
+    } catch {
+      throw new Error(`Failed to fill maintenance from date field with value: "${date}".`);
+    }
   }
 
   async fillEndDate(date: string) {
     await this.page.locator('#asset_maintainance_end_date').fill(date);
-    await expect(this.page.locator('#asset_maintainance_end_date')).toHaveValue(date);
+    try {
+      await expect(this.page.locator('#asset_maintainance_end_date')).toHaveValue(date);
+    } catch {
+      throw new Error(`Failed to fill maintenance end date field with value: "${date}".`);
+    }
   }
 
   async uploadImage(filePath: string) {
@@ -74,6 +107,25 @@ export class MaintenancePage {
       .click();
   }
 
+  async assertNotCreated() {
+    await this.page.waitForLoadState('networkidle');
+    const successFlash = this.page
+      .locator('#flashes')
+      .filter({ hasText: 'Asset Maintainance Created Successfully' });
+    await expect(
+      successFlash,
+      'Asset maintenance record was created without required fields — server-side validation was bypassed.'
+    ).toHaveCount(0);
+  }
+
+  async verifySuccessAlert() {
+    await expectFlashMessage(this.page, 'Asset Maintainance Created Successfully !!!', 'maintenance creation');
+  }
+
+  async verifyUpdateSuccessAlert() {
+    await expectFlashMessage(this.page, 'Asset Maintainance Updated Successfully !!!', 'maintenance update');
+  }
+
   // --- Search & edit ---
 
   async searchMaintenance(query: string) {
@@ -81,8 +133,13 @@ export class MaintenancePage {
   }
 
   async findMaintenanceRow(query: string) {
+    await filterTableBySearch(this.page, query);
     const row = this.page.locator('table tbody tr', { hasText: query }).first();
-    await expect(row).toBeVisible();
+    try {
+      await expect(row).toBeVisible();
+    } catch {
+      throw new Error(`Maintenance row not found for: "${query}".`);
+    }
     return row;
   }
 
@@ -92,21 +149,12 @@ export class MaintenancePage {
   }
 
   async markAsReceived() {
-    await this.page.locator('#asset_maintainance_is_asset_received').click();
-  }
-
-  // --- Download ---
-
-  async downloadReport(downloadDir: string) {
-    if (!fs.existsSync(downloadDir)) fs.mkdirSync(downloadDir, { recursive: true });
-    const [download] = await Promise.all([
-      this.page.waitForEvent('download'),
-      this.page
-        .locator('a[href="asset_maintainances/download_report"] i.fs-3.text-dark.ri-file-download-line')
-        .click(),
-    ]);
-    const filePath = path.join(downloadDir, download.suggestedFilename());
-    await download.saveAs(filePath);
-    return filePath;
+    const toggle = this.page.locator('#asset_maintainance_is_asset_received');
+    await toggle.check();
+    try {
+      await expect(toggle).toBeChecked();
+    } catch {
+      throw new Error('"Is asset received" toggle could not be checked.');
+    }
   }
 }

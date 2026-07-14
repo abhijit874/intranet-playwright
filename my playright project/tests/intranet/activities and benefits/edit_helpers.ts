@@ -17,30 +17,19 @@ export async function pickCategory(page: Page, category: string) {
 }
 
 export async function assertContributionSaved(page: Page) {
-  const flash = page.locator('#flashes');
-  const alert = page.getByRole('alert');
-
-  if (await flash.count()) {
-    await expect(flash).toContainText(/saved successfully|success|created|submitted/i);
-    return;
-  }
-
-  await expect(alert).toContainText(/saved successfully|success|created|submitted/i);
+  const alert = page.locator('#flashes');
+  await expect(alert).toBeVisible();
+  await expect(alert).toHaveClass(/alert-success/);
 }
 
 export async function assertContributionUpdated(page: Page) {
-  const flash = page.locator('#flashes');
-  const alert = page.getByRole('alert');
-
-  if (await flash.count()) {
-    await expect(flash).toContainText(/updated|saved successfully|success/i);
-    return;
-  }
-
-  await expect(alert).toContainText(/updated|saved successfully|success/i);
+  const alert = page.locator('#flashes');
+  await expect(alert).toBeVisible();
+  await expect(alert).toHaveClass(/alert-success/);
 }
 
 export async function openRowForEdit(page: Page, title: string) {
+  await searchContribution(page, title);
   const row = page.locator('table tbody tr', { hasText: title }).first();
   await expect(row).toBeVisible({ timeout: 20000 });
 
