@@ -9,6 +9,17 @@ export function currentDateValue(): string {
   ].join('-');
 }
 
+// A date `daysAgo` days in the past (default: yesterday), formatted YYYY-MM-DD.
+export function pastDateValue(daysAgo = 1): string {
+  const d = new Date();
+  d.setDate(d.getDate() - daysAgo);
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, '0'),
+    String(d.getDate()).padStart(2, '0'),
+  ].join('-');
+}
+
 // A date `daysAhead` days in the future (default: tomorrow), formatted YYYY-MM-DD.
 // Used by negative tests to attempt a future Activity Date that the system must
 // reject.

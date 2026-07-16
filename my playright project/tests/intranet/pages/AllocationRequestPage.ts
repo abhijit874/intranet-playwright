@@ -29,7 +29,24 @@ export class AllocationRequestPage {
   }
 
   async selectEmployee(emailWithId: string) {
-    await selectFromSingleSelect2(this.page, '#select2-employee-container', emailWithId);
+    // The picker's search doesn't match the "(id)" suffix, so search by the email
+    // portion only, then click the option whose full text matches.
+    const email = emailWithId.split(/\s*\(/)[0].trim();
+    await this.page.locator('#select2-employee-container').click();
+    const search = this.page.locator('.select2-container--open .select2-search__field').first();
+    await expect(search).toBeVisible();
+    await search.fill(email);
+    const option = this.page
+      .locator('.select2-results__option')
+      .filter({ hasText: emailWithId })
+      .first();
+    try {
+      await expect(option).toBeVisible({ timeout: 15000 });
+    } catch {
+      throw new Error(`Employee option not found for: "${emailWithId}".`);
+    }
+    await option.click();
+    await expect(this.page.locator('body .select2-container--open')).toHaveCount(0);
   }
 
   async checkAllocationCheckbox() {
@@ -45,11 +62,29 @@ export class AllocationRequestPage {
   }
 
   async selectBillingCode(code: string) {
-    await selectFromSingleSelect2(
-      this.page,
-      'span.select2-selection.select2-selection--single[aria-labelledby*="_billing_code-container"], [role="combobox"][aria-labelledby*="_billing_code-container"]',
-      code
-    );
+    // Open the billing-code select2 and click the exact matching option. Clicking
+    // (rather than arrow-key + Enter) is robust on the edit form, where the
+    // pre-filled value otherwise makes the keyboard selection hang.
+    const container = this.page
+      .locator(
+        'span.select2-selection.select2-selection--single[aria-labelledby*="_billing_code-container"], [role="combobox"][aria-labelledby*="_billing_code-container"]'
+      )
+      .first();
+    await container.click();
+    const search = this.page.locator('.select2-container--open .select2-search__field').first();
+    await expect(search).toBeVisible();
+    await search.fill(code);
+    const option = this.page
+      .locator('.select2-container--open .select2-results__option')
+      .filter({ hasText: new RegExp(`^\\s*${code.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`) })
+      .first();
+    try {
+      await expect(option).toBeVisible({ timeout: 15000 });
+    } catch {
+      throw new Error(`Billing code option not found for: "${code}".`);
+    }
+    await option.click();
+    await expect(this.page.locator('body .select2-container--open')).toHaveCount(0);
   }
 
   async fillAllocationStart(date: string) {
@@ -89,6 +124,32 @@ export class AllocationRequestPage {
     await this.page
       .locator(`input[name="allocation_deallocation_request[deallocation_details][project_ids][]"][value="${projectId}"]`)
       .check();
+  }
+
+  // Checks the first project the employee is currently allocated to (whatever
+  // shows up in the deallocation list), so the test doesn't depend on a specific
+  // pre-seeded allocation. Requires the employee to have at least one allocation.
+  async checkFirstDeallocationProject(): Promise<string> {
+    const checkbox = this.page
+      .locator('input[name="allocation_deallocation_request[deallocation_details][project_ids][]"]')
+      .first();
+    try {
+      await expect(checkbox).toBeVisible({ timeout: 10000 });
+    } catch {
+      throw new Error('No deallocation project available — the employee has no current allocation.');
+    }
+    // Capture the project label so the caller can fill the matching feedback.
+    let projectName = '';
+    const id = await checkbox.getAttribute('id');
+    if (id) {
+      projectName = ((await this.page.locator(`label[for="${id}"]`).textContent().catch(() => '')) ?? '').trim();
+    }
+    if (!projectName) {
+      const container = this.page.locator('label, .form-check, tr').filter({ has: checkbox }).first();
+      projectName = ((await container.innerText().catch(() => '')) ?? '').trim();
+    }
+    await checkbox.check();
+    return projectName;
   }
 
   async setDeallocationDate(date: string) {

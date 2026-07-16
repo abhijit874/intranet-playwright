@@ -65,7 +65,11 @@
       "PowerShell(npx playwright test \"tests/intranet/activities and benefits/create_self_blog.spec.ts\" --grep \"happy flow\" --project=chromium)",
       "PowerShell(npx playwright test create_self_blog --grep \"happy flow\" --project=chromium)",
       "PowerShell(npx playwright test _tmp_dump_pending --project=chromium --reporter=list 2>&1 | Select-Object -Last 40)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "Bash(git add *)",
+      "Bash(grep -iE \"downloads/|\\\\.csv$|^intranet/|CFRBACKUP\")",
+      "Bash(git commit -m '@ *)",
+      "Bash(git commit *)"
     ]
   }
 }

@@ -40,16 +40,27 @@ export class AllocationRequestApprovalPage {
 
   async clickEditIconOnRow(employeeName: string) {
     await filterTableBySearch(this.page, employeeName);
+    // A rejected request is only editable for 7 days after rejection, so the edit
+    // icon appears only on recent rows. Pick the employee's row that actually has
+    // the edit icon (not just the first match, which may be an older, un-editable
+    // request).
     const row = this.page
       .locator('table tbody tr')
       .filter({ hasText: employeeName })
+      .filter({ has: this.page.locator('i.ri-edit-2-line') })
       .first();
     try {
       await expect(row).toBeVisible({ timeout: 20000 });
     } catch {
-      throw new Error(`Request row not found for employee: "${employeeName}".`);
+      throw new Error(`No editable (within 7 days) rejected request row found for: "${employeeName}".`);
     }
-    await row.locator('i.text-dark.ri-edit-2-line').click();
+    // Click the edit control (the anchor/button around the pencil icon, falling
+    // back to the icon itself), scrolling it into view first.
+    const editControl = row
+      .locator('a:has(i.ri-edit-2-line), button:has(i.ri-edit-2-line), i.ri-edit-2-line')
+      .first();
+    await editControl.scrollIntoViewIfNeeded();
+    await editControl.click();
   }
 
   async searchRequests(query: string) {
@@ -58,7 +69,11 @@ export class AllocationRequestApprovalPage {
 
   async findRequestRow(employeeName: string, type?: 'deallocation' | 'allocation') {
     await filterTableBySearch(this.page, employeeName);
-    let row = this.page.locator('table tbody tr', { hasText: employeeName });
+    // The DataTable search already narrows to this employee. The row's display
+    // name may differ from an email-derived name (e.g. "Ankitkumar Singh" vs
+    // "Ankit Singh"), so match on the last-name token rather than the full string.
+    const lastToken = employeeName.trim().split(/\s+/).pop() ?? employeeName;
+    let row = this.page.locator('table tbody tr').filter({ hasText: lastToken });
     if (type) row = row.filter({ hasText: new RegExp(type, 'i') });
     const first = row.first();
     try {
@@ -96,6 +111,40 @@ export class AllocationRequestApprovalPage {
       .locator('input.form-check-input.deallocation-field[name="send_allocation_email"][form="approveForm"]')
       .check();
     await this.page.locator('button.btn.btn-success', { hasText: 'Approve' }).click();
+  }
+
+  // --- Cancel a pending request (done by the admin who created it) ---
+
+  async clickCancelIconOnRow(employeeName: string, type?: 'deallocation' | 'allocation') {
+    // Filter to the employee (their newest request sorts to the top), then open
+    // the cancel modal from the first matching cancel button.
+    await this.findRequestRow(employeeName, type);
+    await this.page.waitForTimeout(500);
+    await this.page.locator('button[data-bs-target="#cancelRequestModal"]').first().click();
+    try {
+      await expect(this.page.locator('#cancelRequestModal')).toBeVisible({ timeout: 10000 });
+    } catch {
+      throw new Error('Cancel request modal did not open.');
+    }
+  }
+
+  async fillCancelReason(reason: string) {
+    const textarea = this.page.locator('#cancelRequestModal textarea[name="cancel_reason"]');
+    await expect(textarea).toBeVisible({ timeout: 10000 });
+    await textarea.fill(reason);
+  }
+
+  async confirmCancel() {
+    await this.page.locator('#cancelRequestModal button', { hasText: 'Confirm Cancel' }).click();
+  }
+
+  async assertRequestCancelled() {
+    const alert = this.page.locator('#flashes');
+    try {
+      await expect(alert).toContainText(/cancel/i, { timeout: 15000 });
+    } catch {
+      throw new Error('Request cancellation was not confirmed (no cancel success message).');
+    }
   }
 
   async clickRejectButton() {
