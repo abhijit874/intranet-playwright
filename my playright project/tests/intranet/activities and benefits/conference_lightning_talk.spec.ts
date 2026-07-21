@@ -1,5 +1,6 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
+import { loginAsContributorFor } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 // Fills the conference-specific required fields the subcategory form mandates.
@@ -12,7 +13,7 @@ async function fillConferenceRequiredFields(page: import('@playwright/test').Pag
 
 test('submit conference lightning talk contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J11', 'Conference', 'Lightning Talk');
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
   await contributionsPage.selectCategory('Conference');
@@ -31,7 +32,7 @@ test('edit existing conference lightning talk contribution', async ({ page }) =>
   const updatedTitle = `conference-lightning-edited-${Date.now()}`;
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J11', 'Conference', 'Lightning Talk');
 
   // create the record this test will edit
   await contributionsPage.navigateToContributions();
@@ -65,7 +66,7 @@ test('conference lightning talk — future date is rejected by the server', asyn
   const title = `conference-lightning-future-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J11', 'Conference', 'Lightning Talk');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
@@ -89,7 +90,7 @@ test('conference lightning talk — previous-quarter date is rejected by the ser
   const title = `conference-lightning-prevq-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J11', 'Conference', 'Lightning Talk');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();

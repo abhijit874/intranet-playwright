@@ -1,6 +1,11 @@
 import { Page, expect } from '@playwright/test';
 import { login } from '../../utils/login_helper';
-import { selectFromSingleSelect2, assertActivityDateWithinRange, setDateByEvaluate } from '../../utils/test_helpers';
+import {
+  selectFromSingleSelect2,
+  assertActivityDateWithinRange,
+  setDateByEvaluate,
+  selectEmployeeFromPicker,
+} from '../../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin';
 
@@ -93,7 +98,35 @@ export class LdRecordPage {
   }
 
   async selectLdEmployee(emailWithId: string) {
-    await selectFromSingleSelect2(this.page, '#select2-employee-container', emailWithId);
+    await selectEmployeeFromPicker(this.page, emailWithId);
+  }
+
+  // Selects the first of the given employees (by Emp ID) that the picker offers,
+  // and returns the chosen "email (id)" label. Options are labelled "email (id)"
+  // and the picker's search only matches the email, so the rendered options are
+  // scanned for the id instead. Pair with
+  // EmployeeListPage.getEmployeeIdsWithGradeInRange() to restrict to J7–J11.
+  async selectLdEmployeeByIds(empIds: string[]): Promise<string> {
+    await this.page.locator('#select2-employee-container').click();
+    const results = this.page.locator('.select2-results__option');
+    try {
+      await expect(results.first()).toBeVisible({ timeout: 15000 });
+    } catch {
+      throw new Error('Employee picker did not open.');
+    }
+
+    for (const id of empIds) {
+      const option = results.filter({ hasText: `(${id})` }).first();
+      if (await option.count()) {
+        const label = ((await option.textContent()) ?? '').trim();
+        await option.click();
+        await expect(this.page.locator('body .select2-container--open')).toHaveCount(0);
+        return label;
+      }
+    }
+
+    await this.page.keyboard.press('Escape').catch(() => undefined);
+    throw new Error('None of the grade-eligible employees are available in the employee picker.');
   }
 
   async fillLdDuration(duration: string) {

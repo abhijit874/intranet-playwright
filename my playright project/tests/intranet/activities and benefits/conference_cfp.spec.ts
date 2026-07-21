@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
+import { loginAsContributorFor } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 // Fills the CFP-specific required fields (Conference name, Location, CFP
@@ -13,7 +14,7 @@ async function fillCfpRequiredFields(page: import('@playwright/test').Page) {
 
 test('submit conference CFP contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J7', 'Conference', 'CFP');
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
   await contributionsPage.selectCategory('Conference');
@@ -35,7 +36,7 @@ test('edit existing conference cfp contribution', async ({ page }) => {
   const updatedTitle = `conference-cfp-edited-${Date.now()}`;
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J7', 'Conference', 'CFP');
 
   // create the record this test will edit
   await contributionsPage.navigateToContributions();
@@ -69,7 +70,7 @@ test('conference CFP — future date is rejected by the server', async ({ page }
   const title = `conference-cfp-future-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J7', 'Conference', 'CFP');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
@@ -93,7 +94,7 @@ test('conference CFP — previous-quarter date is rejected by the server', async
   const title = `conference-cfp-prevq-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J7', 'Conference', 'CFP');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();

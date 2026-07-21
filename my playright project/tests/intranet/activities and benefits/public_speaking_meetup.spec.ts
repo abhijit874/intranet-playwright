@@ -1,10 +1,11 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
+import { loginAsContributorFor } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('public speaking meetup contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J9', 'Public speaking', 'Meetup');
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
   await contributionsPage.selectCategory('Public speaking');
@@ -27,7 +28,7 @@ test('edit existing public speaking meetup contribution', async ({ page }) => {
   const updatedTitle = `meetup-edited-${Date.now()}`;
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J9', 'Public speaking', 'Meetup');
 
   // create the record this test will edit
   await contributionsPage.navigateToContributions();
@@ -68,7 +69,7 @@ test('public speaking meetup — future date is rejected by the server', async (
   const title = `meetup-future-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J9', 'Public speaking', 'Meetup');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
@@ -96,7 +97,7 @@ test('public speaking meetup — previous-quarter date is rejected by the server
   const title = `meetup-prevq-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J9', 'Public speaking', 'Meetup');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();

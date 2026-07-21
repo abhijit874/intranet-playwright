@@ -1,6 +1,11 @@
 import { expect, Page } from '@playwright/test';
 import { login } from '../utils/login_helper';
-import { selectFromSingleSelect2, setDateByEvaluate } from '../utils/test_helpers';
+import {
+  selectFromSingleSelect2,
+  setDateByEvaluate,
+  selectRandomOption,
+  selectRandomFromAssetDropdown,
+} from '../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin';
 
@@ -49,6 +54,14 @@ export class AllocationRequestPage {
     await expect(this.page.locator('body .select2-container--open')).toHaveCount(0);
   }
 
+  // Picks a random employee and returns their "email (id)" label. Only safe where
+  // the test doesn't depend on the employee's allocation state (a deallocation
+  // needs someone who IS allocated; an approval needs someone who is NOT already
+  // on the chosen project).
+  async selectRandomEmployee(): Promise<string> {
+    return selectRandomOption(this.page, '#employee');
+  }
+
   async checkAllocationCheckbox() {
     await this.page.locator('#allocation_checkbox').check();
   }
@@ -59,6 +72,18 @@ export class AllocationRequestPage {
 
   async selectAllocationProject(name: string) {
     await selectFromSingleSelect2(this.page, '#select2-allocation_project-container', name);
+  }
+
+  async selectRandomAllocationProject(): Promise<string> {
+    return selectRandomFromAssetDropdown(this.page, '#select2-allocation_project-container');
+  }
+
+  // Any billing code is valid and none are asserted, so pick one at random.
+  async selectRandomBillingCode(): Promise<string> {
+    return selectRandomFromAssetDropdown(
+      this.page,
+      'span.select2-selection.select2-selection--single[aria-labelledby*="_billing_code-container"], [role="combobox"][aria-labelledby*="_billing_code-container"]'
+    );
   }
 
   async selectBillingCode(code: string) {
@@ -129,16 +154,34 @@ export class AllocationRequestPage {
   // Checks the first project the employee is currently allocated to (whatever
   // shows up in the deallocation list), so the test doesn't depend on a specific
   // pre-seeded allocation. Requires the employee to have at least one allocation.
-  async checkFirstDeallocationProject(): Promise<string> {
+  // Same as checkFirstDeallocationProject but returns null instead of throwing
+  // when the employee has no current allocation — lets a caller try another
+  // (randomly picked) employee. Uses a short timeout since "absent" is expected.
+  async checkFirstDeallocationProjectIfAny(timeout = 3000): Promise<string | null> {
     const checkbox = this.page
       .locator('input[name="allocation_deallocation_request[deallocation_details][project_ids][]"]')
       .first();
     try {
-      await expect(checkbox).toBeVisible({ timeout: 10000 });
+      await expect(checkbox).toBeVisible({ timeout });
     } catch {
+      return null;
+    }
+    return this.readAndCheckDeallocationProject(checkbox);
+  }
+
+  async checkFirstDeallocationProject(): Promise<string> {
+    const project = await this.checkFirstDeallocationProjectIfAny(10000);
+    if (!project) {
       throw new Error('No deallocation project available — the employee has no current allocation.');
     }
-    // Capture the project label so the caller can fill the matching feedback.
+    return project;
+  }
+
+  // Reads the project label for a deallocation checkbox, ticks it, and returns the
+  // label so the caller can reallocate to (or fill feedback for) the same project.
+  private async readAndCheckDeallocationProject(
+    checkbox: ReturnType<Page['locator']>
+  ): Promise<string> {
     let projectName = '';
     const id = await checkbox.getAttribute('id');
     if (id) {

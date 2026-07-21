@@ -1,6 +1,11 @@
 import { expect, Page } from '@playwright/test';
 import { login } from '../../utils/login_helper';
-import { selectAssetDropdown, filterTableBySearch, expectFlashMessage } from '../../utils/test_helpers';
+import {
+  selectAssetDropdown,
+  filterTableBySearch,
+  expectFlashMessage,
+  selectRandomFromAssetDropdown,
+} from '../../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin';
 
@@ -101,8 +106,19 @@ export class InventoryPage {
     await selectAssetDropdown(this.page, '#select2-asset_manufacturing_company-container', company);
   }
 
+  // Random manufacturer. The asset-name list depends on it, so call
+  // selectRandomAssetName() afterwards rather than a fixed name.
+  async selectRandomManufacturingCompany(): Promise<string> {
+    return selectRandomFromAssetDropdown(this.page, '#select2-asset_manufacturing_company-container');
+  }
+
   async selectAssetName(name: string) {
     await selectAssetDropdown(this.page, '#select2-asset_name-container', name);
+  }
+
+  // Random asset name from whatever the chosen manufacturer offers.
+  async selectRandomAssetName(): Promise<string> {
+    return selectRandomFromAssetDropdown(this.page, '#select2-asset_name-container');
   }
 
   async fillSerialNumber(no: string) {
@@ -128,6 +144,10 @@ export class InventoryPage {
     await selectAssetDropdown(this.page, '#select2-asset_location-container', location);
   }
 
+  async selectRandomLocation(): Promise<string> {
+    return selectRandomFromAssetDropdown(this.page, '#select2-asset_location-container');
+  }
+
   async selectAssetOf(value: string) {
     await selectAssetDropdown(this.page, '#select2-asset_asset_of-container', value);
   }
@@ -139,6 +159,15 @@ export class InventoryPage {
       throw new Error('Vendor dropdown not found on the asset form.');
     }
     await selectAssetDropdown(this.page, '#select2-asset_vendor_id-container', name);
+  }
+
+  async selectRandomVendor(): Promise<string> {
+    try {
+      await expect(this.page.locator('#select2-asset_vendor_id-container')).toBeVisible();
+    } catch {
+      throw new Error('Vendor dropdown not found on the asset form.');
+    }
+    return selectRandomFromAssetDropdown(this.page, '#select2-asset_vendor_id-container');
   }
 
   async selectClient(placeholderText: string, optionText: string) {

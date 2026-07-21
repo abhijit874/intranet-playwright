@@ -1,6 +1,11 @@
 import { expect, Page } from '@playwright/test';
 import { login } from '../../utils/login_helper';
-import { selectAssetDropdown, filterTableBySearch, expectFlashMessage } from '../../utils/test_helpers';
+import {
+  selectAssetDropdown,
+  filterTableBySearch,
+  expectFlashMessage,
+  selectRandomOption,
+} from '../../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin';
 
@@ -46,24 +51,20 @@ export class AssetAllocationPage {
     await selectAssetDropdown(this.page, '#select2-asset_allocation_asset_id-container', name);
   }
 
-  // Picks the first genuinely-available asset from the allocation asset dropdown
-  // (skipping the empty placeholder) and returns its name. Used so create-then-edit
-  // tests don't depend on a specific asset that gets consumed once allocated and
-  // removed from the list.
-  async selectFirstAvailableAsset(): Promise<string> {
-    await this.page.locator('#select2-asset_allocation_asset_id-container').click();
-    const option = this.page
-      .getByRole('option')
-      .filter({ hasText: /\S/ })
-      .filter({ hasNotText: /^\s*select/i })
-      .first();
-    const name = ((await option.textContent()) ?? '').trim();
-    await option.click();
-    return name;
-  }
-
   async selectUser(name: string) {
     await selectAssetDropdown(this.page, '#select2-asset_allocation_user_id-container', name);
+  }
+
+  // Picks a random user from the allocation user dropdown and returns their
+  // "Name(email)" label, so allocations spread across employees.
+  async selectRandomUser(): Promise<string> {
+    return selectRandomOption(this.page, '#asset_allocation_user_id');
+  }
+
+  // Picks a random allocatable asset and returns its "Name (SERIAL)" label. The
+  // dropdown only lists assets that can be allocated, so any of them is valid.
+  async selectRandomAsset(): Promise<string> {
+    return selectRandomOption(this.page, '#asset_allocation_asset_id');
   }
 
   async selectAllocatedFrom(location: string) {

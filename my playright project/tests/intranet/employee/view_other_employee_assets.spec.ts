@@ -8,7 +8,8 @@ test('view other employee assets', async ({ page }) => {
   await employeePage.loginAs('hr');
   await employeePage.navigateToEmployees();
   await employeePage.switchToCompactView();
-  await employeePage.searchEmployee('abhijit kasbe');
+  const employeeName = await employeePage.getFirstEmployeeName();
+  await employeePage.searchEmployee(employeeName);
   await employeePage.clickEmployeeProfileIcon();
   await profilePage.clickProfileTab('Assets');
   await expect(page.getByRole('tab', { name: 'Assets' })).toHaveAttribute('aria-selected', 'true');

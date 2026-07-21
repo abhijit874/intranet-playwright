@@ -1,19 +1,20 @@
 ﻿import { test } from '@playwright/test';
 import { LdRecordPage } from '../pages/activities/LdRecordPage';
-import { previousQuarterDateValue } from '../utils/test_helpers';
+import { loginAndGetLdEligibleEmployeeIds } from './ld_helpers';
+import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('nontech openverse content creator', async ({ page }) => {
   const title = `nontech-openverse-${Date.now()}`; // unique per run, avoids collisions
 
   const ldPage = new LdRecordPage(page);
-  await ldPage.loginAs('hr');
+  const empIds = await loginAndGetLdEligibleEmployeeIds(page); // grade J7–J11 only
   await ldPage.navigateToCreateLdRecord();
   await ldPage.selectLdCategory('10');
   await ldPage.selectLdSubcategory('38');
   await ldPage.fillLdTitle(title);
-  await ldPage.fillLdDate('2026-05-12');
+  await ldPage.fillLdDate(validCurrentQuarterDate());
   await ldPage.assertLdDateRange();
-  await ldPage.selectLdEmployee('aastha.bhargava@joshsoftware.com (719)');
+  await ldPage.selectLdEmployeeByIds(empIds);
   await ldPage.fillLdDescription('playwright automation with claude');
   await ldPage.submitAndAssertSaved();
 });
@@ -30,13 +31,13 @@ test('nontech openverse content creator — future date is rejected by the serve
   const title = `nontech-openverse-future-${Date.now()}`; // unique per run, avoids collisions
 
   const ldPage = new LdRecordPage(page);
-  await ldPage.loginAs('hr');
+  const empIds = await loginAndGetLdEligibleEmployeeIds(page); // grade J7–J11 only
   await ldPage.navigateToCreateLdRecord();
   await ldPage.selectLdCategory('10');
   await ldPage.selectLdSubcategory('38');
   await ldPage.fillLdTitle(title);
   await ldPage.forceLdDate(FUTURE_DATE); // bypasses client-side validation
-  await ldPage.selectLdEmployee('aastha.bhargava@joshsoftware.com (719)');
+  await ldPage.selectLdEmployeeByIds(empIds);
   await ldPage.fillLdDescription('playwright automation with claude');
   await ldPage.submitAndAssertRejected('future Activity Date');
 });
@@ -52,13 +53,13 @@ test('nontech openverse content creator — previous-quarter date is rejected by
   const title = `nontech-openverse-prevq-${Date.now()}`; // unique per run, avoids collisions
 
   const ldPage = new LdRecordPage(page);
-  await ldPage.loginAs('hr');
+  const empIds = await loginAndGetLdEligibleEmployeeIds(page); // grade J7–J11 only
   await ldPage.navigateToCreateLdRecord();
   await ldPage.selectLdCategory('10');
   await ldPage.selectLdSubcategory('38');
   await ldPage.fillLdTitle(title);
   await ldPage.forceLdDate(PREVIOUS_QUARTER_DATE); // bypasses client-side validation
-  await ldPage.selectLdEmployee('aastha.bhargava@joshsoftware.com (719)');
+  await ldPage.selectLdEmployeeByIds(empIds);
   await ldPage.fillLdDescription('playwright automation with claude');
   await ldPage.submitAndAssertRejected('previous-quarter Activity Date');
 });

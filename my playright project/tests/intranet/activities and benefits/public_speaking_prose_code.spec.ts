@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
+import { loginAsContributorFor } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('public speaking prose and code contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J7', 'Public speaking', 'Prose & Code');
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
   await contributionsPage.selectCategory('Public speaking');
@@ -25,7 +26,7 @@ test('edit existing public speaking prose and code contribution', async ({ page 
   const updatedTitle = `prose-code-edited-${Date.now()}`;
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J7', 'Public speaking', 'Prose & Code');
 
   // create the record this test will edit
   await contributionsPage.navigateToContributions();
@@ -62,7 +63,7 @@ test('public speaking prose and code — future date is rejected by the server',
   const title = `prose-code-future-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J7', 'Public speaking', 'Prose & Code');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
@@ -88,7 +89,7 @@ test('public speaking prose and code — previous-quarter date is rejected by th
   const title = `prose-code-prevq-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J7', 'Public speaking', 'Prose & Code');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();

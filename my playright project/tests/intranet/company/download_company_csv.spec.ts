@@ -1,13 +1,22 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
+import { CompanyPage } from '../pages/CompanyPage';
 import { CompanyReportsPage } from '../pages/CompanyReportsPage';
 import { processCompanyReportCsv } from '../utils/company_report_filter';
 import { csvValueMatches, readCsvRecords } from '../utils/csv_report_filter';
+import { createCompany } from './company_helpers';
 
+// Self-contained: creates a company, then downloads the company CSV and filters it
+// for that exact company — rather than relying on a pre-seeded name ("open ai")
+// still existing in the export.
 test('download company csv', async ({ page }) => {
+  const companyPage = new CompanyPage(page);
+  await companyPage.loginAs('hr');
+  await companyPage.navigateTo();
+  const { name } = await createCompany(companyPage);
+
   const companyReportsPage = new CompanyReportsPage(page);
-  await companyReportsPage.loginAs('hr');
   await companyReportsPage.navigateTo();
   await companyReportsPage.clickDownloadIcon();
 
@@ -15,8 +24,9 @@ test('download company csv', async ({ page }) => {
   const filePath = await companyReportsPage.downloadCompanyCsv(downloadDir);
   expect(fs.existsSync(filePath)).toBe(true);
 
-  process.env.COMPANY_REPORT_QUERY = process.env.COMPANY_REPORT_QUERY || 'open ai';
-  process.env.COMPANY_REPORT_QUERY_FIELD = process.env.COMPANY_REPORT_QUERY_FIELD || 'Name';
+  // Filter the export for the company this test just created.
+  process.env.COMPANY_REPORT_QUERY = name;
+  process.env.COMPANY_REPORT_QUERY_FIELD = 'Name';
 
   const processed = processCompanyReportCsv(filePath);
   expect(fs.existsSync(processed.filteredPath)).toBe(true);

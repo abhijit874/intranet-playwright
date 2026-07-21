@@ -11,8 +11,15 @@ test('create allocation request', async ({ page }) => {
   await rp.loginAs('admin');
   await rp.navigateTo();
   await rp.clickCreateRequest();
-  await rp.selectEmployee('aditya.kumar@joshsoftware.com (891)');
-  await fillAllocation(rp, { project: 'ERP AI Project' });
+  // This test only creates a pending request (nothing is approved), so the
+  // employee/project don't have to satisfy any allocation state — pick both at
+  // random so requests spread across the data.
+  await rp.selectRandomEmployee();
+  await rp.checkAllocationCheckbox();
+  await rp.selectRandomAllocationProject();
+  await rp.selectRandomBillingCode();
+  await rp.fillAllocationHours('160');
+  await rp.fillBillingHours('160');
   await rp.submit();
   await rp.assertRequestCreated();
 });
@@ -53,5 +60,7 @@ test('create reallocation request', async ({ page }) => {
   const rp = new AllocationRequestPage(page);
   await rp.loginAs('admin');
   await rp.navigateTo();
-  await createReallocationRequest(rp, 'aman.pathan@joshsoftware.com (994)');
+  // Picks a random employee that actually has an allocation, and deallocates +
+  // reallocates them on that same project.
+  await createReallocationRequest(rp);
 });

@@ -164,6 +164,88 @@ export async function selectFromMultiSelect2(
   await expect(page.locator('body .select2-container--open')).toHaveCount(0);
 }
 
+// --- Employee picker (shared) ---
+//
+// The allocation/deallocation request form and the L&D record form use the same
+// employee Select2 (#select2-employee-container). Its search does not match the
+// "(id)" suffix of an option label, so search by the email portion and then click
+// the option whose full text matches.
+
+const EMPLOYEE_PICKER = '#select2-employee-container';
+
+async function openEmployeePicker(page: Page, containerSelector: string) {
+  await page.locator(containerSelector).click();
+  const search = page.locator('.select2-container--open .select2-search__field').first();
+  await expect(search).toBeVisible();
+  return search;
+}
+
+export async function selectEmployeeFromPicker(
+  page: Page,
+  emailWithId: string,
+  containerSelector = EMPLOYEE_PICKER
+) {
+  const search = await openEmployeePicker(page, containerSelector);
+  await search.fill(emailWithId.split(/\s*\(/)[0].trim()); // email only
+  const option = page.locator('.select2-results__option').filter({ hasText: emailWithId }).first();
+  try {
+    await expect(option).toBeVisible({ timeout: 15000 });
+  } catch {
+    throw new Error(`Employee option not found for: "${emailWithId}".`);
+  }
+  await option.click();
+  await expect(page.locator('body .select2-container--open')).toHaveCount(0);
+}
+
+// Picks a random real option from a native <select> (skipping empty values and
+// "-- Select ... --" placeholders) and returns its label. Dropdowns already hold
+// only valid values, so this spreads records across them without extra lookups.
+export async function selectRandomOption(page: Page, selectSelector: string): Promise<string> {
+  const select = page.locator(selectSelector);
+  try {
+    await expect(select.locator('option').first()).toBeAttached({ timeout: 15000 });
+  } catch {
+    throw new Error(`No options found in dropdown: ${selectSelector}`);
+  }
+
+  const options = await select.locator('option').evaluateAll((els) =>
+    els
+      .map((el) => ({ value: (el as HTMLOptionElement).value, label: (el.textContent || '').trim() }))
+      .filter((o) => o.value && o.label && !/^\s*(--)?\s*select/i.test(o.label))
+  );
+  if (!options.length) throw new Error(`No selectable options in dropdown: ${selectSelector}`);
+
+  const choice = options[Math.floor(Math.random() * options.length)];
+  await select.selectOption(choice.value);
+  return choice.label;
+}
+
+// Select2 counterpart of selectRandomOption: opens the widget, picks a random real
+// option (skipping "Select ..." placeholders) and returns its label. Use when the
+// exact value doesn't matter — the dropdown only offers valid choices.
+export async function selectRandomFromAssetDropdown(
+  page: Page,
+  containerSelector: string
+): Promise<string> {
+  await page.locator(containerSelector).click();
+  const options = page.locator('.select2-results__option');
+  try {
+    await expect(options.first()).toBeVisible({ timeout: 15000 });
+  } catch {
+    throw new Error(`Dropdown did not open or has no options: ${containerSelector}`);
+  }
+
+  const labels = (await options.allTextContents())
+    .map((t) => t.trim())
+    .filter((t) => t && !/^\s*(--)?\s*select/i.test(t) && !/^no results/i.test(t));
+  if (!labels.length) throw new Error(`No selectable options in dropdown: ${containerSelector}`);
+
+  const label = labels[Math.floor(Math.random() * labels.length)];
+  await options.filter({ hasText: label }).first().click();
+  await expect(page.locator(containerSelector)).toContainText(label);
+  return label;
+}
+
 export async function selectAssetDropdown(page: Page, containerSelector: string, optionText: string) {
   await page.locator(containerSelector).click();
   await page.getByRole('option', { name: optionText, exact: true }).click();
@@ -267,4 +349,11 @@ export async function setDateByEvaluate(
     },
     { value, stripConstraints: options.stripConstraints ?? false }
   );
+}
+
+// The DataTables search input is numbered per page (dt-search-0 on the current
+// pool tab, dt-search-2 on the future pool tab), so match on the prefix rather
+// than a fixed index.
+export function dataTableSearchBox(page: Page) {
+  return page.locator('[id^="dt-search-"]').first();
 }

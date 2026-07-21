@@ -8,6 +8,8 @@ import {
   selectFromMultiSelect2,
   setDateByEvaluate,
   expectFlashMessage,
+  selectRandomOption,
+  selectRandomFromAssetDropdown,
 } from '../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin' | 'sales';
@@ -74,6 +76,42 @@ export class ProjectsPage {
 
   async fillProjectCode(code: string) {
     await this.page.locator('#project_code').fill(code);
+  }
+
+  // --- Random pickers -------------------------------------------------------
+  // Only fields that are purely descriptive (or accept any valid person) are
+  // randomised. Billing frequency / type of project / bill-by / invoice-by are
+  // deliberately NOT randomised: they drive conditional fields and validation on
+  // this form. The project manager stays fixed too — the edit test asserts on it.
+
+  async selectRandomCompany(): Promise<string> {
+    return selectRandomFromAssetDropdown(this.page, '#select2-project_company_id-container');
+  }
+
+  async selectRandomDomain(): Promise<string> {
+    return selectRandomOption(this.page, '#project_domain');
+  }
+
+  async selectRandomBusinessUnit(): Promise<string> {
+    return selectRandomOption(this.page, '#project_business_unit');
+  }
+
+  async selectRandomSalesHead(): Promise<string> {
+    return selectRandomFromAssetDropdown(this.page, '#select2-project_sales_head_id-container');
+  }
+
+  // "Engineering Manager" on the form is backed by the delivery_head select.
+  async selectRandomDeliveryHead(): Promise<string> {
+    return selectRandomFromAssetDropdown(this.page, '#select2-project_delivery_head_id-container');
+  }
+
+  async selectRandomDeliveryVP(): Promise<string> {
+    return selectRandomFromAssetDropdown(this.page, '#select2-project_delivery_vp_id-container');
+  }
+
+  // "HR" on the form is backed by the product_manager select.
+  async selectRandomProductManager(): Promise<string> {
+    return selectRandomFromAssetDropdown(this.page, '#select2-project_product_manager_id-container');
   }
 
   async selectDomain(value: string) {

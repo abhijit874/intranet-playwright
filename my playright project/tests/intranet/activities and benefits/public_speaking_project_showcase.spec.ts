@@ -1,22 +1,23 @@
 import { test, expect } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
+import { loginAsContributorFor } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('public speaking project showcase contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J10', 'Public speaking', 'Project Showcase');
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
   await contributionsPage.selectCategory('Public speaking');
   await contributionsPage.selectSubcategory('Project Showcase');
   await page.getByLabel('Title:').fill('project showcase');
   await page.getByLabel('Activity Date:').fill(validCurrentQuarterDate());
-  await page.locator('#project_id').selectOption({ label: 'Intranet' });
+  await contributionsPage.selectFirstProject();
   await contributionsPage.submitContribution();
-  // The app allows only one showcase per project per team, and this environment has
-  // a single project (Intranet). So a fresh submission either saves, or — if a
-  // showcase already exists from a prior run — is correctly rejected as a duplicate.
-  // Either response is a valid, expected outcome.
+  // The app allows only one showcase per project per team. So a fresh submission
+  // either saves, or — if a showcase already exists for this contributor's project
+  // from a prior run — is correctly rejected as a duplicate. Either response is a
+  // valid, expected outcome.
   const alert = page.locator('#flashes');
   await expect(alert).toBeVisible();
   await expect(alert).toContainText(
@@ -25,15 +26,14 @@ test('public speaking project showcase contribution', async ({ page }) => {
 });
 
 // NOTE: Project Showcase cannot use the create-then-edit self-contained pattern.
-// The app allows only one showcase per project per team, and this environment has
-// a single project (Intranet) — so creating a second showcase to edit is rejected
-// as a duplicate. Instead this edits an existing showcase (e.g. the one created by
-// the test above), and skips if none is editable.
+// The app allows only one showcase per project per team, so creating a second
+// showcase to edit is rejected as a duplicate. Instead this edits an existing
+// showcase (e.g. the one created by the test above), and skips if none is editable.
 test('edit existing public speaking project showcase contribution', async ({ page }) => {
   const updatedTitle = `project-showcase-edited-${Date.now()}`;
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J10', 'Public speaking', 'Project Showcase');
   await contributionsPage.navigateToContributions();
 
   const editable = await contributionsPage.openEditableFromSearchTerms(
@@ -63,7 +63,7 @@ test('public speaking project showcase — future date is rejected by the server
   const title = `project-showcase-future-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J10', 'Public speaking', 'Project Showcase');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
@@ -71,7 +71,7 @@ test('public speaking project showcase — future date is rejected by the server
   await contributionsPage.selectSubcategory('Project Showcase');
   await page.getByLabel('Title:').fill(title);
   await contributionsPage.forceActivityDate(FUTURE_DATE); // bypasses client-side validation
-  await page.locator('#project_id').selectOption({ label: 'Intranet' });
+  await contributionsPage.selectFirstProject();
   await contributionsPage.submitAndAssertRejected('future Activity Date');
 });
 
@@ -87,7 +87,7 @@ test('public speaking project showcase — previous-quarter date is rejected by 
   const title = `project-showcase-prevq-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J10', 'Public speaking', 'Project Showcase');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
@@ -95,6 +95,6 @@ test('public speaking project showcase — previous-quarter date is rejected by 
   await contributionsPage.selectSubcategory('Project Showcase');
   await page.getByLabel('Title:').fill(title);
   await contributionsPage.forceActivityDate(PREVIOUS_QUARTER_DATE); // bypasses client-side validation
-  await page.locator('#project_id').selectOption({ label: 'Intranet' });
+  await contributionsPage.selectFirstProject();
   await contributionsPage.submitAndAssertRejected('previous-quarter Activity Date');
 });

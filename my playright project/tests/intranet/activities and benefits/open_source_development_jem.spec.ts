@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
+import { loginAsContributorFor } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('open source development jem', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J10', 'Open Source Contribution', 'Develop new Gem / library');
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
   await contributionsPage.selectCategory('Open Source Contribution');
@@ -27,7 +28,7 @@ test('edit existing open source gem contribution', async ({ page }) => {
   const updatedTitle = `open-source-gem-edited-${Date.now()}`;
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J10', 'Open Source Contribution', 'Develop new Gem / library');
 
   // create the record this test will edit
   await contributionsPage.navigateToContributions();
@@ -66,7 +67,7 @@ test('open source gem — future date is rejected by the server', async ({ page 
   const title = `open-source-gem-future-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J10', 'Open Source Contribution', 'Develop new Gem / library');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
@@ -94,7 +95,7 @@ test('open source gem — previous-quarter date is rejected by the server', asyn
   const title = `open-source-gem-prevq-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J10', 'Open Source Contribution', 'Develop new Gem / library');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();

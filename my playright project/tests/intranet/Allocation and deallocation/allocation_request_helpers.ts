@@ -43,7 +43,12 @@ export interface AllocationDetails {
 export async function fillAllocation(rp: AllocationRequestPage, d: AllocationDetails) {
   await rp.checkAllocationCheckbox();
   await rp.selectAllocationProject(d.project);
-  await rp.selectBillingCode(d.billingCode ?? 'BC_M_INR_01');
+  // Billing code isn't asserted anywhere, so pick one at random unless specified.
+  if (d.billingCode) {
+    await rp.selectBillingCode(d.billingCode);
+  } else {
+    await rp.selectRandomBillingCode();
+  }
   if (d.start) await rp.fillAllocationStart(d.start);
   if (d.end) await rp.fillAllocationEnd(d.end);
   await rp.fillAllocationHours(d.hours ?? '160');
@@ -53,30 +58,55 @@ export async function fillAllocation(rp: AllocationRequestPage, d: AllocationDet
 // Creates a reallocation request: deallocates the employee from a project they
 // are currently on (deallocation date = yesterday) and reallocates them to the
 // SAME project (allocation start = today, allocation end left at its auto-filled
-// default). Returns the project name. Requires the employee to be allocated.
+// default).
+//
+// Picks a RANDOM employee and uses whichever project they're actually allocated
+// to, so both halves of the request act on the same project. Not every employee
+// has a current allocation, so it retries other random employees until one does.
+// Pass `employee` to target a specific person instead.
+// Returns the chosen employee ("email (id)") and the project used.
 export async function createReallocationRequest(
   rp: AllocationRequestPage,
-  employee: string
-): Promise<string> {
+  employee?: string
+): Promise<{ employee: string; project: string }> {
   await rp.clickCreateRequest();
-  await rp.selectEmployee(employee);
 
-  // deallocate from the currently-allocated project (yesterday)
-  await rp.checkDeallocationCheckbox();
-  const project = await rp.checkFirstDeallocationProject();
+  const MAX_ATTEMPTS = 8;
+  let chosenEmployee = '';
+  let project: string | null = null;
+
+  for (let attempt = 0; attempt < MAX_ATTEMPTS && !project; attempt += 1) {
+    chosenEmployee = employee ?? (await rp.selectRandomEmployee());
+    if (employee) await rp.selectEmployee(employee);
+
+    // deallocate from a project the employee is currently on
+    await rp.checkDeallocationCheckbox();
+    project = await rp.checkFirstDeallocationProjectIfAny();
+
+    if (!project && employee) {
+      throw new Error(`Employee "${employee}" has no current allocation to reallocate.`);
+    }
+  }
+
+  if (!project) {
+    throw new Error(
+      `Could not find a randomly-picked employee with a current allocation after ${MAX_ATTEMPTS} attempts.`
+    );
+  }
+
   await rp.setDeallocationDate(pastDateValue(1));
 
   // reallocate to the SAME project (start today, keep the default end date)
   await rp.checkAllocationCheckbox();
   await rp.selectAllocationProject(project);
-  await rp.selectBillingCode('BC_M_INR_01');
+  await rp.selectRandomBillingCode();
   await rp.fillAllocationStart(currentDateValue());
   await rp.fillAllocationHours('160');
   await rp.fillBillingHours('160');
 
   await rp.submit();
   await rp.assertRequestCreated();
-  return project;
+  return { employee: chosenEmployee, project };
 }
 
 // Opens the Create Request form, selects the employee, fills an allocation and

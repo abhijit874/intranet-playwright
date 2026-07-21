@@ -30,8 +30,14 @@ export async function createMaintenance(
   cfg: MaintenanceConfig
 ): Promise<string> {
   await maintenancePage.clickAddAsset();
-  await maintenancePage.selectFirstAvailableMaintenanceAsset();
-  await maintenancePage.selectVendor(cfg.vendor ?? 'Zen Computers');
+  // Both dropdowns only offer valid choices, so pick at random rather than always
+  // the first asset / a fixed vendor — this spreads records across the data.
+  await maintenancePage.selectRandomMaintenanceAsset();
+  if (cfg.vendor) {
+    await maintenancePage.selectVendor(cfg.vendor);
+  } else {
+    await maintenancePage.selectRandomVendor();
+  }
   await maintenancePage.fillCost(cfg.cost ?? '1200');
   await maintenancePage.fillReason(cfg.reason);
   await maintenancePage.fillFromDate(cfg.fromDate ?? '2026-05-10');

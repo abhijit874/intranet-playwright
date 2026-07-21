@@ -6,7 +6,8 @@ test('view other employee public profile', async ({ page }) => {
   await employeePage.loginAs('hr');
   await employeePage.navigateToEmployees();
   await employeePage.switchToCompactView();
-  await employeePage.searchEmployee('abhijit kasbe');
+  const employeeName = await employeePage.getFirstEmployeeName();
+  await employeePage.searchEmployee(employeeName);
   await employeePage.clickEmployeeProfileIcon();
   await expect(page).toHaveURL(/profile|users/i);
 });

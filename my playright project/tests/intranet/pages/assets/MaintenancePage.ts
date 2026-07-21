@@ -1,6 +1,11 @@
 import { expect, Page } from '@playwright/test';
 import { login } from '../../utils/login_helper';
-import { selectAssetDropdown, filterTableBySearch, expectFlashMessage } from '../../utils/test_helpers';
+import {
+  selectAssetDropdown,
+  filterTableBySearch,
+  expectFlashMessage,
+  selectRandomFromAssetDropdown,
+} from '../../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin';
 
@@ -33,23 +38,13 @@ export class MaintenancePage {
     );
   }
 
-  // Picks the first genuinely-available asset from the maintenance asset dropdown
-  // (skipping the empty placeholder) and returns its name. Used so create-then-edit
-  // tests don't depend on a specific asset that gets consumed once it's in
-  // maintenance and removed from the list.
-  async selectFirstAvailableMaintenanceAsset(): Promise<string> {
-    const container = this.page.locator(
+  // Picks a random asset from the maintenance asset dropdown (it only lists assets
+  // eligible for maintenance) and returns its name.
+  async selectRandomMaintenanceAsset(): Promise<string> {
+    return selectRandomFromAssetDropdown(
+      this.page,
       '#new_asset_maintainance > div.row.control-group > div:nth-child(1) > div > span > span.selection > span'
     );
-    await container.click();
-    const option = this.page
-      .getByRole('option')
-      .filter({ hasText: /\S/ })
-      .filter({ hasNotText: /^\s*select/i })
-      .first();
-    const name = ((await option.textContent()) ?? '').trim();
-    await option.click();
-    return name;
   }
 
   async selectVendor(name: string) {
@@ -57,6 +52,14 @@ export class MaintenancePage {
       this.page,
       '#new_asset_maintainance > div.row.control-group > div:nth-child(2) > div > span > span.selection > span',
       name
+    );
+  }
+
+  // Picks a random maintenance vendor and returns its name.
+  async selectRandomVendor(): Promise<string> {
+    return selectRandomFromAssetDropdown(
+      this.page,
+      '#new_asset_maintainance > div.row.control-group > div:nth-child(2) > div > span > span.selection > span'
     );
   }
 

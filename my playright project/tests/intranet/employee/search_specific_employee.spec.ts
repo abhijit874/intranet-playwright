@@ -7,6 +7,7 @@ test('search specific employee record', async ({ page }) => {
   await employeePage.loginAs('hr');
   await employeePage.navigateToEmployees();
   await employeePage.switchToCompactView();
-  await employeePage.searchEmployee('abhijit kasbe');
+  const employeeName = await employeePage.getFirstEmployeeName();
+  await employeePage.searchEmployee(employeeName);
   await expect(page.locator('#user_table tbody tr').first()).toBeVisible();
 });

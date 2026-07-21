@@ -5,7 +5,7 @@ test('filter employees by location', async ({ page }) => {
   const employeePage = new EmployeeListPage(page);
   await employeePage.loginAs('hr');
   await employeePage.navigateToEmployees();
-  await employeePage.filterByLocation('Pune');
+  await employeePage.filterByRandomLocation();
   await employeePage.switchToCompactView();
   await expect(page.locator('#user_table')).toBeVisible();
 });

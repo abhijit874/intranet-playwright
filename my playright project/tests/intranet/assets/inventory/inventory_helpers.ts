@@ -48,15 +48,34 @@ export async function fillAssetForm(inventoryPage: InventoryPage, cfg: AssetConf
   await inventoryPage.selectOs(cfg.os ?? 'Windows');
   await inventoryPage.checkWithCharger();
   await inventoryPage.fillChargerSerial(cfg.chargerSerial ?? `chg-${Date.now()}`);
-  await inventoryPage.selectManufacturingCompany(cfg.manufacturingCompany ?? 'Dell');
-  await inventoryPage.selectAssetName(cfg.assetName ?? 'DELL LATITUDE 3410');
+  // Manufacturer/asset-name/location aren't asserted anywhere, so pick them at
+  // random (the dropdowns only offer valid values). The asset-name list depends on
+  // the manufacturer, hence the ordering.
+  if (cfg.manufacturingCompany) {
+    await inventoryPage.selectManufacturingCompany(cfg.manufacturingCompany);
+  } else {
+    await inventoryPage.selectRandomManufacturingCompany();
+  }
+  if (cfg.assetName) {
+    await inventoryPage.selectAssetName(cfg.assetName);
+  } else {
+    await inventoryPage.selectRandomAssetName();
+  }
   await inventoryPage.fillSerialNumber(cfg.serial);
   await inventoryPage.fillVersion(cfg.version ?? 'I9');
-  await inventoryPage.selectLocation(cfg.location ?? 'Pune');
+  if (cfg.location) {
+    await inventoryPage.selectLocation(cfg.location);
+  } else {
+    await inventoryPage.selectRandomLocation();
+  }
   await inventoryPage.selectAssetOf(cfg.assetOf);
 
   if (cfg.assetOf === 'Vendor') {
-    await inventoryPage.selectVendor(cfg.vendor ?? 'Zen Computers');
+    if (cfg.vendor) {
+      await inventoryPage.selectVendor(cfg.vendor);
+    } else {
+      await inventoryPage.selectRandomVendor();
+    }
   }
 
   await inventoryPage.fillMonthlyCost(cfg.monthlyCost ?? '1200');

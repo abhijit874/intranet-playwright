@@ -1,6 +1,6 @@
 import { expect, Page } from '@playwright/test';
 import { login } from '../utils/login_helper';
-import { filterTableBySearch } from '../utils/test_helpers';
+import { filterTableBySearch, selectRandomOption } from '../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin';
 
@@ -52,6 +52,11 @@ export class VendorDocumentPage {
 
   async selectDocumentType(type: string) {
     await this.page.locator('select[name="document_type"]').selectOption(type);
+  }
+
+  // Any document type is valid and none are asserted, so pick one at random.
+  async selectRandomDocumentType(): Promise<string> {
+    return selectRandomOption(this.page, 'select[name="document_type"]');
   }
 
   async uploadDocumentFile(filePath: string) {

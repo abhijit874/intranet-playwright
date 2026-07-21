@@ -1,5 +1,6 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
+import { loginAsContributorFor } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 // Fills the conference-specific required fields the subcategory form mandates.
@@ -12,7 +13,7 @@ async function fillConferenceRequiredFields(page: import('@playwright/test').Pag
 
 test('submit conference presentation contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J9', 'Conference', 'Presentation in Conference (OFFLINE)');
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
   await contributionsPage.selectCategory('Conference');
@@ -31,7 +32,7 @@ test('edit existing conference presentation contribution', async ({ page }) => {
   const updatedTitle = `conference-presentation-edited-${Date.now()}`;
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J9', 'Conference', 'Presentation in Conference (OFFLINE)');
 
   // create the record this test will edit
   await contributionsPage.navigateToContributions();
@@ -65,7 +66,7 @@ test('conference presentation — future date is rejected by the server', async 
   const title = `conference-presentation-future-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J9', 'Conference', 'Presentation in Conference (OFFLINE)');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
@@ -89,7 +90,7 @@ test('conference presentation — previous-quarter date is rejected by the serve
   const title = `conference-presentation-prevq-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J9', 'Conference', 'Presentation in Conference (OFFLINE)');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();

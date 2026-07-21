@@ -1,6 +1,11 @@
 import { expect, Page } from '@playwright/test';
 import { login } from '../utils/login_helper';
-import { selectFromSingleSelect2, filterTableBySearch } from '../utils/test_helpers';
+import {
+  selectFromSingleSelect2,
+  filterTableBySearch,
+  selectRandomOption,
+  expectFlashMessage,
+} from '../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin';
 
@@ -102,20 +107,26 @@ export class CompanyPage {
     await this.page.locator('#company_billing_location_us').check();
   }
 
+  // Time zone accepts any of its listed values, so pick at random. Josh entity,
+  // billing currency and billing location are NOT randomised — the entity drives
+  // conditional fields (some hide the currency picker) and currency/location pair
+  // with the address the form expects.
+  async selectRandomTimeZone(): Promise<string> {
+    return selectRandomOption(this.page, '#company_time_zone');
+  }
+
   async selectTimeZone(label: string) {
     await this.page.locator('#company_time_zone').selectOption({ label });
   }
 
+  // Drive the native <select> rather than the Select2 overlay: the overlay's
+  // rendered span is not reliably clickable here, while the native control holds
+  // the full currency list and is what actually submits.
   async selectBillingCurrency(currency: string) {
-    await selectFromSingleSelect2(
-      this.page,
-      '#select2-company_billing_currency-container',
-      currency
-    );
+    const select = this.page.locator('#company_billing_currency');
+    await select.selectOption(currency);
     try {
-      await expect(
-        this.page.locator('#select2-company_billing_currency-container')
-      ).toContainText(currency);
+      await expect(select).toHaveValue(currency);
     } catch {
       throw new Error(`Billing currency "${currency}" was not selected correctly.`);
     }
@@ -223,6 +234,14 @@ export class CompanyPage {
 
   async submit() {
     await this.page.locator('#company-submit').click();
+  }
+
+  async assertCreated() {
+    await expectFlashMessage(this.page, 'Company created Successfully', 'company creation');
+  }
+
+  async assertUpdated() {
+    await expectFlashMessage(this.page, 'Company updated Successfully', 'company update');
   }
 
   async assertNotCreated() {

@@ -21,9 +21,34 @@ const USERS = {
     email: process.env.SALES_USER_EMAIL ?? '',
     password: process.env.SALES_USER_PASSWORD ?? '',
   },
+  finance: {
+    email: process.env.FINANCE_USER_EMAIL ?? '',
+    password: process.env.FINANCE_USER_PASSWORD ?? '',
+  },
+  manager: {
+    email: process.env.MANAGER_USER_EMAIL ?? '',
+    password: process.env.MANAGER_USER_PASSWORD ?? '',
+  },
 };
 
-type UserKey = keyof typeof USERS;
+export type UserKey = keyof typeof USERS;
+
+// Every account shares the same password, so any employee can be signed in by
+// email alone — which lets tests act as a specific employee (e.g. one of a given
+// grade) rather than only the few role accounts defined above.
+export const COMMON_PASSWORD = process.env.EMPLOYEE_USER_PASSWORD ?? '';
+
+export async function loginWithEmail(page: Page, email: string, password = COMMON_PASSWORD) {
+  if (!email || !password) {
+    throw new Error('Missing email or password for login (check EMPLOYEE_USER_PASSWORD in .env).');
+  }
+  await page.goto('/');
+  await page.getByLabel('Email').fill(email);
+  await page.getByLabel('Password').fill(password);
+  await page.getByRole('button', { name: /Sign in/i }).click();
+  await expect(page.getByRole('alert')).toHaveText(/signed in successfully/i);
+  await expect(page.getByText('Hello,')).toBeVisible();
+}
 
 export async function login(page: Page, user: UserKey = 'employee') {
   const { email, password } = USERS[user];

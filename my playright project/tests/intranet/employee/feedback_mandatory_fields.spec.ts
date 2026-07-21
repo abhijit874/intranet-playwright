@@ -9,7 +9,8 @@ test('mandatory fields - feedback must not be added without required data', asyn
   await employeePage.loginAs('hr');
   await employeePage.navigateToEmployees();
   await employeePage.switchToCompactView();
-  await employeePage.searchEmployee('abhijit kasbe');
+  const employeeName = await employeePage.getFirstEmployeeName();
+  await employeePage.searchEmployee(employeeName);
   await employeePage.clickEmployeeProfileIcon();
   await profilePage.clickProfileTab('Feedbacks');
   // Open the feedback form but submit without filling any required fields

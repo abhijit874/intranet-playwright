@@ -12,16 +12,25 @@ import {
 
 // Self-contained: admin creates an allocation request, then hr approves it.
 test('approve allocation request', async ({ page }) => {
-  const employee = 'aman.pathan@joshsoftware.com (994)';
-  const name = employeeDisplayName(employee);
-
   const rp = new AllocationRequestPage(page);
   await rp.loginAs('admin');
   await rp.navigateTo();
-  // Use a project the employee is not already allocated to (approval fails on a
-  // duplicate allocation).
-  await createAllocationRequest(rp, employee, { project: 'Bidwheelz' });
+  await rp.clickCreateRequest();
 
+  // Approval rejects a duplicate allocation, so a fixed employee/project pair only
+  // works once — after that the employee is already on that project. A random
+  // pairing is very unlikely to collide with an existing allocation, which makes
+  // this re-runnable.
+  const employee = await rp.selectRandomEmployee();
+  await rp.checkAllocationCheckbox();
+  await rp.selectRandomAllocationProject();
+  await rp.selectRandomBillingCode();
+  await rp.fillAllocationHours('160');
+  await rp.fillBillingHours('160');
+  await rp.submit();
+  await rp.assertRequestCreated();
+
+  const name = employeeDisplayName(employee);
   const ap = await switchToHrApproval(page);
   await ap.searchRequests(name);
   await ap.clickViewOnRow(name, 'allocation');
@@ -127,13 +136,12 @@ test('approve deallocation request', async ({ page }) => {
 // the same project), then hr approves it directly. Unlike a plain deallocation,
 // a reallocation does not require filling a feedback form first.
 test('approve reallocation request', async ({ page }) => {
-  const employee = 'aman.pathan@joshsoftware.com (994)';
-  const name = employeeDisplayName(employee);
-
   const rp = new AllocationRequestPage(page);
   await rp.loginAs('admin');
   await rp.navigateTo();
-  await createReallocationRequest(rp, employee);
+  // Random employee that has an allocation; both halves act on that same project.
+  const { employee } = await createReallocationRequest(rp);
+  const name = employeeDisplayName(employee);
 
   const ap = await switchToHrApproval(page);
   await ap.searchRequests(name);

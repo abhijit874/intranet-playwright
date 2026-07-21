@@ -1,21 +1,22 @@
 ﻿import { test } from '@playwright/test';
 import { LdRecordPage } from '../pages/activities/LdRecordPage';
-import { previousQuarterDateValue } from '../utils/test_helpers';
+import { loginAndGetLdEligibleEmployeeIds } from './ld_helpers';
+import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('technical classroom training', async ({ page }) => {
   const title = `tech-classroom-training-${Date.now()}`; // unique per run, avoids collisions
 
   const ldPage = new LdRecordPage(page);
-  await ldPage.loginAs('hr');
+  const empIds = await loginAndGetLdEligibleEmployeeIds(page); // grade J7–J11 only
   await ldPage.navigateToCreateLdRecord();
   await ldPage.selectLdCategory('10');
   await ldPage.selectLdSubcategory('36');
   await ldPage.pressEscape();
   await ldPage.fillLdTitle(title);
-  await ldPage.fillLdDate('2026-05-12');
+  await ldPage.fillLdDate(validCurrentQuarterDate());
   await ldPage.assertLdDateRange();
   await ldPage.fillLdDuration('60');
-  await ldPage.selectLdEmployee('aastha.bhargava@joshsoftware.com (719)');
+  await ldPage.selectLdEmployeeByIds(empIds);
   await ldPage.fillLdDescription('playwright automation with claude');
   await ldPage.submitAndAssertSaved();
 });
@@ -32,7 +33,7 @@ test('technical classroom training — future date is rejected by the server', a
   const title = `tech-classroom-training-future-${Date.now()}`; // unique per run, avoids collisions
 
   const ldPage = new LdRecordPage(page);
-  await ldPage.loginAs('hr');
+  const empIds = await loginAndGetLdEligibleEmployeeIds(page); // grade J7–J11 only
   await ldPage.navigateToCreateLdRecord();
   await ldPage.selectLdCategory('10');
   await ldPage.selectLdSubcategory('36');
@@ -40,7 +41,7 @@ test('technical classroom training — future date is rejected by the server', a
   await ldPage.fillLdTitle(title);
   await ldPage.forceLdDate(FUTURE_DATE); // bypasses client-side validation
   await ldPage.fillLdDuration('60');
-  await ldPage.selectLdEmployee('aastha.bhargava@joshsoftware.com (719)');
+  await ldPage.selectLdEmployeeByIds(empIds);
   await ldPage.fillLdDescription('playwright automation with claude');
   await ldPage.submitAndAssertRejected('future Activity Date');
 });
@@ -56,7 +57,7 @@ test('technical classroom training — previous-quarter date is rejected by the 
   const title = `tech-classroom-training-prevq-${Date.now()}`; // unique per run, avoids collisions
 
   const ldPage = new LdRecordPage(page);
-  await ldPage.loginAs('hr');
+  const empIds = await loginAndGetLdEligibleEmployeeIds(page); // grade J7–J11 only
   await ldPage.navigateToCreateLdRecord();
   await ldPage.selectLdCategory('10');
   await ldPage.selectLdSubcategory('36');
@@ -64,7 +65,7 @@ test('technical classroom training — previous-quarter date is rejected by the 
   await ldPage.fillLdTitle(title);
   await ldPage.forceLdDate(PREVIOUS_QUARTER_DATE); // bypasses client-side validation
   await ldPage.fillLdDuration('60');
-  await ldPage.selectLdEmployee('aastha.bhargava@joshsoftware.com (719)');
+  await ldPage.selectLdEmployeeByIds(empIds);
   await ldPage.fillLdDescription('playwright automation with claude');
   await ldPage.submitAndAssertRejected('previous-quarter Activity Date');
 });

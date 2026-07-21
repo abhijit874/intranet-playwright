@@ -1,44 +1,44 @@
-﻿import { test, expect } from '@playwright/test';
-import path from 'path';
+import { test, expect } from '@playwright/test';
 import { CompanyPage } from '../pages/CompanyPage';
+import { createCompany } from './company_helpers';
 
+// Creates a company with a unique name and confirms it was saved.
 test('add new company', async ({ page }) => {
-  const invoiceCode = `I${Date.now().toString().slice(-2)}`;
-  const fixturePath = path.join(__dirname, '../../fixtures/image.png');
+  const companyPage = new CompanyPage(page);
+  await companyPage.loginAs('hr');
+  await companyPage.navigateTo();
+
+  await createCompany(companyPage); // asserts the success flash
+
+  await expect(page).toHaveURL(/\/companies/i);
+});
+
+// Self-contained: creates a fresh company, then finds that exact company and
+// edits it — no dependency on a pre-seeded record.
+test('edit company', async ({ page }) => {
+  const suffix = Date.now().toString().slice(-6);
 
   const companyPage = new CompanyPage(page);
   await companyPage.loginAs('hr');
   await companyPage.navigateTo();
-  await companyPage.clickAddCompany();
 
-  await companyPage.selectJoshEntity('Josh India');
-  await companyPage.fillName('openAI');
-  await companyPage.setActive(true);
-  await companyPage.fillGstNo('27ABCDE1234F1Z5');
-  await companyPage.fillInvoiceCode(invoiceCode);
-  await companyPage.fillWebsite('https://openai.com');
-  await companyPage.checkBillingLocationUs();
-  await companyPage.selectTimeZone('(GMT-10:00) Hawaii');
-  await companyPage.selectBillingCurrency('USD');
-  await companyPage.fillSalesManager('Saurabh Gaji');
-  await companyPage.checkExistingManager();
-  await companyPage.uploadLogo(fixturePath);
-  await companyPage.uploadGstCard(fixturePath);
-  await companyPage.uploadPanCard(fixturePath);
-  await companyPage.uploadTanCard(fixturePath);
-  await companyPage.fillTypeOfAddress('primary');
-  await companyPage.fillAddress('350 Fifth Avenue, New York, NY 10118');
-  await companyPage.fillCity('New York');
-  await companyPage.fillState('New York');
+  // create the company this test will edit
+  const { name } = await createCompany(companyPage);
+
+  await companyPage.navigateTo();
+  await companyPage.searchCompany(name);
+  await companyPage.clickEditOnRow(name);
+
+  await companyPage.fillWebsite(`https://openai.com/${suffix}`);
+  await companyPage.fillSalesManager(`Saurabh Gaji ${suffix}`);
+  await companyPage.fillTypeOfAddress(`primary ${suffix}`);
+  await companyPage.fillAddress(`${suffix} Market Street, San Francisco, CA`);
+  await companyPage.fillCity(`San Francisco ${suffix}`);
+  await companyPage.fillState(`California ${suffix}`);
   await companyPage.fillCountry('USA');
-  await companyPage.fillLandline('1234567890');
-  await companyPage.fillPinCode('123456');
+  await companyPage.fillLandline(`98${suffix.padStart(8, '0')}`);
+  await companyPage.fillPinCode(suffix.padStart(6, '1'));
   await companyPage.submit();
 
-  const alert = page.locator('#flashes');
-  await expect(alert).toBeVisible();
-  await expect(alert).toHaveClass(/alert-success/);
-  await expect(alert).toContainText('Company created Successfully');
-
-  await expect(page).toHaveURL(/\/companies/i);
+  await companyPage.assertUpdated();
 });

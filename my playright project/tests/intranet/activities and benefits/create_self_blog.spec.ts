@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
+import { loginAsContributorFor } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 // Master happy-flow test: creates a single self blog contribution and confirms it saves.
@@ -8,7 +9,7 @@ test('create self blog — happy flow', async ({ page }) => {
   const activityDate = validCurrentQuarterDate();
 
   const cp = new ContributionsPage(page);
-  await cp.loginAs('employee');
+  await loginAsContributorFor(page, 'J7', 'Blog Writing');
 
   await cp.navigateToContributions();
   await cp.clickAddContribution();
@@ -28,7 +29,7 @@ test('create self blog — duplicate URL is rejected', async ({ page }) => {
   const activityDate = validCurrentQuarterDate();
 
   const cp = new ContributionsPage(page);
-  await cp.loginAs('employee');
+  await loginAsContributorFor(page, 'J7', 'Blog Writing');
 
   // first submission — creates the record
   await cp.navigateToContributions();
@@ -69,7 +70,7 @@ test('create self blog — future date is rejected by the server', async ({ page
   const blogUrl = `https://nourl.com-future-${stamp}`;
 
   const cp = new ContributionsPage(page);
-  await cp.loginAs('employee');
+  await loginAsContributorFor(page, 'J7', 'Blog Writing');
 
   await cp.navigateToContributions();
   await cp.clickAddContribution();
@@ -94,7 +95,7 @@ test('create self blog — previous-quarter date is rejected by the server', asy
   const blogUrl = `https://nourl.com-prevq-${stamp}`;
 
   const cp = new ContributionsPage(page);
-  await cp.loginAs('employee');
+  await loginAsContributorFor(page, 'J7', 'Blog Writing');
 
   await cp.navigateToContributions();
   await cp.clickAddContribution();
@@ -115,7 +116,7 @@ test('edit existing self blog contribution', async ({ page }) => {
   const activityDate = validCurrentQuarterDate();
 
   const cp = new ContributionsPage(page);
-  await cp.loginAs('employee');
+  await loginAsContributorFor(page, 'J7', 'Blog Writing');
 
   // create the record this test will edit
   await cp.navigateToContributions();

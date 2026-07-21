@@ -1,11 +1,12 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
+import { loginAsContributorFor } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('submit innovation in action contribution', async ({ page }) => {
   const activityDate = validCurrentQuarterDate();
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J9', 'Innovation Lab', 'Innovation in Action');
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
   await contributionsPage.selectCategory('Innovation Lab');
@@ -27,7 +28,7 @@ test('edit existing innovation in action contribution', async ({ page }) => {
   const activityDate = validCurrentQuarterDate();
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J9', 'Innovation Lab', 'Innovation in Action');
 
   // create the record this test will edit
   await contributionsPage.navigateToContributions();
@@ -65,7 +66,7 @@ test('innovation in action — future date is rejected by the server', async ({ 
   const validDate = validCurrentQuarterDate();
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J9', 'Innovation Lab', 'Innovation in Action');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
@@ -92,7 +93,7 @@ test('innovation in action — previous-quarter date is rejected by the server',
   const validDate = validCurrentQuarterDate();
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J9', 'Innovation Lab', 'Innovation in Action');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();

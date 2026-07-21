@@ -1,10 +1,11 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
+import { loginAsContributorFor } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('open source contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J11', 'Open Source Contribution', 'Open Source');
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
   await contributionsPage.selectCategory('Open Source Contribution');
@@ -26,7 +27,7 @@ test('edit existing open source contribution', async ({ page }) => {
   const updatedTitle = `open-source-edited-${Date.now()}`;
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J11', 'Open Source Contribution', 'Open Source');
 
   // create the record this test will edit
   await contributionsPage.navigateToContributions();
@@ -64,7 +65,7 @@ test('open source — future date is rejected by the server', async ({ page }) =
   const title = `open-source-future-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J11', 'Open Source Contribution', 'Open Source');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
@@ -91,7 +92,7 @@ test('open source — previous-quarter date is rejected by the server', async ({
   const title = `open-source-prevq-${stamp}`; // unique per run, avoids collisions
 
   const contributionsPage = new ContributionsPage(page);
-  await contributionsPage.loginAs('employee');
+  await loginAsContributorFor(page, 'J11', 'Open Source Contribution', 'Open Source');
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();

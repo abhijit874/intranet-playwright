@@ -1,6 +1,6 @@
-import { Page } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import { login } from '../utils/login_helper';
-import { selectFromSingleSelect2 } from '../utils/test_helpers';
+import { selectFromSingleSelect2, selectRandomOption } from '../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin' | 'leader';
 
@@ -19,18 +19,21 @@ export class EmployeeProfilePage {
     await this.page.getByRole('tab', { name: tabName }).click();
   }
 
+  // Drive the native <select>s rather than the Select2 overlay: the overlay's
+  // rendered span for the second skill is not reliably clickable, while the native
+  // controls hold the full skill list and are what actually submit.
   async updateSkills(skill1: string, skill2: string) {
-    await selectFromSingleSelect2(
-      this.page,
-      '#select2-public_profile_technical_skills_1-container',
-      skill1
-    );
-    await selectFromSingleSelect2(
-      this.page,
-      '#select2-public_profile_technical_skills_2-container',
-      skill2
-    );
+    await this.page.locator('#public_profile_technical_skills_1').selectOption({ label: skill1 });
+    await this.page.locator('#public_profile_technical_skills_2').selectOption({ label: skill2 });
     await this.page.getByRole('button', { name: 'Update Skills' }).click();
+  }
+
+  // Picks two random skills — any listed skill is valid and none is asserted.
+  async updateRandomSkills(): Promise<{ first: string; second: string }> {
+    const first = await selectRandomOption(this.page, '#public_profile_technical_skills_1');
+    const second = await selectRandomOption(this.page, '#public_profile_technical_skills_2');
+    await this.page.getByRole('button', { name: 'Update Skills' }).click();
+    return { first, second };
   }
 
   async addFeedback(feedbackData: {

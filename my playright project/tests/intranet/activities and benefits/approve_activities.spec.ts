@@ -9,10 +9,10 @@ test('approve activity — eligible is approved, over-quota shows the message', 
   await approvalPage.loginAs('hr');
   await approvalPage.navigateToContributionsApproval();
   await approvalPage.approveContribution({
-    title: 'Claude',
-    date: '2026/05/11',
+    title: 'open AI',
+    date: '2026/07/14',
     employeeName: 'Abhijit Kasbe',
-    category: 'Blog Writing',
-    subcategory: 'Self Blog',
+    category: 'Open Source Contribution',
+    subcategory: 'Develop new Gem / library',
   });
 });

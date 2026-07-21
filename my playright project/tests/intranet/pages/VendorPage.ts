@@ -437,6 +437,17 @@ export class VendorPage {
     await this.page.locator('input[type="submit"][name="commit"][value="Save"]').click();
   }
 
+  // Waits for the save to actually complete: on success the form redirects from
+  // /vendors/new to the vendor list. Without this a caller can navigate away
+  // while the create POST is still in flight, silently losing the record.
+  async assertSaved() {
+    try {
+      await expect(this.page).toHaveURL(/\/vendors(?:\?.*)?$/, { timeout: 20000 });
+    } catch {
+      throw new Error('Vendor was not saved — the form did not redirect to the vendor list.');
+    }
+  }
+
   async assertNotSaved() {
     await this.page.waitForLoadState('networkidle');
     await expect(

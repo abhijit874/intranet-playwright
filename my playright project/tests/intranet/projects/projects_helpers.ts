@@ -35,12 +35,16 @@ export async function createProject(
   const code = options.code ?? `pw${stamp}`;
 
   await projectsPage.clickNewProject();
-  await projectsPage.selectCompany('1 Factory');
+  // Company/domain/business-unit are descriptive only, so pick them at random —
+  // the dropdowns hold nothing but valid values.
+  await projectsPage.selectRandomCompany();
   await projectsPage.fillProjectName(name);
-  await projectsPage.selectDomain('Other');
+  await projectsPage.selectRandomDomain();
   await projectsPage.fillDisplayName(name);
+  // Billing frequency / type of project / bill-by / invoice-by stay fixed: they
+  // drive conditional fields and validation on this form.
   await projectsPage.selectBillingFrequency('NA');
-  await projectsPage.selectBusinessUnit('BFSI');
+  await projectsPage.selectRandomBusinessUnit();
   await projectsPage.selectTypeOfProject('T&M');
   await projectsPage.selectBillBy('NA');
   await projectsPage.selectInvoiceBy('Josh');
@@ -52,14 +56,13 @@ export async function createProject(
   // dates later than the end date.
   await projectsPage.setSowStartDate('2026-05-10');
   await projectsPage.setSowEndDate('2026-05-31');
-  // People fields use values confirmed valid in the current environment. Note the
-  // form's "Engineering Manager" field is backed by the delivery_head select, and
-  // "HR" is backed by the product_manager select.
+  // Any valid person is accepted for these, so pick them at random. The project
+  // manager stays fixed — the "update project flow on edit" test asserts on it.
   await projectsPage.selectProjectManager('Pooja Mane(pooja@joshsoftware.com)', 'Pooja Mane');
-  await projectsPage.selectSalesHead('Gautam Rege(gautam@joshsoftware.com)');
-  await projectsPage.selectDeliveryHead('Anuja Ware(anuja@joshsoftware.com)'); // Engineering Manager
-  await projectsPage.selectDeliveryVP('Sameer Tilak(sameer@joshsoftware.com)');
-  await projectsPage.selectProductManager('Saurabh Gaji(saurabh.gaji@joshsoftware.com)'); // HR
+  await projectsPage.selectRandomSalesHead();
+  await projectsPage.selectRandomDeliveryHead(); // Engineering Manager
+  await projectsPage.selectRandomDeliveryVP();
+  await projectsPage.selectRandomProductManager(); // HR
   await projectsPage.fillProjectCode(code);
   // Client Logo and project image are both required.
   await projectsPage.uploadClientLogo(IMAGE_PATH);

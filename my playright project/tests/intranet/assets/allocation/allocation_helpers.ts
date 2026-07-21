@@ -26,8 +26,16 @@ export async function createAllocation(
   cfg: AllocationConfig
 ): Promise<string> {
   await allocationPage.clickAddAssetAllocation();
-  const assetName = await allocationPage.selectFirstAvailableAsset();
-  await allocationPage.selectUser(cfg.user ?? 'Abhijit Kasbe(abhijit.kasbe@joshsoftware.com)');
+  // The dropdown only lists allocatable assets, so pick one at random rather than
+  // always taking the first — this spreads allocations across the inventory.
+  const assetName = await allocationPage.selectRandomAsset();
+  // No specific user requested: pick a random one from the dropdown so allocations
+  // spread across employees rather than always landing on the same person.
+  if (cfg.user) {
+    await allocationPage.selectUser(cfg.user);
+  } else {
+    await allocationPage.selectRandomUser();
+  }
   await allocationPage.selectAllocatedFrom(cfg.allocatedFrom ?? 'Pune');
   await allocationPage.fillPurpose(cfg.purpose);
   await allocationPage.fillIssuedDate(cfg.issuedDate ?? '2026-05-10');

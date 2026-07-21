@@ -1,8 +1,6 @@
 import { expect, Locator, Page } from '@playwright/test';
-import { login } from '../../utils/login_helper';
+import { login, UserKey } from '../../utils/login_helper';
 import { assertActivityDateWithinRange, setDateByEvaluate } from '../../utils/test_helpers';
-
-type UserKey = 'employee' | 'hr' | 'admin';
 
 export class ContributionsPage {
   constructor(private page: Page) {}
@@ -65,6 +63,26 @@ export class ContributionsPage {
       throw new Error(`Subcategory "${subcategory}" not available.`);
     }
     await select.selectOption({ label: subcategory });
+  }
+
+  // The project dropdown lists only the projects the signed-in contributor is
+  // allocated to, so pick whichever one they have rather than hardcoding a name.
+  // Returns the chosen project's label.
+  async selectFirstProject(): Promise<string> {
+    const select = this.page.locator('#project_id');
+    await expect(select).toBeVisible();
+    const options = select.locator('option');
+    const count = await options.count();
+    for (let i = 0; i < count; i += 1) {
+      const option = options.nth(i);
+      const value = await option.getAttribute('value');
+      const label = ((await option.textContent()) ?? '').trim();
+      if (value && !/^\s*(--)?\s*select/i.test(label)) {
+        await select.selectOption(value);
+        return label;
+      }
+    }
+    throw new Error('No project available for this contributor.');
   }
 
   async fillTitle(title: string) {
