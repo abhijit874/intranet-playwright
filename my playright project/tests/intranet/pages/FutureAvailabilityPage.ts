@@ -1,10 +1,10 @@
 import { expect, Page } from '@playwright/test';
 import { login } from '../utils/login_helper';
-import { searchProject, filterTableBySearch } from '../utils/test_helpers';
+import { searchProject, filterTableBySearch, dataTableSearchBox } from '../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin' | 'leader';
 
-export class FuturePoolPage {
+export class FutureAvailabilityPage {
   constructor(private page: Page) {}
 
   async loginAs(user: UserKey = 'employee') {
@@ -12,22 +12,22 @@ export class FuturePoolPage {
   }
 
   async navigateTo() {
-    await this.page.locator('span.fs-6.ms-2', { hasText: 'Pool Report' }).click();
+    await this.page.locator('a[href="/pool_reports"]').click();
     try {
       await expect(this.page).toHaveURL(/\/pool_reports/, { timeout: 20000 });
     } catch {
-      throw new Error('Failed to navigate to Pool Reports page.');
+      throw new Error('Failed to navigate to Innovation Lab page.');
     }
   }
 
-  async navigateToFuturePool() {
+  async navigateToFutureAvailability() {
     await this.page
       .locator('a.btn.btn-outline-secondary.btn-sm[href="/pool_reports/future_pool"]')
       .click();
     try {
       await expect(this.page).toHaveURL(/\/pool_reports\/future_pool/, { timeout: 20000 });
     } catch {
-      throw new Error('Failed to navigate to Future Pool page.');
+      throw new Error('Failed to navigate to Future Availability page.');
     }
   }
 
@@ -52,6 +52,39 @@ export class FuturePoolPage {
       .first();
   }
 
+  // Returns the employee + project of the first entry in the Future Availability, so
+  // tests act on a real upcoming-release row rather than a hardcoded person.
+  // Call after navigateToFutureAvailability().
+  // Note: "View Past Projects" is offered only on the Innovation Lab tab, so
+  // there is no option for it here — see InnovationLabPage.clickViewPastProjects.
+  async getFirstFutureAvailabilityEntry(
+    opts: { withAddIcon?: boolean } = {}
+  ): Promise<{ employee: string; project: string }> {
+    let rows = this.page
+      .locator('table tbody tr')
+      .filter({ hasNot: this.page.locator('td.dataTables_empty') });
+    // Employees already in the Innovation Lab have no add-to-Innovation-Lab icon, so a test
+    // that adds someone must pick a row that still offers the action.
+    if (opts.withAddIcon) {
+      rows = rows.filter({ has: this.page.locator('i.ri-user-add-fill') });
+    }
+    const row = rows.first();
+    try {
+      await expect(row).toBeVisible({ timeout: 20000 });
+    } catch {
+      throw new Error(
+        opts.withAddIcon
+          ? 'Future Availability has no entries that can still be added to the Innovation Lab.'
+          : 'Future Availability table has no entries to pick from.'
+      );
+    }
+    const cells = await row.locator('td').allInnerTexts();
+    const employee = (cells[1] ?? '').replace(/\s+/g, ' ').trim();
+    const project = (cells[4] ?? '').replace(/\s+/g, ' ').trim();
+    if (!employee) throw new Error('Could not read an employee name from the Future Availability table.');
+    return { employee, project };
+  }
+
   async expectRowVisible(employeeName: string, projectName: string) {
     await filterTableBySearch(this.page, employeeName);
     try {
@@ -62,52 +95,57 @@ export class FuturePoolPage {
     return this.findRow(employeeName, projectName);
   }
 
-  async clickAddToPool(employeeName: string, projectName: string) {
+  async clickAddToInnovationLab(employeeName: string, projectName: string) {
     const row = await this.expectRowVisible(employeeName, projectName);
     const icon = row.locator('i.text-success.ri-user-add-fill.fs-5');
     try {
       await expect(icon).toBeVisible({ timeout: 10000 });
     } catch {
       throw new Error(
-        `Add to pool button not found for employee "${employeeName}" and project "${projectName}".`
+        `Add to Innovation Lab button not found for employee "${employeeName}" and project "${projectName}".`
       );
     }
     await icon.click();
   }
 
-  async confirmAddToPool() {
-    await this.page.locator('span.d-flex.align-items-center', { hasText: 'Yes, Add to Pool' }).click();
+  async confirmAddToInnovationLab() {
+    await this.page.locator('.modal.show button').filter({ hasText: /Yes, Add to/ }).click();
   }
 
-  async assertAddedToPool() {
-    const alert = this.page.locator('#flashes');
-    await expect(alert).toBeVisible();
-    await expect(alert).toHaveClass(/alert-success/);
-    await expect(alert).toContainText('Successfully added');
-    await expect(alert).toContainText('to the pool.');
+  async assertAddedToInnovationLab() {
+    // Flashes auto-dismiss, so use a single retrying assertion. The trailing
+    // wording follows the "Pool" -> "Innovation Lab" rename, so only the stable
+    // part of the message is asserted.
+    await expect(this.page.locator('#flashes')).toContainText('Successfully added', {
+      timeout: 15_000,
+    });
   }
 
-  async assertPoolReportLoaded() {
+  async assertInnovationLabLoaded() {
     try {
       await expect(this.page.locator('table tbody')).toBeVisible({ timeout: 20000 });
     } catch {
-      throw new Error('Pool report table did not load.');
+      throw new Error('Innovation Lab table did not load.');
     }
   }
 
   async searchEmployeeExpectNoResults(name: string) {
     await searchProject(this.page, name);
     await this.page.waitForTimeout(1000);
-    const noData = this.page.locator('td.dataTables_empty');
+    // The table may render an explicit empty row or simply no rows at all.
+    const dataRows = this.page
+      .locator('table tbody tr')
+      .filter({ hasNot: this.page.locator('td.dataTables_empty') })
+      .filter({ hasNotText: /no (matching records|data available)/i });
     try {
-      await expect(noData).toBeVisible({ timeout: 5000 });
+      await expect(dataRows).toHaveCount(0, { timeout: 10000 });
     } catch {
       throw new Error(`Expected no records for search "${name}" but records were found.`);
     }
   }
 
   async clearSearch() {
-    const searchBox = this.page.locator('#dt-search-0').first();
+    const searchBox = dataTableSearchBox(this.page);
     await searchBox.clear();
     await searchBox.press('Enter');
     await this.page.waitForTimeout(800);
@@ -120,16 +158,16 @@ export class FuturePoolPage {
     try {
       await expect(dataRow.first()).toBeVisible({ timeout: 10000 });
     } catch {
-      throw new Error('Expected records in the future pool table but none were found.');
+      throw new Error('Expected records in the Future Availability table but none were found.');
     }
   }
 
-  async assertAddToPoolIconNotVisible() {
+  async assertAddToInnovationLabIconNotVisible() {
     const addIcons = this.page.locator('table tbody tr i.text-success.ri-user-add-fill');
     const count = await addIcons.count();
     if (count > 0) {
       throw new Error(
-        `Add-to-Pool icons should not be visible for read-only role, but ${count} were found in the table.`
+        `add-to-Innovation-Lab icons should not be visible for read-only role, but ${count} were found in the table.`
       );
     }
   }
@@ -162,26 +200,4 @@ export class FuturePoolPage {
     }
   }
 
-  async clickViewPastProjects(employeeName: string) {
-    await filterTableBySearch(this.page, employeeName);
-    const row = this.page
-      .locator('table tbody tr')
-      .filter({ hasText: employeeName })
-      .first();
-    await expect(row).toBeVisible({ timeout: 20000 });
-    const [newPage] = await Promise.all([
-      this.page.context().waitForEvent('page'),
-      row.locator('a[href*="public_profile#emp-details"]', { hasText: 'View Past Projects' }).click(),
-    ]);
-    await newPage.waitForLoadState('networkidle');
-    this.page = newPage;
-  }
-
-  async assertPastProjectsPageOpened() {
-    try {
-      await expect(this.page).toHaveURL(/\/users\/\d+\/public_profile/, { timeout: 20000 });
-    } catch {
-      throw new Error('Past projects page did not open - expected employee public profile URL.');
-    }
-  }
 }
