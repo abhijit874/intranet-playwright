@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { VendorPage } from '../pages/VendorPage';
+import { currentDateValue, futureDateValue } from '../utils/test_helpers';
 
 // Shared builder for the vendor specs so every test can create its own vendor
 // (self-contained — no dependency on a pre-seeded record). Mirrors the asset /
@@ -27,42 +28,53 @@ export function uniqueVendorCompany(prefix = 'playwright vendor'): string {
   return `${prefix} ${Date.now()}`;
 }
 
-// Fills the whole "add vendor" form and submits it. GST/PAN must be unique and
-// well-formed, so they're derived from a per-run stamp. Returns the identifying
-// values so callers can find the exact vendor afterwards.
+// Fills the whole "add vendor" form and submits it. Every identifying or
+// format-validated field is DERIVED per run rather than fixed:
+//   - PAN  (5 letters + 4 digits + 1 letter) and GST (state code + PAN +
+//     entity + Z + check char) share the run's stamp, so they're unique
+//     together and pass the form's format validation.
+//   - Account number, IFSC and MSME carry the stamp too, so no two vendors
+//     ever share bank details.
+//   - Contract dates are today -> +6 months, so they can never go stale the
+//     way a hardcoded year does.
+// Returns the identifying values so callers can find the exact vendor.
 export async function createVendor(
   vendorPage: VendorPage,
   cfg: VendorConfig = {}
 ): Promise<CreatedVendor> {
-  const stamp = Date.now().toString().slice(-4);
+  const now = Date.now().toString();
+  const stamp = now.slice(-4);
   const company = cfg.company ?? uniqueVendorCompany();
   const category = cfg.category ?? 'AI';
   const pan = `ABCDE${stamp}F`;
   const gst = `27${pan}1Z5`;
-  const code = `playwright-${Date.now()}`;
+  const accountNumber = `50100${now.slice(-9)}`; // 14 digits, unique per run
+  const ifsc = `HDFC0${now.slice(-6)}`; // 4 letters + 0 + 6 chars
+  const msme = `UDYAM-MH-26-${now.slice(-7)}`; // UDYAM-<state>-<2 digits>-<7 digits>
+  const code = `playwright-${now}`;
   const file = cfg.filePath ?? IMAGE_PATH;
 
   await vendorPage.clickAddVendor();
 
   await vendorPage.fillCompany(company);
   await vendorPage.fillCategory(category);
-  await vendorPage.fillContractStartDate(cfg.contractStart ?? '2026-05-10');
-  await vendorPage.fillContractEndDate(cfg.contractEnd ?? '2026-12-31');
+  await vendorPage.fillContractStartDate(cfg.contractStart ?? currentDateValue());
+  await vendorPage.fillContractEndDate(cfg.contractEnd ?? futureDateValue(180));
   await vendorPage.fillGstNumber(gst);
   await vendorPage.uploadGstFile(file);
   await vendorPage.fillPanNumber(pan);
   await vendorPage.uploadPanCard(file);
-  await vendorPage.fillMsmeNumber('MSME-AUTO-12345');
+  await vendorPage.fillMsmeNumber(msme);
   await vendorPage.uploadMsmeCertificate(file);
   await vendorPage.fillVendorCode(code);
   await vendorPage.fillContactPersonName('john doe');
   await vendorPage.fillContactPersonRole('CEO');
   await vendorPage.fillContactPersonPhone('1234567890');
   await vendorPage.fillContactPersonEmail('johndoe@gmail.com');
-  await vendorPage.fillBankAccountHolderName('jhon doe');
+  await vendorPage.fillBankAccountHolderName('john doe');
   await vendorPage.fillBankName('HDFC bank');
-  await vendorPage.fillAccountNumber('50100123456789');
-  await vendorPage.fillIfscCode('HDFC0001234');
+  await vendorPage.fillAccountNumber(accountNumber);
+  await vendorPage.fillIfscCode(ifsc);
   await vendorPage.uploadBankDocument(file);
   await vendorPage.fillAddress('123 Automation Street, Pune, Maharashtra');
   await vendorPage.fillCity('Pune');
