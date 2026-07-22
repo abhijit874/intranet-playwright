@@ -7,7 +7,7 @@ test('view employee profile on Future Availability', async ({ page }) => {
   await futureAvailabilityPage.navigateTo();
   await futureAvailabilityPage.navigateToFutureAvailability();
   // Act on whoever is actually in the Future Availability rather than a hardcoded person.
-  const { employee: employeeName, project: projectName } = await futureAvailabilityPage.getFirstFutureAvailabilityEntry();
+  const { employee: employeeName } = await futureAvailabilityPage.getFirstFutureAvailabilityEntry();
   await futureAvailabilityPage.searchEmployee(employeeName);
   await futureAvailabilityPage.clickEmployeeProfileLink(employeeName);
   await futureAvailabilityPage.assertProfilePageOpened(employeeName);

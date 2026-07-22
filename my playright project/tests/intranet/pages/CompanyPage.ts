@@ -1,7 +1,6 @@
 import { expect, Page } from '@playwright/test';
 import { login } from '../utils/login_helper';
-import {
-  selectFromSingleSelect2,
+import {
   filterTableBySearch,
   selectRandomOption,
   expectFlashMessage,

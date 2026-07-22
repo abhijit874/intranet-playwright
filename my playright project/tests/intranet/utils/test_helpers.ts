@@ -47,7 +47,7 @@ export function validCurrentQuarterDate(): string {
 
 // First day of the current calendar quarter (Jan/Apr/Jul/Oct 1st), e.g. for any
 // month Apr–Jun this returns YYYY-04-01.
-export function currentQuarterStartValue(): string {
+function currentQuarterStartValue(): string {
   const now = new Date();
   const quarterStartMonth = Math.floor(now.getMonth() / 3) * 3; // 0, 3, 6, 9
   return [now.getFullYear(), String(quarterStartMonth + 1).padStart(2, '0'), '01'].join('-');
@@ -310,17 +310,6 @@ export async function filterTableBySearch(page: Page, term: string): Promise<boo
     }
   }
   return false;
-}
-
-export async function clickFirstVisible(candidates: Locator[]) {
-  for (const candidate of candidates) {
-    if (!(await candidate.count())) continue;
-    if (await candidate.first().isVisible()) {
-      await candidate.first().click();
-      return;
-    }
-  }
-  throw new Error('No visible matching element found to click.');
 }
 
 // Sets a date input's value via JS, bypassing the native picker's UI.
