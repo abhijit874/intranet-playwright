@@ -1,4 +1,4 @@
-import { expect, Dialog, Page } from '@playwright/test';
+import { expect, Dialog, Locator, Page } from '@playwright/test';
 import { login } from '../../utils/login_helper';
 import { filterTableBySearch } from '../../utils/test_helpers';
 
@@ -116,6 +116,80 @@ export class ContributionsApprovalPage {
   // the modal is closed (the record cannot be approved). Returns the outcome.
   async approveContribution(params: ContributionSearchParams): Promise<'approved' | 'quota-blocked'> {
     const modal = await this.openActionModal(params);
+    return this.resolveActionModal(modal);
+  }
+
+  // Approves the first pending record in the table, whatever it is — for runs
+  // against existing data, where any pending record proves the approval flow.
+  // Returns null when nothing is pending (so the caller can create a record).
+  async approveFirstPending(): Promise<'approved' | 'quota-blocked' | null> {
+    const actionable = this.page
+      .locator('table tbody tr')
+      .filter({ has: this.page.locator('[data-bs-target="#actionModal"][data-contribution-id]') });
+    const row = actionable.first();
+    try {
+      await expect(row).toBeVisible({ timeout: 10000 });
+    } catch {
+      return null; // approval queue is empty
+    }
+
+    const actionTarget = row.locator('[data-bs-target="#actionModal"][data-contribution-id]').first();
+    await actionTarget.scrollIntoViewIfNeeded();
+    await actionTarget.click({ force: true });
+    const modal = this.modalLocator();
+    try {
+      await expect(modal).toBeVisible({ timeout: 20000 });
+    } catch {
+      throw new Error('Action modal did not open for the first pending record.');
+    }
+    return this.resolveActionModal(modal);
+  }
+
+  // Opens the action modal of the first pending record that can take a
+  // deduction — i.e. whose modal shows the deduction fields and no quota
+  // warning. Scans up to `limit` pending rows, closing unsuitable modals along
+  // the way. Returns null when no such record is pending.
+  async openFirstDeductibleModal(limit = 8): Promise<Locator | null> {
+    const actionButtons = this.page.locator(
+      'table tbody tr [data-bs-target="#actionModal"][data-contribution-id]'
+    );
+    try {
+      await expect(actionButtons.first()).toBeVisible({ timeout: 10000 });
+    } catch {
+      return null; // approval queue is empty
+    }
+
+    const count = Math.min(await actionButtons.count(), limit);
+    for (let i = 0; i < count; i++) {
+      const button = actionButtons.nth(i);
+      await button.scrollIntoViewIfNeeded();
+      await button.click({ force: true });
+      const modal = this.modalLocator();
+      try {
+        await expect(modal).toBeVisible({ timeout: 20000 });
+      } catch {
+        continue;
+      }
+
+      const quotaShown = await modal
+        .getByText(QUOTA_EXCEEDED_MESSAGE)
+        .isVisible()
+        .catch(() => false);
+      const canDeduct = await this.page
+        .locator('#deduction_amt_input')
+        .isVisible()
+        .catch(() => false);
+      if (!quotaShown && canDeduct) return modal;
+
+      await modal.locator('button[aria-label="Close"][data-bs-dismiss="modal"]').first().click();
+      await expect(modal).toBeHidden({ timeout: 10000 }).catch(() => undefined);
+    }
+    return null;
+  }
+
+  // Shared tail of the approval flow: the modal either shows the quota-exceeded
+  // message (record cannot be approved) or offers an enabled Approve action.
+  private async resolveActionModal(modal: Locator): Promise<'approved' | 'quota-blocked'> {
     const quotaWarning = modal.getByText(QUOTA_EXCEEDED_MESSAGE);
     if (await quotaWarning.isVisible().catch(() => false)) {
       // Over quota — cannot be approved; assert the message the system shows.

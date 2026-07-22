@@ -23,6 +23,33 @@ export class ContributionsPage {
 
   // --- Redeem ---
 
+  // The Contributions page shows two figures: "Earned benefits" (credited when
+  // a record is approved) and "Available balance to redeem" — only the latter
+  // can actually be redeemed, and the app moves earned benefits into it on its
+  // own schedule, not immediately on approval. The Redeem link can render
+  // enabled even at zero, so the amount itself must be read.
+  // Call after navigateToContributions().
+  async getRedeemableBalance(): Promise<number> {
+    await this.page.waitForLoadState('networkidle').catch(() => undefined);
+    const container = this.page.getByText(/Available balance to redeem/i).first();
+    try {
+      await expect(container).toBeVisible({ timeout: 10000 });
+    } catch {
+      return 0;
+    }
+    const text = (await container.textContent()) ?? '';
+    const m = /Available balance to redeem\s*\(?₹?\)?\s*:?\s*([\d,]+)/i.exec(text);
+    return m ? Number(m[1].replace(/,/g, '')) : 0;
+  }
+
+  // Whether the signed-in employee can actually redeem right now.
+  async hasRedeemableBalance(): Promise<boolean> {
+    const disabledRedeem = this.page.locator('a.btn.btn-secondary.disabled[title="No balance available"]');
+    if (await disabledRedeem.count()) return false;
+    if (!(await this.page.locator('#redeemBtn').count())) return false;
+    return (await this.getRedeemableBalance()) > 0;
+  }
+
   async clickRedeem() {
     const disabledRedeem = this.page.locator('a.btn.btn-secondary.disabled[title="No balance available"]');
     if (await disabledRedeem.count()) {

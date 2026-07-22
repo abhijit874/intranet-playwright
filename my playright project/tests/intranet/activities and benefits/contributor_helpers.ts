@@ -1,7 +1,9 @@
 import { Page } from '@playwright/test';
 import { loginWithEmail } from '../utils/login_helper';
+import { validCurrentQuarterDate } from '../utils/test_helpers';
 import { loadEmployeeCsv } from './employee_csv_helpers';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
+import { ContributionsApprovalPage } from '../pages/activities/ContributionsApprovalPage';
 
 // Contribution access is driven by the employee's GRADE, not their role:
 //   * J6 and below cannot create contributions at all.
@@ -52,6 +54,82 @@ async function canCreate(page: Page, category: string, subcategory?: string): Pr
   } catch {
     return false;
   }
+}
+
+// Creates a contribution as a grade-eligible employee and approves it as hr.
+// Used by the approval spec's empty-queue fallback, and by the redeem spec:
+// an approved benefit record credits its amount to the record's CREATOR, so
+// this chain is also how redeemable balance is produced on demand.
+// Returns the creator's email, the record's unique title, and the approval
+// outcome ('approved' | 'quota-blocked' — the latter credits nothing).
+export async function createAndApproveContribution(
+  page: Page,
+  grade: Grade = 'J11',
+  category = 'Innovation Lab',
+  subcategory = 'Monthly Contribution'
+): Promise<{ email: string; title: string; outcome: 'approved' | 'quota-blocked' }> {
+  const title = `auto-approve-${Date.now()}`;
+  const date = validCurrentQuarterDate();
+
+  const contributions = new ContributionsPage(page);
+  const email = await loginAsContributorFor(page, grade, category, subcategory);
+  await contributions.navigateToContributions();
+  await contributions.clickAddContribution();
+  await contributions.selectCategory(category);
+  await contributions.selectSubcategory(subcategory);
+  await contributions.fillTitle(title);
+  await contributions.fillDate(date);
+  await contributions.attachFile('#timesheet_attachment', 'tests/fixtures/image.png');
+  await contributions.submitContribution();
+  await contributions.assertSaved();
+
+  // The approval table shows the employee's name; the CSV maps email -> name.
+  const employeeName = (await loadEmployeeCsv(page)).find((r) => r.email === email)?.name ?? '';
+
+  await page.context().clearCookies();
+  const approvalPage = new ContributionsApprovalPage(page);
+  await approvalPage.loginAs('hr');
+  await approvalPage.navigateToContributionsApproval();
+  const outcome = await approvalPage.approveContribution({
+    title,
+    date,
+    employeeName,
+    category,
+    subcategory,
+  });
+  return { email, title, outcome };
+}
+
+// Signs in as an employee who has redeemable balance (accrued from their
+// approved contributions), trying grade-eligible CSV candidates in random
+// order. Balance depends entirely on what has been approved for whom, so it
+// cannot be conjured — after maxCandidates attempts null is returned and the
+// caller decides (skip, or point REDEEM_EMAIL at a known account).
+export async function loginAsEmployeeWithBalance(
+  page: Page,
+  maxCandidates = 12
+): Promise<string | null> {
+  const rows = await loadEmployeeCsv(page);
+  const emails = shuffled(
+    rows.filter((r) => /^J(7|8|9|10|11)$/.test(r.grade) && r.email).map((r) => r.email)
+  ).slice(0, maxCandidates);
+
+  const contributions = new ContributionsPage(page);
+  for (const email of emails) {
+    await page.context().clearCookies();
+    try {
+      await loginWithEmail(page, email);
+    } catch {
+      continue; // stale CSV row — employee may have left
+    }
+    try {
+      await contributions.navigateToContributions();
+    } catch {
+      continue;
+    }
+    if (await contributions.hasRedeemableBalance()) return email;
+  }
+  return null;
 }
 
 // Tries each candidate in turn; returns the first email that can still create
