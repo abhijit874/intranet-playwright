@@ -10,8 +10,8 @@ test('approve activity — eligible is approved, over-quota shows the message', 
   await approvalPage.navigateToContributionsApproval();
   await approvalPage.approveContribution({
     title: 'open AI',
-    date: '2026/07/14',
-    employeeName: 'Abhijit Kasbe',
+    date: '2026/07/19',
+    employeeName: 'Akshay Khairnar',
     category: 'Open Source Contribution',
     subcategory: 'Develop new Gem / library',
   });
