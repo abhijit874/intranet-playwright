@@ -1,7 +1,6 @@
 import { Page } from '@playwright/test';
 import { loginWithEmail } from '../utils/login_helper';
-import { EmployeeListPage } from '../pages/EmployeeListPage';
-import { LdRecordPage } from '../pages/activities/LdRecordPage';
+import { loadEmployeeCsv } from './employee_csv_helpers';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
 
 // Contribution access is driven by the employee's GRADE, not their role:
@@ -24,82 +23,19 @@ import { ContributionsPage } from '../pages/activities/ContributionsPage';
 // sidesteps exhausted quotas.
 //
 // Every account shares one password, so any employee can be signed in by email.
+// Grade and email both come straight from the Employees CSV export (see
+// employee_csv_helpers), so no UI scraping or Emp-ID joining is needed.
 
-// Grades that contribution specs can run as. J8 is deliberately absent: employees
-// are identified by joining the Employees tab (grade) with the L&D employee picker
-// (email), and that picker happens to list no J8 employees — so we can't obtain a
-// J8 login. Every category J8 supports is also available at J10/J11, so nothing is
-// lost by routing those specs to another grade.
-export type Grade = 'J7' | 'J9' | 'J10' | 'J11';
+export type Grade = 'J7' | 'J8' | 'J9' | 'J10' | 'J11';
 
-// The Employees tab exposes Emp ID + Grade (no email); the L&D employee picker
-// exposes "email (id)". Emp ID is the join key. Both lookups are cached per worker
-// so only the first spec that needs a given grade pays for them.
-let idToEmailCache: Map<string, string> | null = null;
-const gradeEmailsCache = new Map<Grade, string[]>();
-
-// Reads "email (id)" options from the L&D employee picker.
-// Assumes an hr session is already active (see getEmailsForGrade).
-async function loadIdToEmail(page: Page): Promise<Map<string, string>> {
-  if (idToEmailCache) return idToEmailCache;
-
-  const ld = new LdRecordPage(page);
-  await ld.navigateToCreateLdRecord();
-  await page.locator('#select2-employee-container').click();
-  await page.waitForTimeout(1200);
-  const labels = await page.$$eval('.select2-results__option', (els) =>
-    els.map((e) => (e.textContent || '').trim()).filter((t) => t.includes('@'))
-  );
-  await page.keyboard.press('Escape').catch(() => undefined);
-
-  const map = new Map<string, string>();
-  for (const label of labels) {
-    const m = /^(\S+@\S+?)\s*\((.+)\)$/.exec(label);
-    if (m) map.set(m[2].trim(), m[1].trim());
-  }
-  if (!map.size) throw new Error('Could not read any employees from the L&D employee picker.');
-
-  idToEmailCache = map;
-  return map;
+// Emails of every approved employee at the given grade, from the CSV export.
+async function getEmailsForGrade(page: Page, grade: Grade, refresh = false): Promise<string[]> {
+  const rows = await loadEmployeeCsv(page, { refresh });
+  return rows.filter((r) => r.grade === grade && r.email).map((r) => r.email);
 }
 
-// Emails of every employee at the given grade (that the picker also knows about).
-async function getEmailsForGrade(page: Page, grade: Grade): Promise<string[]> {
-  const cached = gradeEmailsCache.get(grade);
-  if (cached?.length) return cached;
-
-  // A lookup is needed, and each spec starts from a fresh page — so sign in as hr,
-  // who can see both the L&D employee picker and the Employees tab.
-  const employees = new EmployeeListPage(page);
-  await employees.loginAs('hr');
-
-  const idToEmail = await loadIdToEmail(page);
-
-  await employees.navigateToEmployees();
-  await page.waitForTimeout(1000);
-  await employees.searchEmployee(grade);
-  await page.waitForTimeout(1500);
-
-  const ids = await page.$$eval(
-    'table tbody tr',
-    (trs, wanted) =>
-      trs
-        .map((tr) => {
-          const td = Array.from(tr.querySelectorAll('td')).map((c) =>
-            (c.textContent || '').replace(/\s+/g, ' ').trim()
-          );
-          return { empId: td[0], grade: td[6] };
-        })
-        .filter((r) => r.empId && r.grade === wanted)
-        .map((r) => r.empId),
-    grade
-  );
-
-  const emails = ids.map((id) => idToEmail.get(id)).filter((e): e is string => !!e);
-  if (!emails.length) throw new Error(`No employees with a known email found for grade ${grade}.`);
-
-  gradeEmailsCache.set(grade, emails);
-  return emails;
+function shuffled(values: string[]): string[] {
+  return [...values].sort(() => Math.random() - 0.5);
 }
 
 // Can the signed-in contributor still create this category/subcategory? A category
@@ -118,28 +54,58 @@ async function canCreate(page: Page, category: string, subcategory?: string): Pr
   }
 }
 
-// Signs in as an employee of the given grade who can STILL create the given
-// category/subcategory — i.e. whose quota for it isn't exhausted — trying
-// candidates in random order. Returns the chosen employee's email.
-export async function loginAsContributorFor(
+// Tries each candidate in turn; returns the first email that can still create
+// the category, or null when every candidate is exhausted or cannot sign in.
+async function firstUsableContributor(
   page: Page,
-  grade: Grade,
+  emails: string[],
   category: string,
   subcategory?: string
-): Promise<string> {
-  const emails = [...(await getEmailsForGrade(page, grade))].sort(() => Math.random() - 0.5);
-
+): Promise<string | null> {
   for (const email of emails) {
-    // The grade lookup signs in as hr, so drop that session before signing in as
-    // the contributor (otherwise the login form is skipped for the dashboard).
+    // The CSV download may have signed in as hr, so drop any session before
+    // signing in as the contributor (otherwise the login form is skipped for
+    // the dashboard).
     await page.context().clearCookies();
-    await loginWithEmail(page, email);
+    try {
+      await loginWithEmail(page, email);
+    } catch {
+      // The CSV may be stale — this employee may have left since it was
+      // downloaded. Just move on to the next candidate.
+      continue;
+    }
     if (await canCreate(page, category, subcategory)) {
       // Leave the half-filled form behind so the spec starts from a clean page.
       await page.goto('/');
       return email;
     }
   }
+  return null;
+}
+
+// Signs in as an employee of the given grade who can STILL create the given
+// category/subcategory — i.e. whose quota for it isn't exhausted — trying
+// candidates in random order. Returns the chosen employee's email.
+//
+// The CSV on disk is reused indefinitely; only when it yields no usable
+// candidate is a fresh copy downloaded (replacing the old one) and any NEW
+// employees it lists tried as well.
+export async function loginAsContributorFor(
+  page: Page,
+  grade: Grade,
+  category: string,
+  subcategory?: string
+): Promise<string> {
+  let emails = await getEmailsForGrade(page, grade);
+  const found = await firstUsableContributor(page, shuffled(emails), category, subcategory);
+  if (found) return found;
+
+  // Nobody in the current CSV worked — refresh it and try anyone new.
+  const freshEmails = (await getEmailsForGrade(page, grade, true)).filter(
+    (e) => !emails.includes(e)
+  );
+  const foundFresh = await firstUsableContributor(page, shuffled(freshEmails), category, subcategory);
+  if (foundFresh) return foundFresh;
 
   const what = subcategory ? `${category} / ${subcategory}` : category;
   throw new Error(

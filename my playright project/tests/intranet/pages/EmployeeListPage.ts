@@ -24,41 +24,6 @@ export class EmployeeListPage {
     await this.page.getByText('Show All').click();
   }
 
-  // Returns the Emp IDs of employees whose grade falls within [minGrade, maxGrade]
-  // (the Employees table's Grade column holds values like "J11"). The employee
-  // pickers elsewhere label options "email (id)", so Emp ID is the join key.
-  async getEmployeeIdsWithGradeInRange(minGrade = 7, maxGrade = 11): Promise<string[]> {
-    await this.navigateToEmployees();
-    await this.page.waitForLoadState('networkidle').catch(() => undefined);
-    const rows = this.page.locator('table tbody tr');
-    try {
-      await expect(rows.first()).toBeVisible({ timeout: 20000 });
-    } catch {
-      throw new Error('Employees table did not load.');
-    }
-
-    const ids = await rows.evaluateAll((trs, range) => {
-      const [min, max] = range as number[];
-      return trs
-        .map((tr) => {
-          const td = Array.from(tr.querySelectorAll('td')).map((c) =>
-            (c.textContent || '').replace(/\s+/g, ' ').trim()
-          );
-          return { empId: td[0], grade: td[6] };
-        })
-        .filter(({ empId, grade }) => {
-          const m = /^J(\d+)$/.exec(grade || '');
-          return !!empId && !!m && Number(m[1]) >= min && Number(m[1]) <= max;
-        })
-        .map(({ empId }) => empId);
-    }, [minGrade, maxGrade]);
-
-    if (!ids.length) {
-      throw new Error(`No employees found with a grade between J${minGrade} and J${maxGrade}.`);
-    }
-    return ids;
-  }
-
   async searchEmployee(name: string) {
     await this.page.locator('#dt-search-0').waitFor({ state: 'visible' });
     await this.page.locator('#dt-search-0').fill(name);

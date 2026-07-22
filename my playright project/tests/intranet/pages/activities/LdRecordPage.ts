@@ -1,7 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { login } from '../../utils/login_helper';
 import {
-  selectFromSingleSelect2,
   assertActivityDateWithinRange,
   setDateByEvaluate,
   selectEmployeeFromPicker,
@@ -104,8 +103,8 @@ export class LdRecordPage {
   // Selects the first of the given employees (by Emp ID) that the picker offers,
   // and returns the chosen "email (id)" label. Options are labelled "email (id)"
   // and the picker's search only matches the email, so the rendered options are
-  // scanned for the id instead. Pair with
-  // EmployeeListPage.getEmployeeIdsWithGradeInRange() to restrict to J7–J11.
+  // scanned for the id instead. Pair with ld_helpers'
+  // loginAndGetLdEligibleEmployeeIds() to restrict to J7–J11.
   async selectLdEmployeeByIds(empIds: string[]): Promise<string> {
     await this.page.locator('#select2-employee-container').click();
     const results = this.page.locator('.select2-results__option');
