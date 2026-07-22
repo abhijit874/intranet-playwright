@@ -30,6 +30,16 @@ export class BepReportsPage {
     await this.page.locator('#quarter').selectOption(quarter);
   }
 
+  // The page opens with the CURRENT financial-year quarter pre-selected, so
+  // tests that want "the ongoing quarter" simply leave the selects alone.
+  // This reads whatever period is in effect, for logging and file naming.
+  async getSelectedPeriod(): Promise<{ year: string; quarter: string }> {
+    return {
+      year: await this.page.locator('#year').inputValue(),
+      quarter: await this.page.locator('#quarter').inputValue(),
+    };
+  }
+
   async downloadApprovedBenefits(downloadDir: string) {
     if (!fs.existsSync(downloadDir)) fs.mkdirSync(downloadDir, { recursive: true });
     await this.page
