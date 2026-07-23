@@ -1,7 +1,11 @@
 import { test } from '@playwright/test';
 import { AllocationRequestPage } from '../pages/AllocationRequestPage';
 import { currentDateValue } from '../utils/test_helpers';
-import { createReallocationRequest, fillAllocation } from './allocation_request_helpers';
+import {
+  createDeallocationRequest,
+  createReallocationRequest,
+  selectEmployeeWithAllocation,
+} from './allocation_request_helpers';
 
 // The deallocation date must not be in the future — use today.
 const DEALLOCATION_DATE = currentDateValue();
@@ -28,14 +32,9 @@ test('create deallocation request', async ({ page }) => {
   const rp = new AllocationRequestPage(page);
   await rp.loginAs('admin');
   await rp.navigateTo();
-  await rp.clickCreateRequest();
-  await rp.selectEmployee('abhijit.kasbe@joshsoftware.com (210)');
-  await rp.checkDeallocationCheckbox();
-  // deallocate from whichever project the employee is currently on
-  await rp.checkFirstDeallocationProject();
-  await rp.setDeallocationDate(DEALLOCATION_DATE);
-  await rp.submit();
-  await rp.assertRequestCreated();
+  // Picks a random employee, and keeps picking until one with an allocated
+  // project turns up — many employees have nothing to deallocate.
+  await createDeallocationRequest(rp, DEALLOCATION_DATE);
 });
 
 test('create allocation and deallocation request', async ({ page }) => {
@@ -43,11 +42,19 @@ test('create allocation and deallocation request', async ({ page }) => {
   await rp.loginAs('admin');
   await rp.navigateTo();
   await rp.clickCreateRequest();
-  await rp.selectEmployee('amar.jadhav@joshsoftware.com (595)');
-  await fillAllocation(rp, { project: 'Innovation lab' });
-  await rp.checkDeallocationCheckbox();
-  await rp.checkFirstDeallocationProject();
+  // Deallocation half: a random employee who actually has a project to leave.
+  const { project: deallocatedProject } = await selectEmployeeWithAllocation(rp);
   await rp.setDeallocationDate(DEALLOCATION_DATE);
+  // Allocation half: a random project — retried once if it happens to match the
+  // project being deallocated (the app rejects duplicate allocations).
+  await rp.checkAllocationCheckbox();
+  let allocationProject = await rp.selectRandomAllocationProject();
+  if (allocationProject === deallocatedProject) {
+    allocationProject = await rp.selectRandomAllocationProject();
+  }
+  await rp.selectRandomBillingCode();
+  await rp.fillAllocationHours('160');
+  await rp.fillBillingHours('160');
   await rp.submit();
   await rp.assertRequestCreated();
 });

@@ -2,9 +2,9 @@ import { test } from '@playwright/test';
 import { AllocationRequestPage } from '../pages/AllocationRequestPage';
 import { AllocationRequestApprovalPage } from '../pages/AllocationRequestApprovalPage';
 import { PendingFeedbackPage } from '../pages/PendingFeedbackPage';
-import { currentDateValue } from '../utils/test_helpers';
 import {
   createAllocationRequest,
+  createDeallocationRequest,
   createReallocationRequest,
   employeeDisplayName,
   switchToHrApproval,
@@ -98,20 +98,14 @@ test('edit rejected request', async ({ page }) => {
 // pending performance feedback for that employee/project, then hr approves the
 // deallocation. (Approving a deallocation is blocked until its feedback is filled.)
 test('approve deallocation request', async ({ page }) => {
-  const employee = 'aditya.yadav@joshsoftware.com (834)';
-  const name = employeeDisplayName(employee);
-
   // 1. admin creates a deallocation request (date must not be in the future)
+  //    for a random employee who actually has an allocated project — employees
+  //    without one are skipped until a suitable one is found.
   const rp = new AllocationRequestPage(page);
   await rp.loginAs('admin');
   await rp.navigateTo();
-  await rp.clickCreateRequest();
-  await rp.selectEmployee(employee);
-  await rp.checkDeallocationCheckbox();
-  const project = await rp.checkFirstDeallocationProject();
-  await rp.setDeallocationDate(currentDateValue());
-  await rp.submit();
-  await rp.assertRequestCreated();
+  const { employee, project } = await createDeallocationRequest(rp);
+  const name = employeeDisplayName(employee);
 
   // 2. hr fills the pending feedback for that employee + deallocated project
   await page.context().clearCookies();

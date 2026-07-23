@@ -55,44 +55,57 @@ export async function fillAllocation(rp: AllocationRequestPage, d: AllocationDet
   await rp.fillBillingHours(d.billingHours ?? '160');
 }
 
+// Deallocation needs an employee who actually HAS a current allocation — after
+// selecting an employee and ticking Deallocation, the form lists their allocated
+// projects, and for many employees that list is empty. So: pick a random
+// employee, and if no project shows up to deallocate, pick another, until one
+// with an allocated project is found. Ticks the first allocated project.
+// Assumes the Create Request form is already open.
+// Returns the chosen employee ("email (id)") and the ticked project.
+export async function selectEmployeeWithAllocation(
+  rp: AllocationRequestPage,
+  maxAttempts = 8
+): Promise<{ employee: string; project: string }> {
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const employee = await rp.selectRandomEmployee();
+    await rp.checkDeallocationCheckbox();
+    const project = await rp.checkFirstDeallocationProjectIfAny();
+    if (project) return { employee, project };
+  }
+  throw new Error(
+    `Could not find a randomly-picked employee with a current allocation after ${maxAttempts} attempts.`
+  );
+}
+
+// Creates a deallocation request for a random employee with a current
+// allocation (see selectEmployeeWithAllocation). The deallocation date must not
+// be in the future; it defaults to today.
+export async function createDeallocationRequest(
+  rp: AllocationRequestPage,
+  date = currentDateValue()
+): Promise<{ employee: string; project: string }> {
+  await rp.clickCreateRequest();
+  const chosen = await selectEmployeeWithAllocation(rp);
+  await rp.setDeallocationDate(date);
+  await rp.submit();
+  await rp.assertRequestCreated();
+  return chosen;
+}
+
 // Creates a reallocation request: deallocates the employee from a project they
 // are currently on (deallocation date = yesterday) and reallocates them to the
 // SAME project (allocation start = today, allocation end left at its auto-filled
 // default).
 //
-// Picks a RANDOM employee and uses whichever project they're actually allocated
-// to, so both halves of the request act on the same project. Not every employee
-// has a current allocation, so it retries other random employees until one does.
-// Pass `employee` to target a specific person instead.
-// Returns the chosen employee ("email (id)") and the project used.
+// Picks the employee via selectEmployeeWithAllocation — a random employee,
+// retried until one with a current allocation is found — and uses whichever
+// project they're actually on, so both halves of the request act on the same
+// project. Returns the chosen employee ("email (id)") and the project used.
 export async function createReallocationRequest(
-  rp: AllocationRequestPage,
-  employee?: string
+  rp: AllocationRequestPage
 ): Promise<{ employee: string; project: string }> {
   await rp.clickCreateRequest();
-
-  const MAX_ATTEMPTS = 8;
-  let chosenEmployee = '';
-  let project: string | null = null;
-
-  for (let attempt = 0; attempt < MAX_ATTEMPTS && !project; attempt += 1) {
-    chosenEmployee = employee ?? (await rp.selectRandomEmployee());
-    if (employee) await rp.selectEmployee(employee);
-
-    // deallocate from a project the employee is currently on
-    await rp.checkDeallocationCheckbox();
-    project = await rp.checkFirstDeallocationProjectIfAny();
-
-    if (!project && employee) {
-      throw new Error(`Employee "${employee}" has no current allocation to reallocate.`);
-    }
-  }
-
-  if (!project) {
-    throw new Error(
-      `Could not find a randomly-picked employee with a current allocation after ${MAX_ATTEMPTS} attempts.`
-    );
-  }
+  const { employee: chosenEmployee, project } = await selectEmployeeWithAllocation(rp);
 
   await rp.setDeallocationDate(pastDateValue(1));
 
