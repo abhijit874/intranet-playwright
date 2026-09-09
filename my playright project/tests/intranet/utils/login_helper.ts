@@ -29,6 +29,19 @@ const USERS = {
     email: process.env.MANAGER_USER_EMAIL ?? '',
     password: process.env.MANAGER_USER_PASSWORD ?? '',
   },
+  // L&D account. Shares the common employee password, so only the email needs
+  // to be set (LD_USER_EMAIL); LD_USER_PASSWORD is honoured if it ever diverges.
+  ld: {
+    email: process.env.LD_USER_EMAIL ?? '',
+    password: process.env.LD_USER_PASSWORD ?? process.env.EMPLOYEE_USER_PASSWORD ?? '',
+  },
+  // Marketing account (designation "Senior Executive - Marketing"). Used as a
+  // non-owner role in the Events access tests. Same convention as ld: set
+  // MARKETING_USER_EMAIL only, unless the password ever diverges.
+  marketing: {
+    email: process.env.MARKETING_USER_EMAIL ?? '',
+    password: process.env.MARKETING_USER_PASSWORD ?? process.env.EMPLOYEE_USER_PASSWORD ?? '',
+  },
 };
 
 export type UserKey = keyof typeof USERS;
