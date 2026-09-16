@@ -24,7 +24,9 @@ test('mentorgain for mentor', async ({ page }) => {
 // validation (the same way a malicious user or direct API call would). The
 // backend MUST still reject a future date. submitAndAssertRejected() inspects the
 // create POST's response: a 3xx redirect means a record was actually created, so
-// the test fails — that failure is the bug being tracked.
+// the test fails. The L&D record form DOES enforce this, so these tests pass
+// normally. That is the difference worth knowing: the employee Add Contribution
+// form is missing the same check, and its equivalent tests carry test.fail().
 const FUTURE_DATE = '2026-12-11'; // a future date the app must reject
 
 test('mentorgain for mentor — future date is rejected by the server', async ({ page }) => {

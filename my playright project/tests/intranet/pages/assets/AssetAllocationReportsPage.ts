@@ -107,4 +107,62 @@ export class AssetAllocationReportsPage {
     await this.openPidWiseReportModal();
     return this.downloadFromPidWiseModal(downloadDir);
   }
+
+  // --- Active Asset Register -------------------------------------------------
+  // The third item in the download dropdown (href="#active_asset_register_modal").
+  // Same shape as the PID-wise report: pick a month, then Download.
+
+  async openActiveAssetRegisterModal() {
+    await this.page
+      .locator('a.dropdown-item', { hasText: 'Active Asset Register' })
+      .click();
+
+    const modal = this.page.locator('#active_asset_register_modal');
+    try {
+      await expect(modal).toBeVisible();
+    } catch {
+      throw new Error('Active Asset Register modal did not open.');
+    }
+    return modal;
+  }
+
+  // Selects a month in the Active Asset Register modal and returns the chosen
+  // label (e.g. "Jul-2026"). Pass an <option> value like "2026-07", or omit to
+  // take the most recent *previous* month (the second option), which avoids
+  // hardcoding a date that ages out of the rolling list.
+  async selectActiveAssetRegisterMonth(month?: string): Promise<string> {
+    const select = this.page.locator('#active_asset_register_modal #activeAssetRegisterReportDate');
+    try {
+      await expect(select).toBeVisible();
+    } catch {
+      throw new Error('Active Asset Register month dropdown (#activeAssetRegisterReportDate) not found.');
+    }
+
+    if (month) {
+      await select.selectOption(month);
+    } else {
+      const previousValue = await select.locator('option').nth(1).getAttribute('value');
+      await select.selectOption(previousValue ?? '');
+    }
+    return ((await select.locator('option:checked').textContent()) ?? '').trim();
+  }
+
+  async downloadFromActiveAssetRegisterModal(downloadDir: string) {
+    if (!fs.existsSync(downloadDir)) fs.mkdirSync(downloadDir, { recursive: true });
+    const modal = this.page.locator('#active_asset_register_modal');
+    const [download] = await Promise.all([
+      // Report generation can exceed the 15s actionTimeout, so wait longer.
+      this.page.waitForEvent('download', { timeout: 60_000 }),
+      modal.locator('button[type="submit"]', { hasText: 'Download' }).click(),
+    ]);
+    const filePath = path.join(downloadDir, download.suggestedFilename());
+    await download.saveAs(filePath);
+    return filePath;
+  }
+
+  // Downloads the Active Asset Register for the default (current) month.
+  async downloadActiveAssetRegister(downloadDir: string) {
+    await this.openActiveAssetRegisterModal();
+    return this.downloadFromActiveAssetRegisterModal(downloadDir);
+  }
 }

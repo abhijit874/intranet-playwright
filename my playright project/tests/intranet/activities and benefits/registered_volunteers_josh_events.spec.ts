@@ -3,49 +3,54 @@ import { ContributionsPage } from '../pages/activities/ContributionsPage';
 import { loginAsContributorFor } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
-// Fills the conference-specific required fields the subcategory form mandates.
-async function fillConferenceRequiredFields(page: import('@playwright/test').Page) {
-  await page.getByLabel('Conference name *').fill('Tech Conference');
-  await page.getByLabel('Location *').fill('Pune');
-  await page.getByLabel('Description *').fill('Conference presentation session');
-  await page.getByLabel('Duration (In minutes) *').fill('30');
-}
+/**
+ * Registered Volunteers -> Josh Events.
+ *
+ * The only subcategory under the Registered Volunteers category, and the whole
+ * category was previously untested.
+ *
+ * Grade rule: Josh Events is restricted to J10 and J11 (see contributor_helpers),
+ * so the contributor is picked from J11 rather than the J9 used by most of the
+ * public-speaking specs.
+ *
+ * The form is the simplest of any subcategory: title and activity date only, no
+ * body fields and no attachment.
+ */
+const CATEGORY = 'Registered Volunteers';
+const SUBCATEGORY = 'Josh Events';
+const GRADE = 'J11';
 
-test('submit conference presentation contribution', async ({ page }) => {
+test('registered volunteers josh events contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await loginAsContributorFor(page, 'J9', 'Conference', 'Presentation in Conference (OFFLINE)');
+  await loginAsContributorFor(page, GRADE, CATEGORY, SUBCATEGORY);
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Conference');
-  await contributionsPage.selectSubcategory('Presentation in Conference (OFFLINE)');
-  await contributionsPage.fillTitle('open code');
+  await contributionsPage.selectCategory(CATEGORY);
+  await contributionsPage.selectSubcategory(SUBCATEGORY);
+  await contributionsPage.fillTitle(`josh-events-${Date.now()}`);
   await contributionsPage.fillDate(validCurrentQuarterDate());
-  await fillConferenceRequiredFields(page);
   await contributionsPage.submitContribution();
   await contributionsPage.assertSaved();
 });
 
-// Self-contained: creates a fresh Presentation record with a unique title, then
-// opens that exact record and edits it.
-test('edit existing conference presentation contribution', async ({ page }) => {
-  const originalTitle = `conference-presentation-${Date.now()}`;
-  const updatedTitle = `conference-presentation-edited-${Date.now()}`;
+// Self-contained: creates a fresh record with a unique title, then opens that
+// exact record and edits it.
+test('edit existing registered volunteers josh events contribution', async ({ page }) => {
+  const originalTitle = `josh-events-${Date.now()}`;
+  const updatedTitle = `josh-events-edited-${Date.now()}`;
 
   const contributionsPage = new ContributionsPage(page);
-  await loginAsContributorFor(page, 'J9', 'Conference', 'Presentation in Conference (OFFLINE)');
+  await loginAsContributorFor(page, GRADE, CATEGORY, SUBCATEGORY);
 
-  // create the record this test will edit
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Conference');
-  await contributionsPage.selectSubcategory('Presentation in Conference (OFFLINE)');
+  await contributionsPage.selectCategory(CATEGORY);
+  await contributionsPage.selectSubcategory(SUBCATEGORY);
   await contributionsPage.fillTitle(originalTitle);
   await contributionsPage.fillDate(validCurrentQuarterDate());
-  await fillConferenceRequiredFields(page);
   await contributionsPage.submitContribution();
   await contributionsPage.assertSaved();
 
-  // open that exact record and edit it
   await contributionsPage.navigateToContributions();
   await contributionsPage.openRowForEdit(originalTitle);
   await contributionsPage.fillTitle(updatedTitle);
@@ -64,43 +69,34 @@ test('edit existing conference presentation contribution', async ({ page }) => {
 // signal to delete the annotation.
 const FUTURE_DATE = '2026-12-11'; // a future date the app must reject
 
-test.fail('conference presentation — future date is rejected by the server', async ({ page }) => {
-  const stamp = Date.now();
-  const title = `conference-presentation-future-${stamp}`; // unique per run, avoids collisions
-
+test.fail('josh events — future date is rejected by the server', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await loginAsContributorFor(page, 'J9', 'Conference', 'Presentation in Conference (OFFLINE)');
+  await loginAsContributorFor(page, GRADE, CATEGORY, SUBCATEGORY);
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Conference');
-  await contributionsPage.selectSubcategory('Presentation in Conference (OFFLINE)');
-  await contributionsPage.fillTitle(title);
+  await contributionsPage.selectCategory(CATEGORY);
+  await contributionsPage.selectSubcategory(SUBCATEGORY);
+  await contributionsPage.fillTitle(`josh-events-future-${Date.now()}`);
   await contributionsPage.forceActivityDate(FUTURE_DATE); // bypasses client-side validation
-  await fillConferenceRequiredFields(page);
   await contributionsPage.submitAndAssertRejected('future Activity Date');
 });
 
 // SERVER-SIDE validation check (previous-quarter date).
 // The Activity Date input blocks dates before the current quarter with `min`, but
 // forceActivityDate() bypasses that. The backend MUST still reject a date from a
-// previous quarter. submitAndAssertRejected() fails if the create POST returns a
-// 3xx redirect — i.e. a record was actually created with an out-of-range date.
+// previous quarter.
 const PREVIOUS_QUARTER_DATE = previousQuarterDateValue(); // last day of the prior quarter
 
-test.fail('conference presentation — previous-quarter date is rejected by the server', async ({ page }) => {
-  const stamp = Date.now();
-  const title = `conference-presentation-prevq-${stamp}`; // unique per run, avoids collisions
-
+test.fail('josh events — previous-quarter date is rejected by the server', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await loginAsContributorFor(page, 'J9', 'Conference', 'Presentation in Conference (OFFLINE)');
+  await loginAsContributorFor(page, GRADE, CATEGORY, SUBCATEGORY);
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Conference');
-  await contributionsPage.selectSubcategory('Presentation in Conference (OFFLINE)');
-  await contributionsPage.fillTitle(title);
+  await contributionsPage.selectCategory(CATEGORY);
+  await contributionsPage.selectSubcategory(SUBCATEGORY);
+  await contributionsPage.fillTitle(`josh-events-prevq-${Date.now()}`);
   await contributionsPage.forceActivityDate(PREVIOUS_QUARTER_DATE); // bypasses client-side validation
-  await fillConferenceRequiredFields(page);
   await contributionsPage.submitAndAssertRejected('previous-quarter Activity Date');
 });

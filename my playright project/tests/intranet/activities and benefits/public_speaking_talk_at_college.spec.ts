@@ -3,52 +3,60 @@ import { ContributionsPage } from '../pages/activities/ContributionsPage';
 import { loginAsContributorFor } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
-// Fills the conference-specific required fields the subcategory form mandates.
-async function fillConferenceRequiredFields(page: import('@playwright/test').Page) {
-  await page.getByLabel('Conference name *').fill('Tech Conference');
-  await page.getByLabel('Location *').fill('Pune');
-  await page.getByLabel('Description *').fill('Conference presentation session');
-  await page.getByLabel('Duration (In minutes) *').fill('30');
+/**
+ * Public Speaking -> Talk at College.
+ *
+ * Grade rule: Public Speaking is open to J7..J11, so any eligible contributor
+ * will do. The form asks for three body fields on top of the usual title and
+ * activity date: College name, Location and No of attendees. There is no
+ * attachment on this subcategory, unlike Meetup.
+ */
+const CATEGORY = 'Public Speaking';
+const SUBCATEGORY = 'Talk at College';
+
+async function fillTalkAtCollegeFields(cp: ContributionsPage, attendees = '60') {
+  await cp.fillFieldByLabel('College name *', 'COEP Pune');
+  await cp.fillFieldByLabel('Location *', 'Pune');
+  await cp.fillFieldByLabel('No of attendees *', attendees);
 }
 
-test('submit conference presentation contribution', async ({ page }) => {
+test('public speaking talk at college contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await loginAsContributorFor(page, 'J9', 'Conference', 'Presentation in Conference (OFFLINE)');
+  await loginAsContributorFor(page, 'J9', CATEGORY, SUBCATEGORY);
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Conference');
-  await contributionsPage.selectSubcategory('Presentation in Conference (OFFLINE)');
-  await contributionsPage.fillTitle('open code');
+  await contributionsPage.selectCategory(CATEGORY);
+  await contributionsPage.selectSubcategory(SUBCATEGORY);
+  await contributionsPage.fillTitle(`talk-at-college-${Date.now()}`);
   await contributionsPage.fillDate(validCurrentQuarterDate());
-  await fillConferenceRequiredFields(page);
+  await fillTalkAtCollegeFields(contributionsPage);
   await contributionsPage.submitContribution();
   await contributionsPage.assertSaved();
 });
 
-// Self-contained: creates a fresh Presentation record with a unique title, then
-// opens that exact record and edits it.
-test('edit existing conference presentation contribution', async ({ page }) => {
-  const originalTitle = `conference-presentation-${Date.now()}`;
-  const updatedTitle = `conference-presentation-edited-${Date.now()}`;
+// Self-contained: creates a fresh record with a unique title, then opens that
+// exact record and edits it.
+test('edit existing public speaking talk at college contribution', async ({ page }) => {
+  const originalTitle = `talk-at-college-${Date.now()}`;
+  const updatedTitle = `talk-at-college-edited-${Date.now()}`;
 
   const contributionsPage = new ContributionsPage(page);
-  await loginAsContributorFor(page, 'J9', 'Conference', 'Presentation in Conference (OFFLINE)');
+  await loginAsContributorFor(page, 'J9', CATEGORY, SUBCATEGORY);
 
-  // create the record this test will edit
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Conference');
-  await contributionsPage.selectSubcategory('Presentation in Conference (OFFLINE)');
+  await contributionsPage.selectCategory(CATEGORY);
+  await contributionsPage.selectSubcategory(SUBCATEGORY);
   await contributionsPage.fillTitle(originalTitle);
   await contributionsPage.fillDate(validCurrentQuarterDate());
-  await fillConferenceRequiredFields(page);
+  await fillTalkAtCollegeFields(contributionsPage);
   await contributionsPage.submitContribution();
   await contributionsPage.assertSaved();
 
-  // open that exact record and edit it
   await contributionsPage.navigateToContributions();
   await contributionsPage.openRowForEdit(originalTitle);
   await contributionsPage.fillTitle(updatedTitle);
+  await contributionsPage.fillFieldByLabel('No of attendees *', '85');
   await contributionsPage.submitEdit();
   await contributionsPage.assertUpdated();
 });
@@ -64,43 +72,36 @@ test('edit existing conference presentation contribution', async ({ page }) => {
 // signal to delete the annotation.
 const FUTURE_DATE = '2026-12-11'; // a future date the app must reject
 
-test.fail('conference presentation — future date is rejected by the server', async ({ page }) => {
-  const stamp = Date.now();
-  const title = `conference-presentation-future-${stamp}`; // unique per run, avoids collisions
-
+test.fail('talk at college — future date is rejected by the server', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await loginAsContributorFor(page, 'J9', 'Conference', 'Presentation in Conference (OFFLINE)');
+  await loginAsContributorFor(page, 'J9', CATEGORY, SUBCATEGORY);
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Conference');
-  await contributionsPage.selectSubcategory('Presentation in Conference (OFFLINE)');
-  await contributionsPage.fillTitle(title);
+  await contributionsPage.selectCategory(CATEGORY);
+  await contributionsPage.selectSubcategory(SUBCATEGORY);
+  await contributionsPage.fillTitle(`talk-at-college-future-${Date.now()}`);
   await contributionsPage.forceActivityDate(FUTURE_DATE); // bypasses client-side validation
-  await fillConferenceRequiredFields(page);
+  await fillTalkAtCollegeFields(contributionsPage);
   await contributionsPage.submitAndAssertRejected('future Activity Date');
 });
 
 // SERVER-SIDE validation check (previous-quarter date).
 // The Activity Date input blocks dates before the current quarter with `min`, but
 // forceActivityDate() bypasses that. The backend MUST still reject a date from a
-// previous quarter. submitAndAssertRejected() fails if the create POST returns a
-// 3xx redirect — i.e. a record was actually created with an out-of-range date.
+// previous quarter.
 const PREVIOUS_QUARTER_DATE = previousQuarterDateValue(); // last day of the prior quarter
 
-test.fail('conference presentation — previous-quarter date is rejected by the server', async ({ page }) => {
-  const stamp = Date.now();
-  const title = `conference-presentation-prevq-${stamp}`; // unique per run, avoids collisions
-
+test.fail('talk at college — previous-quarter date is rejected by the server', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
-  await loginAsContributorFor(page, 'J9', 'Conference', 'Presentation in Conference (OFFLINE)');
+  await loginAsContributorFor(page, 'J9', CATEGORY, SUBCATEGORY);
 
   await contributionsPage.navigateToContributions();
   await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Conference');
-  await contributionsPage.selectSubcategory('Presentation in Conference (OFFLINE)');
-  await contributionsPage.fillTitle(title);
+  await contributionsPage.selectCategory(CATEGORY);
+  await contributionsPage.selectSubcategory(SUBCATEGORY);
+  await contributionsPage.fillTitle(`talk-at-college-prevq-${Date.now()}`);
   await contributionsPage.forceActivityDate(PREVIOUS_QUARTER_DATE); // bypasses client-side validation
-  await fillConferenceRequiredFields(page);
+  await fillTalkAtCollegeFields(contributionsPage);
   await contributionsPage.submitAndAssertRejected('previous-quarter Activity Date');
 });

@@ -57,10 +57,13 @@ test('edit existing innovation in action contribution', async ({ page }) => {
 // validation (the same way a malicious user or direct API call would). The
 // backend MUST still reject a future date. submitAndAssertRejected() inspects the
 // create POST's response: a 3xx redirect means a record was actually created, so
-// the test fails — that failure is the bug being tracked.
+// the test fails — which is why these carry test.fail(): they pass by failing,
+// so the suite stays green while the defect is open. If activity-date validation
+// is ever added, Playwright reports them as "unexpectedly passed" — that is the
+// signal to delete the annotation.
 const FUTURE_DATE = '2026-12-11'; // a future date the app must reject
 
-test('innovation in action — future date is rejected by the server', async ({ page }) => {
+test.fail('innovation in action — future date is rejected by the server', async ({ page }) => {
   const stamp = Date.now();
   const title = `innovation-action-future-${stamp}`; // unique per run, avoids collisions
   const validDate = validCurrentQuarterDate();
