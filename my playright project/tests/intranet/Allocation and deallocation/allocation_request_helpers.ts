@@ -26,7 +26,13 @@ export async function switchToHrApproval(page: Page): Promise<AllocationRequestA
 // Shared builders for the allocation/deallocation request specs.
 
 export interface AllocationDetails {
-  project: string;
+  // Omit to pick a random project whose auto-filled date range is valid, which
+  // is what tests that don't assert on the project should do.
+  //
+  // Innovation Lab is deliberately NOT offered here: nobody requests an allocation
+  // to it. An employee deallocated from every project is placed in Innovation Lab
+  // automatically, so it never appears in the project dropdown.
+  project?: string;
   billingCode?: string;
   start?: string;
   end?: string;
@@ -42,7 +48,11 @@ export interface AllocationDetails {
 // passes explicit (in-range) values — hardcoded dates can fall outside the range.
 export async function fillAllocation(rp: AllocationRequestPage, d: AllocationDetails) {
   await rp.checkAllocationCheckbox();
-  await rp.selectAllocationProject(d.project);
+  if (d.project) {
+    await rp.selectAllocationProject(d.project);
+  } else {
+    await rp.selectRandomAllocationProject();
+  }
   // Billing code isn't asserted anywhere, so pick one at random unless specified.
   if (d.billingCode) {
     await rp.selectBillingCode(d.billingCode);

@@ -207,6 +207,54 @@ export class ContributionsApprovalPage {
     throw new Error('No approvable action found in modal.');
   }
 
+  // Rejects the first pending contribution in the queue, whichever it happens to
+  // be. Use this rather than naming a record: a hardcoded title/employee/date
+  // stops existing once that record is approved, rejected or frozen at quarter
+  // end. Returns the rejected record's title, or null when the queue is empty.
+  async rejectFirstPending(reason = 'Rejecting this activity from approval flow.'): Promise<string | null> {
+    const actionable = this.page
+      .locator('table tbody tr')
+      .filter({ has: this.page.locator('[data-bs-target="#actionModal"][data-contribution-id]') });
+    const row = actionable.first();
+    try {
+      await expect(row).toBeVisible({ timeout: 10000 });
+    } catch {
+      return null; // approval queue is empty
+    }
+    const cells = await row.locator('td').allInnerTexts();
+    const title = (cells[2] ?? '').replace(/\s+/g, ' ').trim();
+
+    const actionTarget = row.locator('[data-bs-target="#actionModal"][data-contribution-id]').first();
+    await actionTarget.scrollIntoViewIfNeeded();
+    await actionTarget.click({ force: true });
+
+    const rejectButton = this.page.locator('#showRejectBox');
+    try {
+      await expect(rejectButton).toBeVisible({ timeout: 20000 });
+    } catch {
+      throw new Error('Reject button not found in the action modal.');
+    }
+    await rejectButton.click();
+
+    const modal = this.modalLocator();
+    const rejectReasonField = modal
+      .locator('#reject_reason:visible, textarea[name="reject_reason"]:visible')
+      .first();
+    try {
+      await expect(rejectReasonField).toBeVisible({ timeout: 20000 });
+    } catch {
+      throw new Error('Rejection reason text area not found in the modal.');
+    }
+    await rejectReasonField.fill(reason);
+
+    const confirmRejectButton = modal
+      .locator('button[type="submit"].btn-danger', { hasText: 'Confirm Reject' })
+      .first();
+    await expect(confirmRejectButton).toBeVisible({ timeout: 20000 });
+    await confirmRejectButton.click();
+    return title;
+  }
+
   async rejectContribution(params: ContributionSearchParams, reason?: string) {
     const { title, employeeName } = params;
     // Reuse the shared lookup so rejection spans all pages via the search box

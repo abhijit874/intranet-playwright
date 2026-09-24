@@ -74,8 +74,44 @@ export class AllocationRequestPage {
     await selectFromSingleSelect2(this.page, '#select2-allocation_project-container', name);
   }
 
-  async selectRandomAllocationProject(): Promise<string> {
-    return selectRandomFromAssetDropdown(this.page, '#select2-allocation_project-container');
+  // Selecting a project auto-fills Allocation Start (today) and Allocation End
+  // (the project's end date). For a project that has already ended, End lands
+  // before Start and the server rejects the request with "Allocation end date
+  // should not be less than allocation start date." About a third of random picks
+  // hit this, so keep picking until the auto-filled range is valid.
+  //
+  // When the same request also deallocates, the form sets Allocation Start's `min`
+  // to the day after the deallocation date, while still auto-filling Start with
+  // today. The browser then silently refuses to submit ("Value must be ... or
+  // later"). So Start is raised to its `min` when it falls below it, and the range
+  // check uses that effective Start.
+  async selectRandomAllocationProject(maxAttempts = 10): Promise<string> {
+    // Click the combobox, not the rendered text span inside it: after a selection
+    // the span's select2 wrapper intercepts clicks, which would stall a re-pick.
+    const combobox = 'span.select2-selection[aria-labelledby="select2-allocation_project-container"]';
+    const startField = this.page.locator('#allocation_start');
+    const endField = this.page.locator('#allocation_end');
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      const previousEnd = await endField.inputValue();
+      const project = await selectRandomFromAssetDropdown(this.page, combobox);
+      // The dates are filled by a change handler. Wait for End to change rather
+      // than merely be non-empty: on a re-pick it still holds the previous
+      // project's value. Two projects can share an end date, so a timeout here is
+      // tolerated and the current value is read regardless.
+      await expect(endField).not.toHaveValue(previousEnd, { timeout: 5000 }).catch(() => undefined);
+      let start = await startField.inputValue();
+      const min = await startField.getAttribute('min');
+      if (min && (!start || start < min)) {
+        await startField.fill(min);
+        start = min;
+      }
+      const end = await endField.inputValue();
+      // ISO yyyy-mm-dd strings compare correctly as plain strings.
+      if (start && end && end >= start) return project;
+    }
+    throw new Error(
+      `No project with a valid allocation date range found after ${maxAttempts} random picks.`
+    );
   }
 
   // Any billing code is valid and none are asserted, so pick one at random.
@@ -226,7 +262,8 @@ export class AllocationRequestPage {
     try {
       await expect(alert).toHaveClass(/alert-info/);
     } catch {
-      throw new Error('Request creation failed — UI showed an error or warning instead of success.');
+      const shown = ((await alert.textContent().catch(() => '')) || '').replace(/\s+/g, ' ').trim();
+      throw new Error(`Request creation failed — UI showed an error or warning instead of success: "${shown}"`);
     }
     try {
       await expect(alert).toContainText('Request created successfully.');

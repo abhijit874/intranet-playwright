@@ -18,8 +18,10 @@ export const NOT_AUTHORIZED = /You are not authoriz(ed to access this page|e to 
 /** A direct visit to `path` must bounce the user home with an authorization flash. */
 export async function expectAccessDenied(page: Page, path: string) {
   await page.goto(path);
-  await expect(page, `${path} should have redirected home`).toHaveURL(/\/$/);
-  await expect(page.locator('#flashes')).toContainText(NOT_AUTHORIZED);
+  // The authorization redirect is a second round trip after the initial load and
+  // can take well over the default 5s on staging, so give it room.
+  await expect(page, `${path} should have redirected home`).toHaveURL(/\/$/, { timeout: 20_000 });
+  await expect(page.locator('#flashes')).toContainText(NOT_AUTHORIZED, { timeout: 10_000 });
 }
 
 /** A direct visit to `path` must render the page itself. */

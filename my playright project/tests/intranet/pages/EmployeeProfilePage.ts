@@ -15,8 +15,25 @@ export class EmployeeProfilePage {
     await this.page.locator('a', { hasText: 'Profile' }).first().click();
   }
 
+  // Profile tabs are Bootstrap tabs (data-bs-toggle="tab") rendered on the
+  // profile page only. Waiting for the tab first turns "the profile page never
+  // opened" into a clear message instead of a bare 15s click timeout, and the
+  // trailing check confirms the pane actually switched rather than assuming the
+  // click took effect.
   async clickProfileTab(tabName: string) {
-    await this.page.getByRole('tab', { name: tabName }).click();
+    const tab = this.page.getByRole('tab', { name: tabName, exact: true });
+    try {
+      await expect(tab).toBeVisible({ timeout: 20000 });
+    } catch {
+      throw new Error(`Profile tab "${tabName}" not found — the profile page may not have opened.`);
+    }
+    await tab.scrollIntoViewIfNeeded();
+    await tab.click();
+    try {
+      await expect(tab).toHaveAttribute('aria-selected', 'true', { timeout: 10000 });
+    } catch {
+      throw new Error(`Profile tab "${tabName}" did not become the selected tab after clicking.`);
+    }
   }
 
   // Drive the native <select>s rather than the Select2 overlay: the overlay's

@@ -12,9 +12,9 @@ export class InnovationLabPage {
   }
 
   async navigateTo() {
-    await this.page.locator('a[href="/pool_reports"]').click();
+    await this.page.locator('a[href="/innovation_lab_reports"]').click();
     try {
-      await expect(this.page).toHaveURL(/\/pool_reports/, { timeout: 20000 });
+      await expect(this.page).toHaveURL(/\/innovation_lab_reports/, { timeout: 20000 });
     } catch {
       throw new Error('Failed to navigate to Innovation Lab page.');
     }
@@ -42,10 +42,11 @@ export class InnovationLabPage {
     let rows = this.page
       .locator('table tbody tr')
       .filter({ hasNot: this.page.locator('td.dataTables_empty') });
-    // Not every row exposes the edit/remove actions, so tests that act on a row
-    // must pick one that actually has them.
+    // Not every row exposes an action, so tests that act on a row must pick one
+    // that actually has one. Edit is now the only row action: the remove-from-
+    // Innovation-Lab icon (i.ri-user-minus-fill) is no longer rendered.
     if (opts.withActions) {
-      rows = rows.filter({ has: this.page.locator('i.ri-user-minus-fill') });
+      rows = rows.filter({ has: this.page.locator('i.ri-edit-2-line') });
     }
     // Likewise, not every row offers "View Past Projects".
     if (opts.withPastProjectsLink) {
@@ -56,7 +57,7 @@ export class InnovationLabPage {
       await expect(row).toBeVisible({ timeout: 20000 });
     } catch {
       if (opts.withActions) {
-        throw new Error('Innovation Lab table has no entries with edit/remove actions.');
+        throw new Error('Innovation Lab table has no entries with an edit action.');
       }
       if (opts.withPastProjectsLink) {
         throw new Error('Innovation Lab table has no entries offering a "View Past Projects" link.');
@@ -105,32 +106,6 @@ export class InnovationLabPage {
       throw new Error(`Row not found for employee "${employeeName}" and project "${projectName}".`);
     }
     return this.findRow(employeeName, projectName);
-  }
-
-  async clickRemoveFromInnovationLab(employeeName: string, projectName: string) {
-    const row = await this.expectRowVisible(employeeName, projectName);
-    const icon = row.locator('i.text-danger.ri-user-minus-fill');
-    try {
-      await expect(icon).toBeVisible({ timeout: 10000 });
-    } catch {
-      throw new Error(
-        `Remove from Innovation Lab button not found for employee "${employeeName}" and project "${projectName}".`
-      );
-    }
-    await icon.click();
-  }
-
-  async confirmRemoveFromInnovationLab() {
-    await this.page.locator('.modal.show button').filter({ hasText: /Yes, Remove from/ }).click();
-  }
-
-  async assertRemovedFromInnovationLab() {
-    // Flashes auto-dismiss, so use a single retrying assertion. The trailing
-    // wording follows the "Pool" -> "Innovation Lab" rename, so only the stable
-    // part of the message is asserted.
-    await expect(this.page.locator('#flashes')).toContainText('Successfully removed', {
-      timeout: 15_000,
-    });
   }
 
   async clickEditIcon(employeeName: string, projectName: string) {
@@ -284,20 +259,19 @@ export class InnovationLabPage {
   }
 
   async assertInnovationLabMenuItemNotVisible() {
-    const menuItem = this.page.locator('a[href="/pool_reports"]');
+    const menuItem = this.page.locator('a[href="/innovation_lab_reports"]');
     const isVisible = await menuItem.isVisible().catch(() => false);
     if (isVisible) {
       throw new Error('Innovation Lab navigation item should not be visible for this role.');
     }
   }
 
-  async assertEditIconNotVisible() {
-    const editIcons = this.page.locator('table tbody tr i.ri-edit-2-line');
-    const count = await editIcons.count();
-    if (count > 0) {
-      throw new Error(
-        `Edit icons should not be visible for read-only role, but ${count} were found in the table.`
-      );
+  // admin, hr and leader (and the sales account, which holds leader) can edit.
+  async assertEditIconVisible() {
+    try {
+      await expect(this.page.locator('table tbody tr i.ri-edit-2-line').first()).toBeVisible({ timeout: 10000 });
+    } catch {
+      throw new Error('Edit icons should be visible in the Innovation Lab table for this role, but none were found.');
     }
   }
 

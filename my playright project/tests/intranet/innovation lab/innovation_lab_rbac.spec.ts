@@ -4,14 +4,16 @@ import { FutureAvailabilityPage } from '../pages/FutureAvailabilityPage';
 
 test.describe('Innovation Lab - role-based access control', () => {
 
-  // --- Authorized roles: read-only access ---
+  // --- Authorized roles ---
+  // Leader has edit access, like admin and hr. Add-to and remove-from Innovation
+  // Lab were taken out of the product for every role.
 
-  test('leader can view Innovation Lab report but has no edit or remove icons', async ({ page }) => {
+  test('leader can view and edit the Innovation Lab report, with no remove icons', async ({ page }) => {
     const innovationLabPage = new InnovationLabPage(page);
     await innovationLabPage.loginAs('leader');
     await innovationLabPage.navigateTo();
     await innovationLabPage.assertInnovationLabLoaded();
-    await innovationLabPage.assertEditIconNotVisible();
+    await innovationLabPage.assertEditIconVisible();
     await innovationLabPage.assertRemoveIconNotVisible();
   });
 
@@ -32,15 +34,15 @@ test.describe('Innovation Lab - role-based access control', () => {
     await innovationLabPage.assertInnovationLabMenuItemNotVisible();
   });
 
-  // The "sales" test account currently carries the leader role, so it gets the
-  // same view-only access rather than being denied. If it is ever given a plain
-  // sales role, this expectation flips to assertInnovationLabMenuItemNotVisible().
-  test('sales account (leader role) has view-only Innovation Lab access', async ({ page }) => {
+  // The "sales" test account carries the leader role, so it gets the same access
+  // as leader, edit included. If it is ever given a plain sales role, this
+  // expectation flips to assertInnovationLabMenuItemNotVisible().
+  test('sales account (leader role) can view and edit Innovation Lab', async ({ page }) => {
     const innovationLabPage = new InnovationLabPage(page);
     await innovationLabPage.loginAs('sales');
     await innovationLabPage.navigateTo();
     await innovationLabPage.assertInnovationLabLoaded();
-    await innovationLabPage.assertEditIconNotVisible();
+    await innovationLabPage.assertEditIconVisible();
     await innovationLabPage.assertRemoveIconNotVisible();
   });
 

@@ -45,6 +45,16 @@ test('edit an existing contribution located by parameters', async ({ page }) => 
     subcategory: process.env.NEW_SUBCATEGORY,
   };
 
+  // This spec is a manual, parameter-driven tool rather than part of the regular
+  // suite: with no env vars set there is no record to target. Skip in that case
+  // so a plain module run stays meaningful, and only complain when the run is
+  // half-configured.
+  const configured = Object.values(criteria).some(Boolean) || Object.values(newValues).some(Boolean);
+  test.skip(
+    !configured,
+    'Parameter-driven spec: set EDIT_* and NEW_* env vars to target a record (see the header comment).'
+  );
+
   // Fail fast with a clear message when the run is missing required inputs.
   if (!Object.values(criteria).some(Boolean)) {
     throw new Error(

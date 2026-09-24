@@ -9,19 +9,18 @@ import { expectAccessDenied } from '../utils/rbac_helper';
  * and can add, edit and delete events. No other role should be able to create
  * or edit one, including the marketing designation.
  *
- * Trello #1308 — the Events controller has no authorization filter, so every
- * role can reach /events/new by URL and create an event the whole company then
- * sees. The tests asserting that non-HR roles are refused are marked
- * test.fail(): they are the correct expectation and pass by failing until the
- * guard is added. Once it lands, Playwright reports them as "unexpectedly
- * passed", which is the signal to drop the annotation.
+ * Trello #1308 (FIXED, verified in-browser 2026-09-23) — the Events controller
+ * previously had no authorization filter, so any role could reach /events/new by
+ * URL and create an event the whole company then saw. It is now guarded: non-HR
+ * roles have no Josh Events entry in the navigation, and a direct visit to
+ * /events is refused with the standard authorization flash. These are ordinary
+ * tests again — the test.fail() annotations that tracked the defect are gone.
  *
- * Note on the marketing account (MARKETING_USER_EMAIL): its designation is
- * "Senior Executive - Marketing", but on staging it carries plain-employee
- * permissions — no Josh Events entry in its navigation, and it is refused on
- * /resource_list and /invite_user with the employee authorization flash. It can
- * currently reach the New Event form, but only because of #1308, not because
- * the designation grants anything. It is treated as a non-owner role here.
+ * Admin keeps the Josh Events entry, as it does for every other module, so admin
+ * is not in the non-owner list below.
+ *
+ * The marketing account (MARKETING_USER_EMAIL, designation "Senior Executive -
+ * Marketing") carries plain-employee permissions and is treated as a non-owner.
  */
 test.describe('Events - access per role', () => {
 
@@ -92,6 +91,15 @@ test.describe('Events - access per role', () => {
     expect(await page.locator('svg[data-icon="trash-can"]').count()).toBe(editCount);
   });
 
+  // --- admin: keeps access, as it does for every module -------------------
+
+  test('admin: Josh Events is in the navigation and the list opens', async ({ page }) => {
+    await login(page, 'admin');
+    await expect(page.getByText('Josh Events')).toHaveCount(1);
+    await page.goto('/events');
+    await expect(page.getByRole('heading', { name: 'Events' })).toBeVisible();
+  });
+
   // --- every other role, marketing included ------------------------------
 
   const nonOwnerRoles: UserKey[] = [
@@ -105,34 +113,34 @@ test.describe('Events - access per role', () => {
     });
   }
 
-  // --- Trello #1308 -------------------------------------------------------
-  // Currently failing: the controller admits every role.
+  // Both the list and the create form are guarded, so a non-owner role is
+  // bounced home with an authorization flash rather than merely losing the link.
 
   for (const role of nonOwnerRoles) {
-    test.fail(`${role}: a direct visit to /events is refused`, async ({ page }) => {
+    test(`${role}: a direct visit to /events is refused`, async ({ page }) => {
       await login(page, role);
       await expectAccessDenied(page, '/events');
     });
 
-    test.fail(`${role}: a direct visit to /events/new is refused`, async ({ page }) => {
+    test(`${role}: a direct visit to /events/new is refused`, async ({ page }) => {
       await login(page, role);
       await expectAccessDenied(page, '/events/new');
     });
   }
 
-  test.fail('employee: the New Event form does not render', async ({ page }) => {
+  test('employee: the New Event form does not render', async ({ page }) => {
     await login(page, 'employee');
     await page.goto('/events/new');
     await expect(page.locator('#event_title')).toHaveCount(0);
   });
 
-  test.fail('marketing: the New Event form does not render', async ({ page }) => {
+  test('marketing: the New Event form does not render', async ({ page }) => {
     await login(page, 'marketing');
     await page.goto('/events/new');
     await expect(page.locator('#event_title')).toHaveCount(0);
   });
 
-  test.fail('employee: the Add Event control is not offered on the list', async ({ page }) => {
+  test('employee: the Add Event control is not offered on the list', async ({ page }) => {
     await login(page, 'employee');
     await page.goto('/events');
     await expect(page.getByText('Add Event')).toHaveCount(0);

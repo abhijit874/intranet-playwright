@@ -12,9 +12,9 @@ export class FutureAvailabilityPage {
   }
 
   async navigateTo() {
-    await this.page.locator('a[href="/pool_reports"]').click();
+    await this.page.locator('a[href="/innovation_lab_reports"]').click();
     try {
-      await expect(this.page).toHaveURL(/\/pool_reports/, { timeout: 20000 });
+      await expect(this.page).toHaveURL(/\/innovation_lab_reports/, { timeout: 20000 });
     } catch {
       throw new Error('Failed to navigate to Innovation Lab page.');
     }
@@ -22,10 +22,10 @@ export class FutureAvailabilityPage {
 
   async navigateToFutureAvailability() {
     await this.page
-      .locator('a.btn.btn-outline-secondary.btn-sm[href="/pool_reports/future_pool"]')
+      .locator('a.btn.btn-outline-secondary.btn-sm[href="/innovation_lab_reports/future_pool"]')
       .click();
     try {
-      await expect(this.page).toHaveURL(/\/pool_reports\/future_pool/, { timeout: 20000 });
+      await expect(this.page).toHaveURL(/\/innovation_lab_reports\/future_pool/, { timeout: 20000 });
     } catch {
       throw new Error('Failed to navigate to Future Availability page.');
     }
@@ -93,32 +93,6 @@ export class FutureAvailabilityPage {
       throw new Error(`Row not found for employee "${employeeName}" and project "${projectName}".`);
     }
     return this.findRow(employeeName, projectName);
-  }
-
-  async clickAddToInnovationLab(employeeName: string, projectName: string) {
-    const row = await this.expectRowVisible(employeeName, projectName);
-    const icon = row.locator('i.text-success.ri-user-add-fill.fs-5');
-    try {
-      await expect(icon).toBeVisible({ timeout: 10000 });
-    } catch {
-      throw new Error(
-        `Add to Innovation Lab button not found for employee "${employeeName}" and project "${projectName}".`
-      );
-    }
-    await icon.click();
-  }
-
-  async confirmAddToInnovationLab() {
-    await this.page.locator('.modal.show button').filter({ hasText: /Yes, Add to/ }).click();
-  }
-
-  async assertAddedToInnovationLab() {
-    // Flashes auto-dismiss, so use a single retrying assertion. The trailing
-    // wording follows the "Pool" -> "Innovation Lab" rename, so only the stable
-    // part of the message is asserted.
-    await expect(this.page.locator('#flashes')).toContainText('Successfully added', {
-      timeout: 15_000,
-    });
   }
 
   async assertInnovationLabLoaded() {

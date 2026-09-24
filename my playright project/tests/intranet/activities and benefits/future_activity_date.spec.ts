@@ -13,7 +13,10 @@ const TITLE = `future date validation ${stamp}`; // unique, so the lookup is exa
 const BLOG_URL = `https://future-date.com/${stamp}`;
 const FUTURE_DATE = futureDateValue(1); // tomorrow
 
-test('create contribution — future Activity Date is rejected', async ({ page }) => {
+// Same open defect as the other activity-date specs (Trello #1311): the server
+// accepts a forced out-of-range date. Marked test.fail() so it passes by failing
+// while the defect is open, and reports "unexpectedly passed" once fixed.
+test.fail('create contribution — future Activity Date is rejected', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
   await contributionsPage.loginAs('employee');
   await contributionsPage.navigateToContributions();

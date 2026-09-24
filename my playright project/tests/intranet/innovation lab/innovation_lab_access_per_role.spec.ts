@@ -16,7 +16,7 @@ test.describe('Innovation Lab - access verification per role', () => {
   test('admin: Innovation Lab navigation item is visible', async ({ page }) => {
     const innovationLabPage = new InnovationLabPage(page);
     await innovationLabPage.loginAs('admin');
-    await expect(page.locator('a[href="/pool_reports"]')).toBeVisible();
+    await expect(page.locator('a[href="/innovation_lab_reports"]')).toBeVisible();
   });
 
   test('admin: Innovation Lab table loads successfully', async ({ page }) => {
@@ -26,20 +26,19 @@ test.describe('Innovation Lab - access verification per role', () => {
     await innovationLabPage.assertInnovationLabLoaded();
   });
 
-  test('admin: edit and remove icons are visible in Innovation Lab table', async ({ page }) => {
+  test('admin: the edit icon is visible in Innovation Lab table', async ({ page }) => {
     const innovationLabPage = new InnovationLabPage(page);
     await innovationLabPage.loginAs('admin');
     await innovationLabPage.navigateTo();
     await expect(page.locator('table tbody tr i.ri-edit-2-line').first()).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('table tbody tr i.ri-user-minus-fill').first()).toBeVisible({ timeout: 10000 });
   });
 
-  test('admin: add-to-Innovation-Lab icon is visible in Future Availability table', async ({ page }) => {
+  test('admin: no add-to-Innovation-Lab icon in Future Availability - the action was removed', async ({ page }) => {
     const futureAvailabilityPage = new FutureAvailabilityPage(page);
     await futureAvailabilityPage.loginAs('admin');
     await futureAvailabilityPage.navigateTo();
     await futureAvailabilityPage.navigateToFutureAvailability();
-    await expect(page.locator('table tbody tr i.text-success.ri-user-add-fill').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('table tbody tr i.text-success.ri-user-add-fill')).toHaveCount(0);
   });
 
   // ─── hr ───────────────────────────────────────────────────────────────────
@@ -47,7 +46,7 @@ test.describe('Innovation Lab - access verification per role', () => {
   test('hr: Innovation Lab navigation item is visible', async ({ page }) => {
     const innovationLabPage = new InnovationLabPage(page);
     await innovationLabPage.loginAs('hr');
-    await expect(page.locator('a[href="/pool_reports"]')).toBeVisible();
+    await expect(page.locator('a[href="/innovation_lab_reports"]')).toBeVisible();
   });
 
   test('hr: Innovation Lab table loads successfully', async ({ page }) => {
@@ -57,20 +56,19 @@ test.describe('Innovation Lab - access verification per role', () => {
     await innovationLabPage.assertInnovationLabLoaded();
   });
 
-  test('hr: edit and remove icons are visible in Innovation Lab table', async ({ page }) => {
+  test('hr: the edit icon is visible in Innovation Lab table', async ({ page }) => {
     const innovationLabPage = new InnovationLabPage(page);
     await innovationLabPage.loginAs('hr');
     await innovationLabPage.navigateTo();
     await expect(page.locator('table tbody tr i.ri-edit-2-line').first()).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('table tbody tr i.ri-user-minus-fill').first()).toBeVisible({ timeout: 10000 });
   });
 
-  test('hr: add-to-Innovation-Lab icon is visible in Future Availability table', async ({ page }) => {
+  test('hr: no add-to-Innovation-Lab icon in Future Availability - the action was removed', async ({ page }) => {
     const futureAvailabilityPage = new FutureAvailabilityPage(page);
     await futureAvailabilityPage.loginAs('hr');
     await futureAvailabilityPage.navigateTo();
     await futureAvailabilityPage.navigateToFutureAvailability();
-    await expect(page.locator('table tbody tr i.text-success.ri-user-add-fill').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('table tbody tr i.text-success.ri-user-add-fill')).toHaveCount(0);
   });
 
   // ─── leader ───────────────────────────────────────────────────────────────
@@ -78,7 +76,7 @@ test.describe('Innovation Lab - access verification per role', () => {
   test('leader: Innovation Lab navigation item is visible', async ({ page }) => {
     const innovationLabPage = new InnovationLabPage(page);
     await innovationLabPage.loginAs('leader');
-    await expect(page.locator('a[href="/pool_reports"]')).toBeVisible();
+    await expect(page.locator('a[href="/innovation_lab_reports"]')).toBeVisible();
   });
 
   test('leader: Innovation Lab table loads successfully', async ({ page }) => {
@@ -88,12 +86,14 @@ test.describe('Innovation Lab - access verification per role', () => {
     await innovationLabPage.assertInnovationLabLoaded();
   });
 
-  test('leader: edit and remove icons are NOT visible in Innovation Lab table', async ({ page }) => {
+  // Leader was granted edit access alongside admin and hr. Remove is gone for
+  // every role, since the action was taken out of the product.
+  test('leader: the edit icon is visible and there is no remove icon', async ({ page }) => {
     const innovationLabPage = new InnovationLabPage(page);
     await innovationLabPage.loginAs('leader');
     await innovationLabPage.navigateTo();
     await innovationLabPage.assertInnovationLabLoaded();
-    await expect(page.locator('table tbody tr i.ri-edit-2-line')).toHaveCount(0);
+    await expect(page.locator('table tbody tr i.ri-edit-2-line').first()).toBeVisible({ timeout: 10000 });
     await expect(page.locator('table tbody tr i.ri-user-minus-fill')).toHaveCount(0);
   });
 
@@ -147,17 +147,17 @@ test.describe('Innovation Lab - access verification per role', () => {
   test('employee: Innovation Lab navigation item is NOT visible', async ({ page }) => {
     const innovationLabPage = new InnovationLabPage(page);
     await innovationLabPage.loginAs('employee');
-    await expect(page.locator('a[href="/pool_reports"]')).toHaveCount(0);
+    await expect(page.locator('a[href="/innovation_lab_reports"]')).toHaveCount(0);
   });
 
   // ─── sales ────────────────────────────────────────────────────────────────
 
-  // The "sales" test account currently carries the leader role, so it sees the
-  // tab with view-only access rather than being denied.
+  // The "sales" test account carries the leader role, so it gets the same
+  // Innovation Lab access as leader - including edit.
   test('sales: Innovation Lab navigation item is visible (account holds leader role)', async ({ page }) => {
     const innovationLabPage = new InnovationLabPage(page);
     await innovationLabPage.loginAs('sales');
-    await expect(page.locator('a[href="/pool_reports"]')).toHaveCount(1);
+    await expect(page.locator('a[href="/innovation_lab_reports"]')).toHaveCount(1);
   });
 
 });

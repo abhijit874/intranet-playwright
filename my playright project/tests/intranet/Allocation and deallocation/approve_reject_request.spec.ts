@@ -46,7 +46,7 @@ test('reject allocation request', async ({ page }) => {
   const rp = new AllocationRequestPage(page);
   await rp.loginAs('admin');
   await rp.navigateTo();
-  await createAllocationRequest(rp, employee, { project: 'Innovation lab' });
+  await createAllocationRequest(rp, employee, {});
 
   const ap = await switchToHrApproval(page);
   await ap.searchRequests(name);
@@ -66,7 +66,7 @@ test('edit rejected request', async ({ page }) => {
   const rp = new AllocationRequestPage(page);
   await rp.loginAs('admin');
   await rp.navigateTo();
-  await createAllocationRequest(rp, employee, { project: 'Innovation lab' });
+  await createAllocationRequest(rp, employee, {});
 
   // hr rejects it
   const ap = await switchToHrApproval(page);
@@ -122,7 +122,7 @@ test('approve deallocation request', async ({ page }) => {
   await ap.navigateTo();
   await ap.searchRequests(name);
   await ap.clickViewOnRow(name, 'deallocation');
-  await ap.approveRequest(true);
+  await ap.approveRequest();
   await ap.assertRequestApproved();
 });
 
@@ -153,7 +153,7 @@ test('cancel pending request', async ({ page }) => {
   const rp = new AllocationRequestPage(page);
   await rp.loginAs('admin');
   await rp.navigateTo();
-  await createAllocationRequest(rp, employee, { project: 'Innovation lab' });
+  await createAllocationRequest(rp, employee, {});
 
   // still on the admin session — cancel the pending request
   const ap = new AllocationRequestApprovalPage(page);

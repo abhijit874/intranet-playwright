@@ -95,7 +95,10 @@ export class AllocationRequestApprovalPage {
       .click();
   }
 
-  async approveRequest(sendEmail = true) {
+  // sendEmail ticks the optional "send deallocation email" box. Off by default:
+  // the tests pick random real employees, so a suite run would otherwise mail
+  // colleagues. Pass true only in a spec that is specifically about that email.
+  async approveRequest(sendEmail = false) {
     if (sendEmail) {
       await this.page.locator('input[name="send_deallocation_email"][form="approveForm"]').check();
     }
@@ -169,7 +172,8 @@ export class AllocationRequestApprovalPage {
     try {
       await expect(alert).toHaveClass(/alert-info/);
     } catch {
-      throw new Error('Approval failed — UI showed an error or warning instead of success.');
+      const shown = ((await alert.textContent().catch(() => '')) || '').replace(/\s+/g, ' ').trim();
+      throw new Error(`Approval failed — UI showed an error or warning instead of success: "${shown}"`);
     }
     try {
       await expect(alert).toContainText('Allocation deallocation done successfully.');
