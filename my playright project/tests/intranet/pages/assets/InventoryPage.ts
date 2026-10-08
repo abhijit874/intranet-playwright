@@ -5,6 +5,7 @@ import {
   filterTableBySearch,
   expectFlashMessage,
   selectRandomFromAssetDropdown,
+  stripClientValidation,
 } from '../../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin';
@@ -218,19 +219,72 @@ export class InventoryPage {
     }
   }
 
+  // See stripClientValidation() — lets a deliberately bad value reach the server.
+  async disableClientValidation() {
+    await stripClientValidation(this.page, { numbersToText: true });
+  }
+
   async submit() {
     await this.page.locator('input[type="submit"][name="commit"][value="Save"]').click();
   }
 
   async assertNotCreated() {
-    await this.page.waitForLoadState('networkidle');
+    // A refused submit re-renders the form quickly, but an accepted one redirects
+    // slowly — reading the flash too early times out "waiting for navigation" and
+    // says nothing either way. Let the page settle first, generously.
+    await this.page.waitForLoadState('networkidle', { timeout: 60_000 }).catch(() => {});
     const successFlash = this.page
       .locator('#flashes')
       .filter({ hasText: 'Asset Created Successfully' });
     await expect(
       successFlash,
-      'Asset was created without required fields — server-side validation was bypassed.'
+      `Asset was created despite invalid input — server-side validation was bypassed (now on ${new URL(this.page.url()).pathname}).`
+    ).toHaveCount(0, { timeout: 15_000 });
+  }
+
+  // Stronger than assertNotCreated(): that only proves no success flash appeared,
+  // which a slow redirect can also look like. This proves the record is genuinely
+  // not in the inventory. Assumes the list page is open.
+  async expectAssetAbsent(serial: string) {
+    // Straight to the URL rather than through navigateTo(): after a refused
+    // submit the Assets menu is already expanded, so clicking it collapses the
+    // nav and hides the Inventory link.
+    await this.page.goto('/organisation_assets');
+    await filterTableBySearch(this.page, serial);
+    await expect(
+      this.page.locator('table tbody tr', { hasText: serial }),
+      `Asset "${serial}" was saved even though the submit should have been refused.`
     ).toHaveCount(0);
+  }
+
+  async assertNotUpdated() {
+    await this.page.waitForLoadState('networkidle', { timeout: 60_000 }).catch(() => {});
+    const successFlash = this.page
+      .locator('#flashes')
+      .filter({ hasText: 'Asset Updated Successfully' });
+    await expect(
+      successFlash,
+      `The asset was updated despite invalid input — server-side validation was bypassed (now on ${new URL(this.page.url()).pathname}).`
+    ).toHaveCount(0, { timeout: 15_000 });
+  }
+
+  // Deterministic counterpart to assertNotUpdated() for a refused discontinue:
+  // flashes auto-dismiss, but an asset that really was taken out of service moves
+  // from the active report to the inactive one.
+  async expectAssetStillInService(serial: string) {
+    const response = await this.page.request.get(
+      '/organisation_assets/download_report?report_type=inactive'
+    );
+    // Guard the guard: if the report comes back as an error page rather than a
+    // CSV, "the serial is not in it" would be true for the wrong reason.
+    expect(
+      response.headers()['content-type'],
+      'the inactive report did not come back as a CSV, so its contents prove nothing'
+    ).toContain('text/csv');
+    expect(
+      await response.text(),
+      `Asset "${serial}" was taken out of service even though the change should have been refused.`
+    ).not.toContain(serial);
   }
 
   async verifySuccessAlert() {

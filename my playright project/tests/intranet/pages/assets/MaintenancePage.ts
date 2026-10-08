@@ -5,6 +5,7 @@ import {
   filterTableBySearch,
   expectFlashMessage,
   selectRandomFromAssetDropdown,
+  stripClientValidation,
 } from '../../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin';
@@ -104,6 +105,11 @@ export class MaintenancePage {
     await this.page.locator('#asset_maintainance_asset_image').setInputFiles(filePath);
   }
 
+  // See stripClientValidation() — lets a deliberately bad value reach the server.
+  async disableClientValidation() {
+    await stripClientValidation(this.page, { numbersToText: true });
+  }
+
   async submit() {
     await this.page
       .locator('input[type="submit"][name="commit"][value="Save"].btn.btn-secondary.controls')
@@ -111,14 +117,34 @@ export class MaintenancePage {
   }
 
   async assertNotCreated() {
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('networkidle', { timeout: 60_000 }).catch(() => {});
     const successFlash = this.page
       .locator('#flashes')
       .filter({ hasText: 'Asset Maintainance Created Successfully' });
     await expect(
       successFlash,
-      'Asset maintenance record was created without required fields — server-side validation was bypassed.'
-    ).toHaveCount(0);
+      `Asset maintenance record was created despite invalid input — server-side validation was bypassed (now on ${new URL(this.page.url()).pathname}).`
+    ).toHaveCount(0, { timeout: 15_000 });
+  }
+
+  // Stronger than assertNotCreated(): that only proves no success flash was on
+  // screen, and flashes auto-dismiss, so on a slow run a record that WAS created
+  // can look refused. The report lists every maintenance record, and reasons are
+  // stamped unique per run, so this settles it either way. (The list table is not
+  // used here — a brand new record is not reliably findable in it.)
+  async expectMaintenanceAbsent(reason: string) {
+    const response = await this.page.request.get('/asset_maintainances/download_report');
+    // Guard the guard: if the report ever comes back as an error page rather than
+    // a CSV, "the reason is not in it" would be true for the wrong reason and this
+    // check would pass silently.
+    expect(
+      response.headers()['content-type'],
+      'the maintenance report did not come back as a CSV, so its contents prove nothing'
+    ).toContain('text/csv');
+    expect(
+      await response.text(),
+      `The maintenance record "${reason}" was saved even though the submit should have been refused.`
+    ).not.toContain(reason);
   }
 
   async verifySuccessAlert() {

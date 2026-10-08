@@ -14,6 +14,10 @@ export interface MaintenanceConfig {
   fromDate?: string;
   endDate?: string;
   imagePath?: string;
+  // See AssetConfig — strips the browser's validation before the form is filled.
+  bypassClientValidation?: boolean;
+  // Skip the success assertion: the caller expects the submit to be refused.
+  expectRejected?: boolean;
 }
 
 // Maintenance records are located by their reason, so a per-run stamp keeps the
@@ -30,6 +34,7 @@ export async function createMaintenance(
   cfg: MaintenanceConfig
 ): Promise<string> {
   await maintenancePage.clickAddAsset();
+  if (cfg.bypassClientValidation) await maintenancePage.disableClientValidation();
   // Both dropdowns only offer valid choices, so pick at random rather than always
   // the first asset / a fixed vendor — this spreads records across the data.
   await maintenancePage.selectRandomMaintenanceAsset();
@@ -44,7 +49,7 @@ export async function createMaintenance(
   await maintenancePage.fillEndDate(cfg.endDate ?? '2026-06-01');
   await maintenancePage.uploadImage(cfg.imagePath ?? IMAGE_PATH);
   await maintenancePage.submit();
-  await maintenancePage.verifySuccessAlert();
+  if (!cfg.expectRejected) await maintenancePage.verifySuccessAlert();
 
   return cfg.reason;
 }

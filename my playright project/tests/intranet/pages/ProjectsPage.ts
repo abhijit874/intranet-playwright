@@ -30,7 +30,20 @@ export class ProjectsPage {
   }
 
   async clickNewProject() {
-    await this.page.locator('a[href="/projects/new"]').first().click({ noWaitAfter: true });
+    // Creating a project is slow (uploads plus a heavy form), so a test that
+    // creates one and immediately starts another arrives here while the previous
+    // navigation is still settling — the click then times out "waiting for
+    // navigation to finish". Let the page settle and wait for the link itself.
+    await this.page.waitForLoadState('domcontentloaded');
+    const newProjectLink = this.page.locator('a[href="/projects/new"]').first();
+    try {
+      await expect(newProjectLink).toBeVisible({ timeout: 30000 });
+    } catch {
+      throw new Error(
+        'The "Add Project" link is not available — is this role allowed to create projects? (admin is not; hr is)'
+      );
+    }
+    await newProjectLink.click({ noWaitAfter: true, timeout: 30000 });
     await this.page.waitForURL((url) => url.pathname === '/projects/new', { timeout: 30000 });
   }
 
@@ -178,6 +191,23 @@ export class ProjectsPage {
     await selectFromSingleSelect2(this.page, '#select2-project_product_manager_id-container', name);
   }
 
+  // Turns off the browser's own form validation so a deliberately bad value
+  // actually reaches the server. A negative test that only proves Chrome
+  // refused to submit proves little: that guard is bypassable with devtools or
+  // a direct POST (see Trello #1311).
+  async disableClientValidation() {
+    await this.page.evaluate(() => {
+      document.querySelectorAll('form').forEach((f) => {
+        (f as HTMLFormElement).noValidate = true;
+      });
+      document.querySelectorAll('[pattern]').forEach((e) => e.removeAttribute('pattern'));
+      document.querySelectorAll('input[type="date"]').forEach((e) => {
+        e.removeAttribute('min');
+        e.removeAttribute('max');
+      });
+    });
+  }
+
   async submitNewProject() {
     // Project creation redirects slowly (can exceed the 15s actionTimeout); don't
     // block the click on navigation — assertCreated() polls the flash to confirm.
@@ -217,19 +247,33 @@ export class ProjectsPage {
   }
 
   async assertNotCreated() {
-    await this.page.waitForLoadState('networkidle');
+    // A refused submit re-renders the form quickly, but an accepted one redirects
+    // slowly — so reading the flash too early times out "waiting for navigation"
+    // and says nothing either way. Let the page settle first, generously.
+    await this.page.waitForLoadState('networkidle', { timeout: 60_000 }).catch(() => {});
     const successFlash = this.page
       .locator('#flashes')
       .filter({ hasText: 'Project created Successfully' });
     await expect(
       successFlash,
-      'Project was created without required fields — server-side validation was bypassed.'
-    ).toHaveCount(0);
+      `Project was created despite invalid input — server-side validation was bypassed (now on ${new URL(this.page.url()).pathname}).`
+    ).toHaveCount(0, { timeout: 15_000 });
   }
 
   async assertCreated() {
     // Project create/update redirects can be slow, so allow extra time.
     await expectFlashMessage(this.page, 'Project created Successfully', 'project creation', 30_000);
+  }
+
+  async assertNotUpdated() {
+    await this.page.waitForLoadState('networkidle');
+    const successFlash = this.page
+      .locator('#flashes')
+      .filter({ hasText: 'Project updated Successfully' });
+    await expect(
+      successFlash,
+      'The edit was saved with an invalid value — server-side validation was bypassed.'
+    ).toHaveCount(0);
   }
 
   async assertSaved() {

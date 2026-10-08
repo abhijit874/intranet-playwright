@@ -14,6 +14,22 @@ export interface VendorConfig {
   contractStart?: string;
   contractEnd?: string;
   filePath?: string;
+  // Overrides used by the negative specs to submit one deliberately bad value.
+  gst?: string;
+  pan?: string;
+  ifsc?: string;
+  msme?: string;
+  accountNumber?: string;
+  phone?: string;
+  email?: string;
+  pinCode?: string;
+  landline?: string;
+  code?: string;
+  // Skip the success assertion: the caller expects the submit to be refused.
+  expectRejected?: boolean;
+  // Strip the browser's validation before submitting, so the bad value reaches
+  // the server and the server's own answer is what gets tested.
+  bypassClientValidation?: boolean;
 }
 
 export interface CreatedVendor {
@@ -46,12 +62,12 @@ export async function createVendor(
   const stamp = now.slice(-4);
   const company = cfg.company ?? uniqueVendorCompany();
   const category = cfg.category ?? 'AI';
-  const pan = `ABCDE${stamp}F`;
-  const gst = `27${pan}1Z5`;
-  const accountNumber = `50100${now.slice(-9)}`; // 14 digits, unique per run
-  const ifsc = `HDFC0${now.slice(-6)}`; // 4 letters + 0 + 6 chars
-  const msme = `UDYAM-MH-26-${now.slice(-7)}`; // UDYAM-<state>-<2 digits>-<7 digits>
-  const code = `playwright-${now}`;
+  const pan = cfg.pan ?? `ABCDE${stamp}F`;
+  const gst = cfg.gst ?? `27${pan}1Z5`;
+  const accountNumber = cfg.accountNumber ?? `50100${now.slice(-9)}`; // 14 digits, unique per run
+  const ifsc = cfg.ifsc ?? `HDFC0${now.slice(-6)}`; // 4 letters + 0 + 6 chars
+  const msme = cfg.msme ?? `UDYAM-MH-26-${now.slice(-7)}`; // UDYAM-<state>-<2 digits>-<7 digits>
+  const code = cfg.code ?? `playwright-${now}`;
   const file = cfg.filePath ?? IMAGE_PATH;
 
   await vendorPage.clickAddVendor();
@@ -69,8 +85,8 @@ export async function createVendor(
   await vendorPage.fillVendorCode(code);
   await vendorPage.fillContactPersonName('john doe');
   await vendorPage.fillContactPersonRole('CEO');
-  await vendorPage.fillContactPersonPhone('1234567890');
-  await vendorPage.fillContactPersonEmail('johndoe@gmail.com');
+  await vendorPage.fillContactPersonPhone(cfg.phone ?? '1234567890');
+  await vendorPage.fillContactPersonEmail(cfg.email ?? 'johndoe@gmail.com');
   await vendorPage.fillBankAccountHolderName('john doe');
   await vendorPage.fillBankName('HDFC bank');
   await vendorPage.fillAccountNumber(accountNumber);
@@ -78,11 +94,15 @@ export async function createVendor(
   await vendorPage.uploadBankDocument(file);
   await vendorPage.fillAddress('123 Automation Street, Pune, Maharashtra');
   await vendorPage.fillCity('Pune');
-  await vendorPage.fillPinCode('123456');
+  await vendorPage.fillPinCode(cfg.pinCode ?? '123456');
   await vendorPage.fillState('Maharashtra');
   await vendorPage.fillCountry('India');
-  await vendorPage.fillLandline('1234567890');
+  await vendorPage.fillLandline(cfg.landline ?? '1234567890');
+  if (cfg.bypassClientValidation) await vendorPage.disableClientValidation();
   await vendorPage.submit();
+  if (cfg.expectRejected) {
+    return { company, category, code };
+  }
   // Wait for the create to land before the caller navigates away — otherwise the
   // in-flight POST is abandoned and the vendor is never created.
   await vendorPage.assertSaved();

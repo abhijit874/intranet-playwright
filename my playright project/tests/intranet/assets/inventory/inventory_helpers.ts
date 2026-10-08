@@ -27,6 +27,13 @@ export interface AssetConfig {
   availabilityStatus?: string;
   receivedDate?: string;
   lockingPeriod?: string;
+  // Strip the browser's own validation before anything is typed, so a bad value
+  // reaches the server and the server's answer is what gets tested. Done first
+  // (not just before submit) because Playwright cannot type letters into an
+  // input[type=number] until the bypass has retyped it as text.
+  bypassClientValidation?: boolean;
+  // Skip the success assertion: the caller expects the submit to be refused.
+  expectRejected?: boolean;
 }
 
 // Serial numbers must be unique per run to keep the tests repeatable.
@@ -40,6 +47,7 @@ export function uniqueSerial(prefix = 'auto'): string {
 // dropdown only appears after "Vendor" is chosen, and the client combobox only
 // after "Client" is chosen.
 export async function fillAssetForm(inventoryPage: InventoryPage, cfg: AssetConfig) {
+  if (cfg.bypassClientValidation) await inventoryPage.disableClientValidation();
   await inventoryPage.selectCategory(cfg.category ?? 'Hardware');
   await inventoryPage.selectHardwareType(cfg.hardwareType ?? 'Laptop');
   await inventoryPage.selectAssetType(cfg.assetType ?? 'Non Consumable');
@@ -95,5 +103,6 @@ export async function createAsset(inventoryPage: InventoryPage, cfg: AssetConfig
   await inventoryPage.clickAddAsset();
   await fillAssetForm(inventoryPage, cfg);
   await inventoryPage.submit();
+  if (!cfg.expectRejected) await inventoryPage.verifySuccessAlert();
   return cfg.serial;
 }

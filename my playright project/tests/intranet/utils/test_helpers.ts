@@ -105,7 +105,30 @@ export async function expectFlashMessage(
   try {
     await expect(flash).toContainText(expectedText, { timeout });
   } catch {
-    throw new Error(`Success alert "${expectedText}" was not displayed after ${description}.`);
+    // Report what the app actually said. Without this the failure is just
+    // "the success alert was not displayed", which hides the real reason
+    // (a validation error, a duplicate, an authorization refusal) and costs
+    // another run — often another created record — to find out.
+    const shown = ((await flash.textContent().catch(() => '')) || '').replace(/\s+/g, ' ').trim();
+    // A form that fails validation often stays put with inline field errors and
+    // no flash at all, so report the URL and those errors too.
+    const url = new URL(page.url()).pathname;
+    const inline = (
+      await page
+        .locator('.invalid-feedback:visible, .field_with_errors, .alert-danger, .error:visible')
+        .allTextContents()
+        .catch(() => [] as string[])
+    )
+      .map((t) => t.replace(/\s+/g, ' ').trim())
+      .filter(Boolean)
+      .slice(0, 5);
+
+    const detail = shown
+      ? `the page showed: "${shown}"`
+      : `no flash message appeared at all (still on ${url}${inline.length ? `, field errors: ${inline.join(' | ')}` : ''})`;
+    throw new Error(
+      `Success alert "${expectedText}" was not displayed after ${description} — ${detail}.`
+    );
   }
 }
 
@@ -223,6 +246,10 @@ export async function selectRandomOption(page: Page, selectSelector: string): Pr
 // Select2 counterpart of selectRandomOption: opens the widget, picks a random real
 // option (skipping "Select ..." placeholders) and returns its label. Use when the
 // exact value doesn't matter — the dropdown only offers valid choices.
+function escapeForRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export async function selectRandomFromAssetDropdown(
   page: Page,
   containerSelector: string
@@ -241,7 +268,11 @@ export async function selectRandomFromAssetDropdown(
   if (!labels.length) throw new Error(`No selectable options in dropdown: ${containerSelector}`);
 
   const label = labels[Math.floor(Math.random() * labels.length)];
-  await options.filter({ hasText: label }).first().click();
+  // Match the option exactly. hasText is a substring match, so picking "HP" could
+  // click "HP Pavilion" instead — the container then holds a different label and
+  // the check below fails for a reason that has nothing to do with the test.
+  const exactLabel = new RegExp(`^\\s*${escapeForRegExp(label)}\\s*$`);
+  await options.filter({ hasText: exactLabel }).first().click();
   await expect(page.locator(containerSelector)).toContainText(label);
   return label;
 }
@@ -306,6 +337,19 @@ export async function filterTableBySearch(page: Page, term: string): Promise<boo
     const input = candidate.first();
     if (await input.count()) {
       await input.fill(term.trim());
+      // DataTables re-renders asynchronously, so returning here hands the caller a
+      // table that may still be showing the unfiltered first page — the row it
+      // wants then appears to be missing. The info line gains "(filtered from N
+      // total entries)" once the search has been applied, so wait for that.
+      // Best effort: not every table on the site carries an info line.
+      const info = page.locator('[id$="_info"], .dt-info, .dataTables_info').first();
+      if (await info.count()) {
+        try {
+          await expect(info).toContainText(/filtered from/i, { timeout: 10_000 });
+        } catch {
+          // Leave it to the caller's own assertion to report what was not found.
+        }
+      }
       return true;
     }
   }
@@ -345,4 +389,40 @@ export async function setDateByEvaluate(
 // than a fixed index.
 export function dataTableSearchBox(page: Page) {
   return page.locator('[id^="dt-search-"]').first();
+}
+
+/**
+ * Turns off the browser's own form validation so a deliberately bad value
+ * actually reaches the server.
+ *
+ * A negative test that only proves Chrome refused to submit proves very little:
+ * that guard is bypassable with devtools or a direct POST (see Trello #1311).
+ * The server is what has to say no. Every spec that uses this also carries a
+ * control test proving a VALID record still saves once the guard is gone —
+ * otherwise a broken bypass would make every negative case pass for free.
+ *
+ * `numbersToText` additionally retypes number inputs as text, because Playwright
+ * cannot type "abc" into an input[type=number] at all — without it, the
+ * non-numeric cases could never be submitted in the first place.
+ */
+export async function stripClientValidation(
+  page: Page,
+  options: { numbersToText?: boolean } = {}
+) {
+  await page.evaluate(({ numbersToText }) => {
+    document.querySelectorAll('form').forEach((f) => {
+      (f as HTMLFormElement).noValidate = true;
+    });
+    document.querySelectorAll('[pattern]').forEach((e) => e.removeAttribute('pattern'));
+    document.querySelectorAll('input[type="date"]').forEach((e) => {
+      e.removeAttribute('min');
+      e.removeAttribute('max');
+    });
+    document.querySelectorAll('input[type="number"]').forEach((e) => {
+      e.removeAttribute('min');
+      e.removeAttribute('max');
+      e.removeAttribute('step');
+      if (numbersToText) e.setAttribute('type', 'text');
+    });
+  }, { numbersToText: options.numbersToText ?? false });
 }

@@ -69,8 +69,10 @@ export class AssetAllocationReportsPage {
 
   // Selects a month in the PID-wise modal's report-date dropdown and returns the
   // selected label (e.g. "May-2026"). Pass an <option> value like "2026-05", or
-  // omit to select the most recent *previous* month (the second option) — this
-  // avoids hardcoding a date that ages out of the rolling 12-month list.
+  // omit to take the second option — one month further back than the default.
+  // The list starts at LAST month (the current, unfinished month is not offered),
+  // so the second option is two months ago. Chosen positionally rather than by
+  // date so it never ages out of the rolling 12-month list.
   async selectPidWiseReportMonth(month?: string): Promise<string> {
     const select = this.page.locator('#pid_wise_report_modal #reportDate');
     try {
@@ -102,7 +104,8 @@ export class AssetAllocationReportsPage {
     return filePath;
   }
 
-  // Downloads the PID-wise report for the default (current) month.
+  // Downloads the PID-wise report for whatever the modal preselects — the first
+  // option, which is last month.
   async downloadPidWiseAssetCostReport(downloadDir: string) {
     await this.openPidWiseReportModal();
     return this.downloadFromPidWiseModal(downloadDir);
@@ -128,8 +131,8 @@ export class AssetAllocationReportsPage {
 
   // Selects a month in the Active Asset Register modal and returns the chosen
   // label (e.g. "Jul-2026"). Pass an <option> value like "2026-07", or omit to
-  // take the most recent *previous* month (the second option), which avoids
-  // hardcoding a date that ages out of the rolling list.
+  // take the second option — one month further back than the default. Chosen
+  // positionally so it never ages out of the rolling list.
   async selectActiveAssetRegisterMonth(month?: string): Promise<string> {
     const select = this.page.locator('#active_asset_register_modal #activeAssetRegisterReportDate');
     try {
@@ -160,7 +163,7 @@ export class AssetAllocationReportsPage {
     return filePath;
   }
 
-  // Downloads the Active Asset Register for the default (current) month.
+  // Downloads the Active Asset Register for whatever the modal preselects.
   async downloadActiveAssetRegister(downloadDir: string) {
     await this.openActiveAssetRegisterModal();
     return this.downloadFromActiveAssetRegisterModal(downloadDir);

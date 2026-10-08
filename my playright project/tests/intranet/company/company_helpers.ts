@@ -10,6 +10,14 @@ const IMAGE_PATH = path.join(__dirname, '../../fixtures/image.png');
 export interface CompanyConfig {
   name?: string;
   filePath?: string;
+  // Overrides used by the negative specs to submit a deliberately bad value.
+  gst?: string;
+  website?: string;
+  pinCode?: string;
+  landline?: string;
+  invoiceCode?: string;
+  // Skip the success assertion: the caller expects the submit to be refused.
+  expectRejected?: boolean;
 }
 
 export interface CreatedCompany {
@@ -35,8 +43,8 @@ export async function createCompany(
 ): Promise<CreatedCompany> {
   const stamp = Date.now().toString();
   const name = cfg.name ?? uniqueCompanyName();
-  const invoiceCode = `I${stamp.slice(-4)}`;
-  const gst = `27ABCDE${stamp.slice(-4)}F1Z5`;
+  const invoiceCode = cfg.invoiceCode ?? `I${stamp.slice(-4)}`;
+  const gst = cfg.gst ?? `27ABCDE${stamp.slice(-4)}F1Z5`;
   const file = cfg.filePath ?? IMAGE_PATH;
 
   await companyPage.clickAddCompany();
@@ -48,7 +56,7 @@ export async function createCompany(
   await companyPage.setActive(true);
   await companyPage.fillGstNo(gst);
   await companyPage.fillInvoiceCode(invoiceCode);
-  await companyPage.fillWebsite('https://openai.com');
+  await companyPage.fillWebsite(cfg.website ?? 'https://openai.com');
   await companyPage.checkBillingLocationUs();
   await companyPage.selectRandomTimeZone();
   await companyPage.selectBillingCurrency('USD');
@@ -63,9 +71,12 @@ export async function createCompany(
   await companyPage.fillCity('New York');
   await companyPage.fillState('New York');
   await companyPage.fillCountry('USA');
-  await companyPage.fillLandline('1234567890');
-  await companyPage.fillPinCode('123456');
+  await companyPage.fillLandline(cfg.landline ?? '1234567890');
+  await companyPage.fillPinCode(cfg.pinCode ?? '123456');
   await companyPage.submit();
+  if (cfg.expectRejected) {
+    return { name, invoiceCode };
+  }
   await companyPage.assertCreated();
 
   return { name, invoiceCode };

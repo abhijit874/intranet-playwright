@@ -16,6 +16,20 @@ export interface CreateProjectOptions {
   name?: string;
   code?: string;
   sowStatus?: string;
+  // Overrides used by the negative specs to submit one deliberately bad value.
+  startDate?: string;
+  endDate?: string;
+  sowStartDate?: string;
+  sowEndDate?: string;
+  // Upload something other than the known-good image (e.g. a .txt file) for the
+  // Client Logo / project image, to prove the form checks what it is given.
+  clientLogoPath?: string;
+  projectImagePath?: string;
+  // Skip the success assertion: the caller expects the submit to be refused.
+  expectRejected?: boolean;
+  // Strip the browser's own validation first, so the bad value reaches the
+  // server and the server's answer is what gets tested.
+  bypassClientValidation?: boolean;
 }
 
 export function uniqueProjectName(prefix = 'playwright automation'): string {
@@ -49,13 +63,13 @@ export async function createProject(
   await projectsPage.selectBillBy('NA');
   await projectsPage.selectInvoiceBy('Josh');
   await projectsPage.selectSowStatus(options.sowStatus ?? 'SOW/MSA Not Required');
-  await projectsPage.setStartDate('2026-05-10');
-  await projectsPage.setEndDate('2026-12-31');
+  await projectsPage.setStartDate(options.startDate ?? '2026-05-10');
+  await projectsPage.setEndDate(options.endDate ?? '2026-12-31');
   // Keep SOW dates in the past so they never exceed the project end date — marking
   // a project inactive sets its end date to ~today, and the server rejects SOW
   // dates later than the end date.
-  await projectsPage.setSowStartDate('2026-05-10');
-  await projectsPage.setSowEndDate('2026-05-31');
+  await projectsPage.setSowStartDate(options.sowStartDate ?? '2026-05-10');
+  await projectsPage.setSowEndDate(options.sowEndDate ?? '2026-05-31');
   // Any valid person is accepted for these, so pick them at random. The project
   // manager stays fixed — the "update project flow on edit" test asserts on it.
   await projectsPage.selectProjectManager('Pooja Mane(pooja@joshsoftware.com)', 'Pooja Mane');
@@ -65,9 +79,13 @@ export async function createProject(
   await projectsPage.selectRandomProductManager(); // HR
   await projectsPage.fillProjectCode(code);
   // Client Logo and project image are both required.
-  await projectsPage.uploadClientLogo(IMAGE_PATH);
-  await projectsPage.uploadProjectImage(IMAGE_PATH);
+  await projectsPage.uploadClientLogo(options.clientLogoPath ?? IMAGE_PATH);
+  await projectsPage.uploadProjectImage(options.projectImagePath ?? IMAGE_PATH);
+  if (options.bypassClientValidation) await projectsPage.disableClientValidation();
   await projectsPage.submitNewProject();
+  if (options.expectRejected) {
+    return { name, code };
+  }
   await projectsPage.assertCreated();
 
   return { name, code };

@@ -1,6 +1,7 @@
 import { expect, Page } from '@playwright/test';
 import { login } from '../utils/login_helper';
-import {
+import {
+
   filterTableBySearch,
   selectRandomOption,
   expectFlashMessage,
@@ -235,12 +236,14 @@ export class CompanyPage {
     await this.page.locator('#company-submit').click();
   }
 
+  // Creating a company uploads four files (logo, GST, PAN, TAN), so the round
+  // trip regularly runs past the helper's 15s default before the flash appears.
   async assertCreated() {
-    await expectFlashMessage(this.page, 'Company created Successfully', 'company creation');
+    await expectFlashMessage(this.page, 'Company created Successfully', 'company creation', 45_000);
   }
 
   async assertUpdated() {
-    await expectFlashMessage(this.page, 'Company updated Successfully', 'company update');
+    await expectFlashMessage(this.page, 'Company updated Successfully', 'company update', 45_000);
   }
 
   async assertNotCreated() {

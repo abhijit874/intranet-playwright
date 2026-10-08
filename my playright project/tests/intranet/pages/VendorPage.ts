@@ -433,6 +433,22 @@ export class VendorPage {
     }
   }
 
+  // Turns off the browser's own form validation (pattern, required, type=email
+  // and friends) so a deliberately bad value actually reaches the server.
+  //
+  // Without this, a negative test only proves Chrome refused to submit — which a
+  // user can bypass with devtools or by posting the form directly. The server is
+  // the thing that has to say no. This is the same bypass the activity-date
+  // specs use (see Trello #1311).
+  async disableClientValidation() {
+    await this.page.evaluate(() => {
+      document.querySelectorAll('form').forEach((f) => {
+        (f as HTMLFormElement).noValidate = true;
+      });
+      document.querySelectorAll('[pattern]').forEach((e) => e.removeAttribute('pattern'));
+    });
+  }
+
   async submit() {
     await this.page.locator('input[type="submit"][name="commit"][value="Save"]').click();
   }

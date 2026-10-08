@@ -9,6 +9,10 @@ export interface AllocationConfig {
   user?: string;
   allocatedFrom?: string;
   issuedDate?: string;
+  // See AssetConfig — strips the browser's validation before the form is filled.
+  bypassClientValidation?: boolean;
+  // Skip the success assertion: the caller expects the submit to be refused.
+  expectRejected?: boolean;
 }
 
 // Purposes don't have to be unique, but a per-run stamp keeps records
@@ -26,6 +30,7 @@ export async function createAllocation(
   cfg: AllocationConfig
 ): Promise<string> {
   await allocationPage.clickAddAssetAllocation();
+  if (cfg.bypassClientValidation) await allocationPage.disableClientValidation();
   // The dropdown only lists allocatable assets, so pick one at random rather than
   // always taking the first — this spreads allocations across the inventory.
   const assetName = await allocationPage.selectRandomAsset();
@@ -40,7 +45,7 @@ export async function createAllocation(
   await allocationPage.fillPurpose(cfg.purpose);
   await allocationPage.fillIssuedDate(cfg.issuedDate ?? '2026-05-10');
   await allocationPage.submit();
-  await allocationPage.verifySuccessAlert();
+  if (!cfg.expectRejected) await allocationPage.verifySuccessAlert();
 
   return assetName.match(/\(([^)]+)\)/)?.[1] ?? assetName;
 }

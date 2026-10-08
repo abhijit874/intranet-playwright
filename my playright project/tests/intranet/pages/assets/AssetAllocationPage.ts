@@ -5,6 +5,7 @@ import {
   filterTableBySearch,
   expectFlashMessage,
   selectRandomOption,
+  stripClientValidation,
 } from '../../utils/test_helpers';
 
 type UserKey = 'employee' | 'hr' | 'admin';
@@ -89,21 +90,37 @@ export class AssetAllocationPage {
     }
   }
 
+  // See stripClientValidation() — lets a deliberately bad value reach the server.
+  async disableClientValidation() {
+    await stripClientValidation(this.page, { numbersToText: true });
+  }
+
   async submit() {
     await this.page
       .locator('input[type="submit"][name="commit"][value="Save"].btn.btn-secondary.controls')
       .click();
   }
 
+  async assertNotUpdated() {
+    await this.page.waitForLoadState('networkidle', { timeout: 60_000 }).catch(() => {});
+    const successFlash = this.page
+      .locator('#flashes')
+      .filter({ hasText: 'Asset Allocation Updated Successfully' });
+    await expect(
+      successFlash,
+      `The allocation was saved with an invalid value — server-side validation was bypassed (now on ${new URL(this.page.url()).pathname}).`
+    ).toHaveCount(0, { timeout: 15_000 });
+  }
+
   async assertNotAllocated() {
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('networkidle', { timeout: 60_000 }).catch(() => {});
     const successFlash = this.page
       .locator('#flashes')
       .filter({ hasText: 'Asset has been allocated successfully' });
     await expect(
       successFlash,
-      'Asset was allocated without required fields — server-side validation was bypassed.'
-    ).toHaveCount(0);
+      `Asset was allocated despite invalid input — server-side validation was bypassed (now on ${new URL(this.page.url()).pathname}).`
+    ).toHaveCount(0, { timeout: 15_000 });
   }
 
   async verifySuccessAlert() {
@@ -154,7 +171,8 @@ export class AssetAllocationPage {
       .filter({ has: this.page.getByText('No', { exact: true }) })
       .first();
     try {
-      await expect(row).toBeVisible();
+      // This table is large and slow to re-render after a search, so give it room.
+      await expect(row).toBeVisible({ timeout: 20_000 });
     } catch {
       throw new Error(`Active (un-received) allocation row not found for serial: "${serial}".`);
     }
