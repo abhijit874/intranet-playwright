@@ -172,6 +172,21 @@ export class MaintenancePage {
     return row;
   }
 
+  // Opens the edit form of the first maintenance record already in the list, for
+  // tests that edit an existing record instead of creating one.
+  async clickEditOnFirstRow() {
+    const row = this.page
+      .locator('table tbody tr')
+      .filter({ has: this.page.locator('a[href*="/edit"]') })
+      .first();
+    try {
+      await expect(row).toBeVisible({ timeout: 20000 });
+    } catch {
+      throw new Error('No existing maintenance record with an edit action was found to edit.');
+    }
+    await row.locator('a[href*="/edit"]').first().click();
+  }
+
   async clickEditOnRow(query: string) {
     const row = await this.findMaintenanceRow(query);
     await row.locator('a[href*="/edit"]').click();

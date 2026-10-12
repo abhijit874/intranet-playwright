@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
-import { loginAsContributorFor } from './contributor_helpers';
+import { loginAsContributorFor, openExistingOrCreateForEdit } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 // Master happy-flow test: creates a single self blog contribution and confirms it saves.
@@ -121,20 +121,21 @@ test('edit existing self blog contribution', async ({ page }) => {
   const cp = new ContributionsPage(page);
   await loginAsContributorFor(page, 'J7', 'Blog Writing');
 
-  // create the record this test will edit
-  await cp.navigateToContributions();
-  await cp.clickAddContribution();
-  await cp.selectCategory('Blog Writing');
-  await cp.fillTitle(originalTitle);
-  await cp.fillDate(activityDate);
-  await cp.fillFieldByLabel('Blog URL *', blogUrl);
-  await page.locator('#published_on').selectOption('Self');
-  await cp.submitContribution();
-  await cp.assertSaved();
+  await openExistingOrCreateForEdit(cp, ['playwright-self', 'Self Blog'], async () => {
+    await cp.navigateToContributions();
+    await cp.clickAddContribution();
+    await cp.selectCategory('Blog Writing');
+    await cp.fillTitle(originalTitle);
+    await cp.fillDate(activityDate);
+    await cp.fillFieldByLabel('Blog URL *', blogUrl);
+    await page.locator('#published_on').selectOption('Self');
+    await cp.submitContribution();
+    await cp.assertSaved();
 
-  // open that exact record and edit it
-  await cp.navigateToContributions();
-  await cp.openRowForEdit(originalTitle);
+    // open that exact record and edit it
+    await cp.navigateToContributions();
+    await cp.openRowForEdit(originalTitle);
+  });
   await cp.fillTitle(updatedTitle);
   await cp.fillFieldByLabel('Blog URL *', 'https://playwright.in/edited');
   await cp.submitEdit();

@@ -53,25 +53,16 @@ test('adding new vendor asset', async ({ page }) => {
 
 // Self-contained: creates a fresh asset with a unique serial number, then searches
 // for that exact asset and edits it. No dependency on a pre-existing record.
+// Edits an existing asset rather than creating one each run: opens the first
+// asset in the list and changes its processor/version. Staging-only data.
 test('editing asset', async ({ page }) => {
-  const serialNumber = uniqueSerial();
   const updatedProcessor = 'I7';
 
   const inventoryPage = new InventoryPage(page);
   await inventoryPage.loginAs('hr');
   await inventoryPage.navigateTo();
 
-  // create the asset this test will edit
-  await inventoryPage.clickAddAsset();
-  await fillAssetForm(inventoryPage, { serial: serialNumber, assetOf: 'Josh' });
-  await inventoryPage.submit();
-  await inventoryPage.verifySuccessAlert();
-
-  // search for that exact asset and edit it
-  await inventoryPage.navigateTo();
-  await inventoryPage.searchAsset(serialNumber);
-  await inventoryPage.clickEditOnRow(serialNumber);
-  await expect(page.locator('#asset_serial_number')).toHaveValue(serialNumber);
+  await inventoryPage.clickEditOnFirstRow();
   await inventoryPage.fillVersion(updatedProcessor);
   await inventoryPage.submit();
   await inventoryPage.verifyUpdateSuccessAlert();

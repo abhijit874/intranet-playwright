@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
-import { loginAsContributorFor } from './contributor_helpers';
+import { loginAsContributorFor, openExistingOrCreateForEdit } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('submit innovation talk contribution', async ({ page }) => {
@@ -17,29 +17,32 @@ test('submit innovation talk contribution', async ({ page }) => {
   await contributionsPage.assertSaved();
 });
 
-// Self-contained: creates a fresh Innovation Talk record with a unique title, then
-// opens that exact record and edits it.
+// Edits an existing Innovation Talk record rather than creating one each run.
+// Rescue: if no editable record of this type exists, create one first, then edit.
 test('edit existing innovation talk contribution', async ({ page }) => {
-  const originalTitle = `innovation-talk-${Date.now()}`;
   const updatedTitle = `innovation-talk-edited-${Date.now()}`;
 
   const contributionsPage = new ContributionsPage(page);
   await loginAsContributorFor(page, 'J10', 'Innovation Lab', 'Innovation Talk');
 
-  // create the record this test will edit
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Innovation Lab');
-  await contributionsPage.selectSubcategory('Innovation Talk');
-  await contributionsPage.fillTitle(originalTitle);
-  await contributionsPage.fillDate(validCurrentQuarterDate());
-  await contributionsPage.fillFieldByLabel('Description', 'this is the test');
-  await contributionsPage.submitContribution();
-  await contributionsPage.assertSaved();
+  await openExistingOrCreateForEdit(
+    contributionsPage,
+    ['Innovation Talk', 'innovation-talk', 'innovation talk'],
+    async () => {
+      const originalTitle = `innovation-talk-${Date.now()}`;
+      await contributionsPage.clickAddContribution();
+      await contributionsPage.selectCategory('Innovation Lab');
+      await contributionsPage.selectSubcategory('Innovation Talk');
+      await contributionsPage.fillTitle(originalTitle);
+      await contributionsPage.fillDate(validCurrentQuarterDate());
+      await contributionsPage.fillFieldByLabel('Description', 'this is the test');
+      await contributionsPage.submitContribution();
+      await contributionsPage.assertSaved();
+      await contributionsPage.navigateToContributions();
+      await contributionsPage.openRowForEdit(originalTitle);
+    }
+  );
 
-  // open that exact record and edit it
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.openRowForEdit(originalTitle);
   await contributionsPage.fillTitle(updatedTitle);
   await contributionsPage.fillFieldByLabel('Description', 'edited innovation talk');
   await contributionsPage.submitEdit();

@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
-import { loginAsContributorFor } from './contributor_helpers';
+import { loginAsContributorFor, openExistingOrCreateForEdit } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('open source contribution', async ({ page }) => {
@@ -29,23 +29,24 @@ test('edit existing open source contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
   await loginAsContributorFor(page, 'J11', 'Open Source Contribution', 'Open Source');
 
-  // create the record this test will edit
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Open Source Contribution');
-  await contributionsPage.selectSubcategory('Open Source');
-  await contributionsPage.fillTitle(originalTitle);
-  await contributionsPage.fillDate(validCurrentQuarterDate());
-  await contributionsPage.fillFieldByLabel('Repository handle (URL) *', 'https://codex.com');
-  await contributionsPage.fillFieldByLabel('PR link *', 'https://chatgpt.com');
-  await contributionsPage.fillFieldByLabel('Repository name *', 'AI automation');
-  await contributionsPage.fillFieldByLabel('Library URL *', 'https://opencode.com');
-  await contributionsPage.submitContribution();
-  await contributionsPage.assertSaved();
+  await openExistingOrCreateForEdit(contributionsPage, ['open-source-', 'Open Source'], async () => {
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.clickAddContribution();
+    await contributionsPage.selectCategory('Open Source Contribution');
+    await contributionsPage.selectSubcategory('Open Source');
+    await contributionsPage.fillTitle(originalTitle);
+    await contributionsPage.fillDate(validCurrentQuarterDate());
+    await contributionsPage.fillFieldByLabel('Repository handle (URL) *', 'https://codex.com');
+    await contributionsPage.fillFieldByLabel('PR link *', 'https://chatgpt.com');
+    await contributionsPage.fillFieldByLabel('Repository name *', 'AI automation');
+    await contributionsPage.fillFieldByLabel('Library URL *', 'https://opencode.com');
+    await contributionsPage.submitContribution();
+    await contributionsPage.assertSaved();
 
-  // open that exact record and edit it
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.openRowForEdit(originalTitle);
+    // open that exact record and edit it
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.openRowForEdit(originalTitle);
+  });
   await contributionsPage.fillTitle(updatedTitle);
   await contributionsPage.fillFieldByLabel('Repository name *', 'AI automation edited');
   await contributionsPage.submitEdit();

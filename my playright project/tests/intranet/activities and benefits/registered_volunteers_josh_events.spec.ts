@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
-import { loginAsContributorFor } from './contributor_helpers';
+import { loginAsContributorFor, openExistingOrCreateForEdit } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 /**
@@ -42,17 +42,19 @@ test('edit existing registered volunteers josh events contribution', async ({ pa
   const contributionsPage = new ContributionsPage(page);
   await loginAsContributorFor(page, GRADE, CATEGORY, SUBCATEGORY);
 
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory(CATEGORY);
-  await contributionsPage.selectSubcategory(SUBCATEGORY);
-  await contributionsPage.fillTitle(originalTitle);
-  await contributionsPage.fillDate(validCurrentQuarterDate());
-  await contributionsPage.submitContribution();
-  await contributionsPage.assertSaved();
+  await openExistingOrCreateForEdit(contributionsPage, ['josh-events', 'Registered Volunteers'], async () => {
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.clickAddContribution();
+    await contributionsPage.selectCategory(CATEGORY);
+    await contributionsPage.selectSubcategory(SUBCATEGORY);
+    await contributionsPage.fillTitle(originalTitle);
+    await contributionsPage.fillDate(validCurrentQuarterDate());
+    await contributionsPage.submitContribution();
+    await contributionsPage.assertSaved();
 
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.openRowForEdit(originalTitle);
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.openRowForEdit(originalTitle);
+  });
   await contributionsPage.fillTitle(updatedTitle);
   await contributionsPage.submitEdit();
   await contributionsPage.assertUpdated();

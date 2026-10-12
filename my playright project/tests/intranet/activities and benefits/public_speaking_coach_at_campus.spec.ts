@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
-import { loginAsContributorFor } from './contributor_helpers';
+import { loginAsContributorFor, openExistingOrCreateForEdit } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('public speaking coach at campus contribution', async ({ page }) => {
@@ -28,22 +28,23 @@ test('edit existing public speaking coach at campus contribution', async ({ page
   const contributionsPage = new ContributionsPage(page);
   await loginAsContributorFor(page, 'J11', 'Public speaking', 'Coach at Campus Workshop (TAG)');
 
-  // create the record this test will edit
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Public speaking');
-  await contributionsPage.selectSubcategory('Coach at Campus Workshop (TAG)');
-  await page.getByLabel('Title:').fill(originalTitle);
-  await page.getByLabel('Activity Date:').fill(validCurrentQuarterDate());
-  await contributionsPage.fillFieldByLabel('Event details', 'offline');
-  await page.getByLabel('Location *').fill('Pune');
-  await contributionsPage.fillFieldByLabel('Duration (In minutes) *', '50');
-  await contributionsPage.submitContribution();
-  await contributionsPage.assertSaved();
+  await openExistingOrCreateForEdit(contributionsPage, ['campus-workshop', 'Coach at Campus'], async () => {
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.clickAddContribution();
+    await contributionsPage.selectCategory('Public speaking');
+    await contributionsPage.selectSubcategory('Coach at Campus Workshop (TAG)');
+    await page.getByLabel('Title:').fill(originalTitle);
+    await page.getByLabel('Activity Date:').fill(validCurrentQuarterDate());
+    await contributionsPage.fillFieldByLabel('Event details', 'offline');
+    await page.getByLabel('Location *').fill('Pune');
+    await contributionsPage.fillFieldByLabel('Duration (In minutes) *', '50');
+    await contributionsPage.submitContribution();
+    await contributionsPage.assertSaved();
 
-  // open that exact record and edit it
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.openRowForEdit(originalTitle);
+    // open that exact record and edit it
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.openRowForEdit(originalTitle);
+  });
   await page.getByLabel('Title:').fill(updatedTitle);
   await page.getByLabel('Location *').fill('Mumbai');
   await contributionsPage.submitEdit();

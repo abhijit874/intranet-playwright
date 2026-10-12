@@ -13,21 +13,16 @@ test('adding maintenance', async ({ page }) => {
 
 // Self-contained: creates a fresh maintenance record (on the first available asset)
 // with a unique reason, then searches for that exact record and edits it.
+// Edits an existing maintenance record rather than creating one each run: opens
+// the first record in the list and changes its reason. Staging-only data.
 test('editing maintenance', async ({ page }) => {
-  const reason = uniqueReason();
-  const updatedReason = `${reason} edited`;
+  const updatedReason = `playwright edited ${Date.now().toString().slice(-6)}`;
 
   const maintenancePage = new MaintenancePage(page);
   await maintenancePage.loginAs('hr');
   await maintenancePage.navigateTo();
 
-  // create the record this test will edit
-  await createMaintenance(maintenancePage, { reason });
-
-  // search for that exact record and edit it
-  await maintenancePage.navigateTo();
-  await maintenancePage.searchMaintenance(reason);
-  await maintenancePage.clickEditOnRow(reason);
+  await maintenancePage.clickEditOnFirstRow();
   await page.locator('#asset_maintainance_reason').clear();
   await maintenancePage.fillReason(updatedReason);
   await maintenancePage.submit();

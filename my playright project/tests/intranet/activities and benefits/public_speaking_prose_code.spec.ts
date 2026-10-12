@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
-import { loginAsContributorFor } from './contributor_helpers';
+import { loginAsContributorFor, openExistingOrCreateForEdit } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('public speaking prose and code contribution', async ({ page }) => {
@@ -28,22 +28,23 @@ test('edit existing public speaking prose and code contribution', async ({ page 
   const contributionsPage = new ContributionsPage(page);
   await loginAsContributorFor(page, 'J7', 'Public speaking', 'Prose & Code');
 
-  // create the record this test will edit
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Public speaking');
-  await contributionsPage.selectSubcategory('Prose & Code');
-  await page.getByLabel('Title:').fill(originalTitle);
-  await page.getByLabel('Activity Date:').fill(validCurrentQuarterDate());
-  await page.locator('#duration').fill('40');
-  await page.locator('#type').selectOption({ label: 'Code' });
-  await contributionsPage.fillFieldByLabel('Description *', 'automation of prose and code');
-  await contributionsPage.submitContribution();
-  await contributionsPage.assertSaved();
+  await openExistingOrCreateForEdit(contributionsPage, ['prose-code', 'Prose & Code'], async () => {
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.clickAddContribution();
+    await contributionsPage.selectCategory('Public speaking');
+    await contributionsPage.selectSubcategory('Prose & Code');
+    await page.getByLabel('Title:').fill(originalTitle);
+    await page.getByLabel('Activity Date:').fill(validCurrentQuarterDate());
+    await page.locator('#duration').fill('40');
+    await page.locator('#type').selectOption({ label: 'Code' });
+    await contributionsPage.fillFieldByLabel('Description *', 'automation of prose and code');
+    await contributionsPage.submitContribution();
+    await contributionsPage.assertSaved();
 
-  // open that exact record and edit it
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.openRowForEdit(originalTitle);
+    // open that exact record and edit it
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.openRowForEdit(originalTitle);
+  });
   await page.getByLabel('Title:').fill(updatedTitle);
   await page.locator('#duration').fill('50');
   await contributionsPage.submitEdit();

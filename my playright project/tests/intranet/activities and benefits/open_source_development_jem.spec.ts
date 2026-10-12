@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
-import { loginAsContributorFor } from './contributor_helpers';
+import { loginAsContributorFor, openExistingOrCreateForEdit } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('open source development jem', async ({ page }) => {
@@ -30,24 +30,25 @@ test('edit existing open source gem contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
   await loginAsContributorFor(page, 'J10', 'Open Source Contribution', 'Develop new Gem / library');
 
-  // create the record this test will edit
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Open Source Contribution');
-  await contributionsPage.selectSubcategory('Develop new Gem / library');
-  await contributionsPage.fillTitle(originalTitle);
-  await contributionsPage.fillDate(validCurrentQuarterDate());
-  await contributionsPage.fillFieldByLabel('Library/Gem Name *', 'chat gpt');
-  await contributionsPage.fillFieldByLabel('Library/Gem URL *', 'https://openai.com');
-  await contributionsPage.fillFieldByLabel('Repository Link *', 'https://openai.com');
-  await contributionsPage.fillFieldByLabel('Pull Request Link *', 'https://codex.com');
-  await contributionsPage.fillFieldByLabel('Description *', 'playright automation');
-  await contributionsPage.submitContribution();
-  await contributionsPage.assertSaved();
+  await openExistingOrCreateForEdit(contributionsPage, ['open-source-gem', 'Develop new Gem'], async () => {
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.clickAddContribution();
+    await contributionsPage.selectCategory('Open Source Contribution');
+    await contributionsPage.selectSubcategory('Develop new Gem / library');
+    await contributionsPage.fillTitle(originalTitle);
+    await contributionsPage.fillDate(validCurrentQuarterDate());
+    await contributionsPage.fillFieldByLabel('Library/Gem Name *', 'chat gpt');
+    await contributionsPage.fillFieldByLabel('Library/Gem URL *', 'https://openai.com');
+    await contributionsPage.fillFieldByLabel('Repository Link *', 'https://openai.com');
+    await contributionsPage.fillFieldByLabel('Pull Request Link *', 'https://codex.com');
+    await contributionsPage.fillFieldByLabel('Description *', 'playright automation');
+    await contributionsPage.submitContribution();
+    await contributionsPage.assertSaved();
 
-  // open that exact record and edit it
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.openRowForEdit(originalTitle);
+    // open that exact record and edit it
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.openRowForEdit(originalTitle);
+  });
   await contributionsPage.fillTitle(updatedTitle);
   await contributionsPage.fillFieldByLabel('Description *', 'edited playwright automation');
   await contributionsPage.submitEdit();

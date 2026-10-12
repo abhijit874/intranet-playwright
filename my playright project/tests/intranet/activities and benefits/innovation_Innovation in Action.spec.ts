@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
-import { loginAsContributorFor } from './contributor_helpers';
+import { loginAsContributorFor, openExistingOrCreateForEdit } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('submit innovation in action contribution', async ({ page }) => {
@@ -30,22 +30,23 @@ test('edit existing innovation in action contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
   await loginAsContributorFor(page, 'J9', 'Innovation Lab', 'Innovation in Action');
 
-  // create the record this test will edit
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Innovation Lab');
-  await contributionsPage.selectSubcategory('Innovation in Action');
-  await contributionsPage.fillTitle(originalTitle);
-  await contributionsPage.fillDate(activityDate);
-  await page.getByLabel('Activity Start Date *').fill(activityDate);
-  await page.getByLabel('Activity End Date *').fill(activityDate);
-  await contributionsPage.fillFieldByLabel('Description', 'this is the test');
-  await contributionsPage.submitContribution();
-  await contributionsPage.assertSaved();
+  await openExistingOrCreateForEdit(contributionsPage, ['innovation-action', 'Innovation in Action'], async () => {
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.clickAddContribution();
+    await contributionsPage.selectCategory('Innovation Lab');
+    await contributionsPage.selectSubcategory('Innovation in Action');
+    await contributionsPage.fillTitle(originalTitle);
+    await contributionsPage.fillDate(activityDate);
+    await page.getByLabel('Activity Start Date *').fill(activityDate);
+    await page.getByLabel('Activity End Date *').fill(activityDate);
+    await contributionsPage.fillFieldByLabel('Description', 'this is the test');
+    await contributionsPage.submitContribution();
+    await contributionsPage.assertSaved();
 
-  // open that exact record and edit it
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.openRowForEdit(originalTitle);
+    // open that exact record and edit it
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.openRowForEdit(originalTitle);
+  });
   await contributionsPage.fillTitle(updatedTitle);
   await contributionsPage.fillFieldByLabel('Description', 'edited description');
   await contributionsPage.submitEdit();

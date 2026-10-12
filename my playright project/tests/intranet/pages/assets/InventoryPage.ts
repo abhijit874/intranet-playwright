@@ -312,6 +312,24 @@ export class InventoryPage {
     return row;
   }
 
+  // Opens the edit form of the first asset already in the list, for tests that
+  // edit an existing record instead of creating one. Returns its serial number.
+  async clickEditOnFirstRow(): Promise<string> {
+    await this.page.goto('/organisation_assets');
+    const row = this.page
+      .locator('table tbody tr')
+      .filter({ has: this.page.locator('a[href*="/edit"]') })
+      .first();
+    try {
+      await expect(row).toBeVisible({ timeout: 20000 });
+    } catch {
+      throw new Error('No existing asset with an edit action was found to edit.');
+    }
+    await row.locator('a[href*="/edit"]').first().click();
+    await expect(this.page).toHaveURL(/\/organisation_assets\/\d+\/edit/i);
+    return this.page.locator('#asset_serial_number').inputValue();
+  }
+
   async clickEditOnRow(query: string) {
     const row = await this.findAssetRow(query);
     await row.locator('a[href*="/edit"]').click();

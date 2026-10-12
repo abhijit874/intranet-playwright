@@ -13,6 +13,8 @@ test('create new project', async ({ page }) => {
 
 // Self-contained: creates a fresh project (project manager = Pooja Mane), then
 // opens that exact project on edit, confirms the project manager, and saves.
+// Edits an existing project rather than creating one each run: opens the first
+// project in the list and re-saves it. Staging-only data.
 test('update project flow on edit', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'Run only on Chromium as requested.');
 
@@ -21,14 +23,13 @@ test('update project flow on edit', async ({ page, browserName }) => {
   await expect(page).toHaveURL(/pg-stage-intranet/i);
   await projectsPage.navigateTo();
 
-  const { name } = await createProject(projectsPage);
+  await projectsPage.clickEditOnFirstRow();
 
-  await projectsPage.navigateTo();
-  await projectsPage.search(name);
-  await projectsPage.clickEditOnRow(name);
-
-  // keep the existing project manager (Pooja Mane) and save
-  await expect(page.locator('#select2-project_manager_ids-container')).toContainText('Pooja Mane');
+  // An existing project already has a project manager assigned.
+  await expect(page.locator('#select2-project_manager_ids-container')).not.toBeEmpty();
+  // An active project rejects an end date before today, and the first existing
+  // one may have aged out — push it to a clearly-future date before saving.
+  await projectsPage.setEndDate('2027-12-31');
   await projectsPage.saveProjectEdit();
   await projectsPage.assertSaved();
 });

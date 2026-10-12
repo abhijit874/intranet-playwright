@@ -72,6 +72,24 @@ export class ProjectsPage {
       .click();
   }
 
+  // Opens the edit form of the first project already in the list, for tests that
+  // edit an existing record instead of creating one.
+  async clickEditOnFirstRow() {
+    const editSel =
+      'a:has-text("Edit"), button:has-text("Edit"), a[title*="Edit" i], a:has(i.fa-edit), a:has(i[class*="edit"])';
+    const row = this.page
+      .locator('table tbody tr')
+      .filter({ has: this.page.locator(editSel) })
+      .first();
+    try {
+      await expect(row).toBeVisible({ timeout: 20000 });
+    } catch {
+      throw new Error('No existing project with an edit action was found to edit.');
+    }
+    await row.locator(editSel).first().click();
+    await expect(this.page).toHaveURL(/\/projects\/\d+\/edit/i);
+  }
+
   // --- New project form ---
 
   async selectCompany(name: string) {

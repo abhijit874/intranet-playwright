@@ -17,8 +17,10 @@ test('add new vendor', async ({ page }) => {
   await expect(row).toContainText(category);
 });
 
-// Self-contained: creates a fresh vendor, then finds that exact vendor and edits
-// it — no dependency on a pre-seeded record.
+// Edits an existing vendor rather than creating one each run: opens the first
+// vendor already in the list, changes its contact-person role and saves. The
+// data is staging-only, so mutating an existing record is fine and avoids adding
+// a new vendor on every run.
 test('edit existing vendor', async ({ page }) => {
   const updatedRole = `CTO ${Date.now().toString().slice(-4)}`;
 
@@ -26,18 +28,14 @@ test('edit existing vendor', async ({ page }) => {
   await vendorPage.loginAs('hr');
   await vendorPage.navigateTo();
 
-  // create the vendor this test will edit
-  const { company } = await createVendor(vendorPage);
-
-  await vendorPage.navigateTo();
-  await vendorPage.searchVendor(company);
-  await vendorPage.clickEditOnRow(company);
+  const company = await vendorPage.clickEditOnFirstRow();
 
   await vendorPage.fillContactPersonRole(updatedRole);
   await vendorPage.submit();
+  await vendorPage.assertSaved();
 
-  // the edited vendor should still be listed
-  await vendorPage.navigateTo();
+  // The edit persisted: re-open the same vendor and confirm the new role stuck.
   await vendorPage.searchVendor(company);
-  await expect(await vendorPage.findVendorRow(company)).toBeVisible();
+  await vendorPage.clickEditOnRow(company);
+  await expect(page.locator('#vendor_contact_persons_attributes_0_role')).toHaveValue(updatedRole);
 });

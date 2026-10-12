@@ -56,6 +56,29 @@ export class VendorPage {
     }
   }
 
+  // Opens the edit form of the first vendor already in the list, for tests that
+  // edit an existing record instead of creating one. Returns the vendor's company
+  // name (column 2) so the caller can find it again. Throws if the list is empty.
+  async clickEditOnFirstRow(): Promise<string> {
+    const row = this.page
+      .locator('#vendor_stream_table tbody tr')
+      .filter({ has: this.page.locator('a[href*="/edit"]') })
+      .first();
+    try {
+      await expect(row).toBeVisible({ timeout: 20000 });
+    } catch {
+      throw new Error('No existing vendor with an edit action was found to edit.');
+    }
+    const company = ((await row.locator('td').nth(1).textContent()) || '').trim();
+    await row.locator('a[href*="/edit"]').first().click();
+    try {
+      await expect(this.page).toHaveURL(/\/vendors\/\d+\/edit/i);
+    } catch {
+      throw new Error('Failed to open the edit page for the first vendor.');
+    }
+    return company;
+  }
+
   // --- Mandatory fields ---
 
   async fillCompany(name: string) {

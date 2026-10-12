@@ -190,3 +190,28 @@ export async function loginAsContributorFor(
     `No ${grade} employee can currently create "${what}" — every candidate's quota looks exhausted.`
   );
 }
+
+/**
+ * Rescue wrapper for the "edit existing contribution" tests.
+ *
+ * Prefers editing a record that already exists so the test does not add a new
+ * contribution on every run. It searches for an editable (pending) record
+ * matching `searchTerms`; if one is found it is opened for edit and the function
+ * returns. Only when none exists does it fall back to `createAndOpenForEdit`,
+ * which must create a record and leave the page on that record's edit form — so
+ * coverage never drops to a skip.
+ *
+ * Either way the caller is left on the contribution's edit form, ready to change
+ * fields and submit.
+ */
+export async function openExistingOrCreateForEdit(
+  contributionsPage: ContributionsPage,
+  searchTerms: string[],
+  createAndOpenForEdit: () => Promise<void>
+): Promise<void> {
+  await contributionsPage.navigateToContributions();
+  const found = await contributionsPage.openEditableFromSearchTerms(searchTerms, {
+    throwOnMissing: false,
+  });
+  if (!found) await createAndOpenForEdit();
+}

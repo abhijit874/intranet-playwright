@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
-import { loginAsContributorFor } from './contributor_helpers';
+import { loginAsContributorFor, openExistingOrCreateForEdit } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('submit innovation monthly contribution', async ({ page }) => {
@@ -26,21 +26,22 @@ test('edit existing innovation monthly contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
   await loginAsContributorFor(page, 'J11', 'Innovation Lab', 'Monthly Contribution');
 
-  // create the record this test will edit
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Innovation Lab');
-  await contributionsPage.selectSubcategory('Monthly Contribution');
-  await contributionsPage.fillTitle(originalTitle);
-  await contributionsPage.fillDate(validCurrentQuarterDate());
-  await contributionsPage.attachFile('#timesheet_attachment', 'tests/fixtures/image.png');
-  await contributionsPage.submitContribution();
-  await contributionsPage.assertSaved();
+  await openExistingOrCreateForEdit(contributionsPage, ['innovation-monthly', 'Monthly Contribution'], async () => {
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.clickAddContribution();
+    await contributionsPage.selectCategory('Innovation Lab');
+    await contributionsPage.selectSubcategory('Monthly Contribution');
+    await contributionsPage.fillTitle(originalTitle);
+    await contributionsPage.fillDate(validCurrentQuarterDate());
+    await contributionsPage.attachFile('#timesheet_attachment', 'tests/fixtures/image.png');
+    await contributionsPage.submitContribution();
+    await contributionsPage.assertSaved();
 
-  // open that exact record and edit it (the timesheet attachment is required again
-  // on the edit form, so re-attach it before submitting)
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.openRowForEdit(originalTitle);
+    // open that exact record and edit it (the timesheet attachment is required again
+    // on the edit form, so re-attach it before submitting)
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.openRowForEdit(originalTitle);
+  });
   await contributionsPage.fillTitle(updatedTitle);
   await contributionsPage.attachFile('#timesheet_attachment', 'tests/fixtures/image.png');
   await contributionsPage.submitEdit();

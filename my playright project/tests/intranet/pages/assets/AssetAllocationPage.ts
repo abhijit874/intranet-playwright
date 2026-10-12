@@ -148,6 +148,22 @@ export class AssetAllocationPage {
     return row;
   }
 
+  // Opens the edit form of the first allocation already in the list, for tests
+  // that edit an existing record instead of creating one.
+  async clickEditOnFirstRow() {
+    const row = this.page
+      .locator('table tbody tr')
+      .filter({ has: this.page.locator('a[href*="/edit"]') })
+      .first();
+    try {
+      await expect(row).toBeVisible({ timeout: 20000 });
+    } catch {
+      throw new Error('No existing allocation with an edit action was found to edit.');
+    }
+    await row.locator('a[href*="/edit"]').first().click();
+    await expect(this.page).toHaveURL(/\/asset_allocations\/\d+\/edit/i);
+  }
+
   async clickEditOnRow(query: string) {
     const row = await this.findAllocationRow(query);
     await row.locator('a[href*="/edit"]').click();

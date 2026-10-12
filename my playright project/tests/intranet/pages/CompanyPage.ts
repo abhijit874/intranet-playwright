@@ -61,6 +61,26 @@ export class CompanyPage {
     }
   }
 
+  // Opens the edit form of the first company already in the list, for tests that
+  // edit an existing record instead of creating one. Throws if the list is empty.
+  async clickEditOnFirstRow() {
+    const row = this.page
+      .locator('#companies_list tbody tr')
+      .filter({ has: this.page.locator('a[href$="/edit"]') })
+      .first();
+    try {
+      await expect(row).toBeVisible({ timeout: 20000 });
+    } catch {
+      throw new Error('No existing company with an edit action was found to edit.');
+    }
+    await row.locator('a[href$="/edit"]').first().click();
+    try {
+      await expect(this.page).toHaveURL(/\/companies\/\d+\/edit/i);
+    } catch {
+      throw new Error('Failed to open the edit page for the first company.');
+    }
+  }
+
   // --- Form fields ---
 
   async selectJoshEntity(label: string) {
@@ -210,6 +230,14 @@ export class CompanyPage {
     } catch {
       throw new Error(`Failed to fill country field with value: "${country}".`);
     }
+  }
+
+  // The first contact person's phone. The server treats it as mandatory on save
+  // even though the input is not marked required, so an edit of an existing
+  // company whose contact phone is blank must fill it.
+  async fillContactPersonPhone(phone: string) {
+    const field = this.page.locator('#company_contact_persons_attributes_0_phone_no');
+    if (await field.count()) await field.fill(phone);
   }
 
   async fillLandline(phone: string) {

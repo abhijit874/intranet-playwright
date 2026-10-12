@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { ContributionsPage } from '../pages/activities/ContributionsPage';
-import { loginAsContributorFor } from './contributor_helpers';
+import { loginAsContributorFor, openExistingOrCreateForEdit } from './contributor_helpers';
 import { previousQuarterDateValue, validCurrentQuarterDate } from '../utils/test_helpers';
 
 test('public speaking meetup contribution', async ({ page }) => {
@@ -30,25 +30,26 @@ test('edit existing public speaking meetup contribution', async ({ page }) => {
   const contributionsPage = new ContributionsPage(page);
   await loginAsContributorFor(page, 'J9', 'Public speaking', 'Meetup');
 
-  // create the record this test will edit
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.clickAddContribution();
-  await contributionsPage.selectCategory('Public speaking');
-  await contributionsPage.selectSubcategory('Meetup');
-  await contributionsPage.fillTitle(originalTitle);
-  await contributionsPage.fillDate(validCurrentQuarterDate());
-  await contributionsPage.fillFieldByLabel('Location *', 'Pune');
-  await contributionsPage.fillFieldByLabel('Meetup Type *', 'offline');
-  await page.getByLabel('Number of Attendees *').fill('50');
-  await contributionsPage.attachFile('#attachment', 'tests/fixtures/image.png');
-  await contributionsPage.fillFieldByLabel('URL *', 'https://openai.com');
-  await contributionsPage.submitContribution();
-  await contributionsPage.assertSaved();
+  await openExistingOrCreateForEdit(contributionsPage, ['meetup-', 'Meetup'], async () => {
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.clickAddContribution();
+    await contributionsPage.selectCategory('Public speaking');
+    await contributionsPage.selectSubcategory('Meetup');
+    await contributionsPage.fillTitle(originalTitle);
+    await contributionsPage.fillDate(validCurrentQuarterDate());
+    await contributionsPage.fillFieldByLabel('Location *', 'Pune');
+    await contributionsPage.fillFieldByLabel('Meetup Type *', 'offline');
+    await page.getByLabel('Number of Attendees *').fill('50');
+    await contributionsPage.attachFile('#attachment', 'tests/fixtures/image.png');
+    await contributionsPage.fillFieldByLabel('URL *', 'https://openai.com');
+    await contributionsPage.submitContribution();
+    await contributionsPage.assertSaved();
 
-  // open that exact record and edit it (the attachment is required again on the
-  // edit form, so re-attach it before submitting)
-  await contributionsPage.navigateToContributions();
-  await contributionsPage.openRowForEdit(originalTitle);
+    // open that exact record and edit it (the attachment is required again on the
+    // edit form, so re-attach it before submitting)
+    await contributionsPage.navigateToContributions();
+    await contributionsPage.openRowForEdit(originalTitle);
+  });
   await contributionsPage.fillTitle(updatedTitle);
   await page.getByLabel('Number of Attendees *').fill('75');
   await contributionsPage.attachFile('#attachment', 'tests/fixtures/image.png');
