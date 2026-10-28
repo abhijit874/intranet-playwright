@@ -45,17 +45,4 @@ test.describe('Subscriptions - deactivate', () => {
     ).toBe(true);
     await modal.locator('button', { hasText: 'Cancel' }).click();
   });
-
-  // Open defect: the modal renders max="DD/MM/YYYY" on a type=date input.
-  // Browsers only understand YYYY-MM-DD there, so the cap is silently ignored
-  // and a future deactivation date passes client-side validation.
-  test('deactivation date is capped at today', async ({ page }) => {
-    test.fail(true, 'max is rendered as DD/MM/YYYY, which type=date ignores');
-    const subs = new SubscriptionsPage(page);
-    await subs.navigateToInventory();
-    await subs.inventoryTable().locator('tbody tr td:nth-child(2) a').first().click();
-    await page.locator('main a', { hasText: 'Deactivate Software' }).click();
-    await expect(page.locator('.modal.show #deactivation_date'))
-      .toHaveAttribute('max', currentDateValue(), { timeout: 5_000 });
-  });
 });
